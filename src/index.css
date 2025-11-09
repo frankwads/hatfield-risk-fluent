@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 215 45% 15%;
+    --foreground: 0 0% 100%;
+
+    --card: 215 40% 20%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 215 45% 15%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 215 65% 48%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 40% 25%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 215 40% 25%;
+    --muted-foreground: 0 0% 100%;
+
+    --accent: 215 65% 48%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 40% 30%;
+    --input: 215 40% 30%;
+    --ring: 215 65% 48%;
+
+    --radius: 0.5rem;
+
+    /* Design tokens - Blue accent palette */
+    --deep-blue: 215 45% 15%;
+    --blue-dark: 212 40% 25%;
+    --blue-accent: 215 65% 48%;
+    --blue-light: 215 65% 60%;
+    --blue-darker: 220 50% 8%;
+    --article-bg: 215 25% 96%;
+    --article-text: 215 30% 25%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(215 45% 15%) 0%, hsl(215 40% 20%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(215 65% 48%) 0%, hsl(215 65% 60%) 100%);
+    --gradient-subtle: linear-gradient(180deg, hsl(215 45% 15%) 0%, hsl(215 40% 20%) 100%);
+    --gradient-light: linear-gradient(180deg, hsl(215 45% 15%) 0%, hsl(215 40% 25%) 100%);
+    --gradient-hero: radial-gradient(ellipse at 70% 30%, hsl(215 80% 45%) 0%, hsl(220 60% 20%) 35%, hsl(220 50% 12%) 65%, hsl(215 25% 22%) 100%);
+    --gradient-capabilities: radial-gradient(ellipse 120% 80% at 30% 70%, hsl(215 40% 22%) 0%, hsl(220 35% 16%) 30%, hsl(215 30% 28%) 65%, hsl(215 25% 35%) 100%);
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    --shadow-glow: 0 0 40px hsl(215 65% 48% / 0.2);
+    
+    /* Animations */
+    --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-extralight;
+  }
+}
+
+@keyframes scroll-infinite {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-infinite {
+  animation: scroll-infinite 20s linear infinite;
+}
