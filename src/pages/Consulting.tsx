@@ -38,28 +38,14 @@ const Consulting = () => {
       title: "Procurement",
       subtitle: "Transforming Procurement to Operate at the Speed of Business",
       description:
-        "Many procurement organizations are perceived by businesses as overly slow and cumbersome, providing minimal value beyond contract management and invoice processing. Procurement professionals often view themselves as underappreciated stewards of supplier relationships and enforcers of procedural compliance, focusing on the do's and don'ts of supplier engagement. Numerous procurement organizations remain aligned with traditional and outdated practices, relegating innovation and thought leadership to secondary roles behind the status quo.",
+        "Too often, organizations approach procurement transformation in a fragmented way—implementing point solutions for sourcing, contract management, or third-party risk without examining how each component connects within the broader workflow. The result is inefficiency, redundant effort, and missed opportunities for automation and insight.",
       details: [
-        "Hatfield Advisory partners with our clients to break the mold of old and traditional, helping identify advanced and innovative procurement solutions that drive value and operate at the speed of business.",
-      ],
-      services: [
-        "Optimizing supplier portfolios",
-        "Identifying buy and pay channel strategies",
-        "Leveraging technology to automate and leapfrog to best-in-class solutions",
-        "Identifying strategic sourcing savings targets and spend category strategies",
-        "Implementing source-to-pay operational workflow efficiencies",
-        "Establishing metrics dashboard to track and manage KPI's and SLA's",
-      ],
-    },
-    {
-      title: "Offshoring and Outsourcing",
-      subtitle: "Offshoring Done Right: Right Skills in the Right Locations at the Right Price",
-      description:
-        "Hatfield Advisory provides industry-based insights and expertise in determining the best opportunities for our clients to unleash significant value and savings when exploring offshoring and outsourcing opportunities.",
-      details: [
-        "The biggest pitfall when considering offshoring opportunities is basing the value proposition almost exclusively on labor rate arbitrage. The value of offshoring work to lower-cost labor markets entails so much more than assessing the cost of resources in one location versus another. It requires detailed labor market studies to understand skills availability, labor market supply and demand dynamics, geopolitical stability, government incentives and so much more. Beyond assessing labor rate arbitrage opportunities, it is important for companies to factor in labor productivity, taking into account business domain knowledge, language barriers, cultural differences, time zone and communication challenges.",
-        "With the advent of artificial intelligence (AI) and machine learning (ML), technology is a significant disruptor to traditional offshoring and outsourcing solutions and needs to be carefully considered when establishing related strategies. It is also important to determine which labor markets best suit various business requirements in terms of onshoring, near-shoring and offshoring solutions. Eastern Europe labor markets are very different from India, which are very different from China and the Philippines, which in turn are exceptionally different to Mexico and Latin America. Critical thinking needs to be applied to intellectual/knowledge capital retention requirements and business competitive advantage when outsourcing and offshoring work.",
-      ],
+        "Hatfield Advisory applies a holistic, end-to-end approach to optimizing procurement and supply chain operations. We integrate Third-Party Risk Management (TPRM) and Contract Lifecycle Management (CLM) directly into sourcing, supplier onboarding, and accounts payable processes—eliminating silos and enabling seamless, risk-aware operations across the enterprise.",
+
+        "Our team includes certified Lean Six Sigma Green and Black Belt process engineers who conduct deep-dive assessments of procurement workflows to identify bottlenecks, inefficiencies, and risk gaps. We then design and recommend integrated solutions that streamline operations, accelerate cycle times, enhance compliance visibility, and drive measurable business value."
+      
+        "In short: whether deploying a TPRM, CLM, or source-to-pay platform, Hatfield ensures the solution aligns with the entire workflow—delivering cohesive, technology-enabled procurement excellence that operates at the speed of business."
+      ]
     },
     {
       title: "Supply Chain",
