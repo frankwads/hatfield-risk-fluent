@@ -65,11 +65,9 @@ const About = () => {
                     Our Mission
                   </h2>
                   <p className="text-lg text-muted-foreground leading-relaxed text-center md:text-left">
-                    Hatfield Advisory's tailored approach embodies the highest
-                    standards of consulting excellence. By combining intellectual
-                    curiosity, data-driven analytics, client centricity, and
-                    pragmatic problem solving, we empower our clients to overcome
-                    challenges, seize opportunities, and achieve sustainable growth.
+                    Hatfield’s mission is to redefine Third-Party Risk Management through intelligence, automation, and trust.
+                    Purpose-built for the financial-services industry, Hatfield delivers an AI-powered platform that streamlines risk workflows, automates due diligence, and ensures seamless regulatory alignment — transforming TPRM from a reactive compliance burden into a proactive source of insight and resilience.
+                    Developed by practitioners for practitioners, Hatfield empowers institutions to manage risk with speed, precision, and confidence — bridging the gap between compliance and performance in an increasingly complex world.
                   </p>
                 </div>
               </div>
