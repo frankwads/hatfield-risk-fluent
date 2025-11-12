@@ -41,9 +41,11 @@ const About = () => {
               About Hatfield
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Hatfield is an AI-powered Third-Party Risk Management (TPRM) platform purpose-built to streamline risk workflows, automate assessments, and ensure seamless regulatory alignment. It integrates effortlessly into procurement and supply chain ecosystems, helping organizations strengthen governance, accelerate onboarding, and enhance operational resilience.
-              In addition, Hatfield Advisory provides consulting services to support TPRM assessments, implementation, and integration within client procurement and supply chain environments.
+               Hatfield is an AI-powered Third-Party Risk Management (TPRM) platform purpose-built to streamline risk workflows, automate assessments, and ensure seamless regulatory alignment. It integrates effortlessly into procurement and supply chain ecosystems, helping organizations strengthen governance, accelerate onboarding, and enhance operational resilience.
+               <br /><br />
+               Hatfield Advisory also provides consulting services to support TPRM assessments, implementation, and integration within client procurement and supply chain environments.
             </p>
+
           </div>
         </div>
       </section>
