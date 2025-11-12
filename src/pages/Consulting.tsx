@@ -41,10 +41,8 @@ const Consulting = () => {
         "Too often, organizations approach procurement transformation in a fragmented way—implementing point solutions for sourcing, contract management, or third-party risk without examining how each component connects within the broader workflow. The result is inefficiency, redundant effort, and missed opportunities for automation and insight.",
       details: [
         "Hatfield Advisory applies a holistic, end-to-end approach to optimizing procurement and supply chain operations. We integrate Third-Party Risk Management (TPRM) and Contract Lifecycle Management (CLM) directly into sourcing, supplier onboarding, and accounts payable processes—eliminating silos and enabling seamless, risk-aware operations across the enterprise.",
-
         "Our team includes certified Lean Six Sigma Green and Black Belt process engineers who conduct deep-dive assessments of procurement workflows to identify bottlenecks, inefficiencies, and risk gaps. We then design and recommend integrated solutions that streamline operations, accelerate cycle times, enhance compliance visibility, and drive measurable business value.",
-      
-        "In short: whether deploying a TPRM, CLM, or source-to-pay platform, Hatfield ensures the solution aligns with the entire workflow—delivering cohesive, technology-enabled procurement excellence that operates at the speed of business."
+        "In short: whether deploying a TPRM, CLM, or source-to-pay platform, Hatfield ensures the solution aligns with the entire workflow—delivering cohesive, technology-enabled procurement excellence that operates at the speed of business.",
       ]
     },
     {
