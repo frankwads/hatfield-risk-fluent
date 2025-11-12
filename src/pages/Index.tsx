@@ -105,7 +105,7 @@ const Index = () => {
                     <iframe
                       width="100%"
                       height="100%"
-                      src="https://youtu.be/l_w4UKB8KWQ"
+                      src="https://www.youtube.com/embed/l_w4UKB8KWQ"
                       title="Hatfield.ai Platform Demo"
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
