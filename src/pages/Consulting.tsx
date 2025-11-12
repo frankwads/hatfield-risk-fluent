@@ -33,7 +33,8 @@ const Consulting = () => {
         "In addition to point-in-time risk assessment evaluations, organizations should employ ongoing risk-sensing measures that provide real-time alerts based on social media sentiment, negative news events, corporate actions, company litigation, and more.",
       ],
       closing: "As a trusted partner, Hatfield Advisory can assist in optimizing your risk procedures while ensuring compliance with various regulatory requirements.",
-    {
+      },
+      {
       title: "Procurement",
       subtitle: "Transforming Procurement to Operate at the Speed of Business",
       description:
