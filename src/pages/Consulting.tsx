@@ -33,17 +33,16 @@ const Consulting = () => {
         "In addition to point-in-time risk assessment evaluations, organizations should employ ongoing risk-sensing measures that provide real-time alerts based on social media sentiment, negative news events, corporate actions, company litigation, and more.",
       ],
       closing: "As a trusted partner, Hatfield Advisory can assist in optimizing your risk procedures while ensuring compliance with various regulatory requirements.",
-      },
-      {
+    },
+    {
       title: "Procurement",
       subtitle: "Transforming Procurement to Operate at the Speed of Business",
-      description:
-      "Too often, organizations approach procurement transformation in a fragmented way implementing point solutions for sourcing, contract management, or third-party risk without examining how each component connects within the broader workflow. The result is inefficiency, redundant effort, and missed opportunities for automation and insight.",
+      description: "Too often, organizations approach procurement transformation in a fragmented way implementing point solutions for sourcing, contract management, or third-party risk without examining how each component connects within the broader workflow. The result is inefficiency, redundant effort, and missed opportunities for automation and insight.",
       details: [
-      "Hatfield Advisory applies a holistic, end-to-end approach to optimizing procurement and supply chain operations. We integrate Third-Party Risk Management (TPRM) and Contract Lifecycle Management (CLM) directly into sourcing, supplier onboarding, and accounts payable processes eliminating silos and enabling seamless, risk-aware operations across the enterprise.",
-      "Our team includes certified Lean Six Sigma Green and Black Belt process engineers who conduct deep-dive assessments of procurement workflows to identify bottlenecks, inefficiencies, and risk gaps. We then design and recommend integrated solutions that streamline operations, accelerate cycle times, enhance compliance visibility, and drive measurable business value.",
-      "In short: whether deploying a TPRM, CLM, or source-to-pay platform, Hatfield ensures the solution aligns with the entire workflow delivering cohesive, technology-enabled procurement excellence that operates at the speed of business."
-     ],
+        "Hatfield Advisory applies a holistic, end-to-end approach to optimizing procurement and supply chain operations. We integrate Third-Party Risk Management and Contract Lifecycle Management directly into sourcing, supplier onboarding, and accounts payable processes eliminating silos and enabling seamless, risk-aware operations across the enterprise.",
+        "Our team includes certified Lean Six Sigma Green and Black Belt process engineers who conduct deep-dive assessments of procurement workflows to identify bottlenecks, inefficiencies, and risk gaps. We then design and recommend integrated solutions that streamline operations, accelerate cycle times, enhance compliance visibility, and drive measurable business value.",
+        "In short: whether deploying a TPRM, CLM, or source-to-pay platform, Hatfield ensures the solution aligns with the entire workflow delivering cohesive, technology-enabled procurement excellence that operates at the speed of business."
+      ],
     },
     {
       title: "Supply Chain",
@@ -56,12 +55,10 @@ const Consulting = () => {
     },
   ];
 
-
   return (
     <div className="min-h-screen">
       <Navigation />
 
-      {/* Hero Section */}
       <section className="pt-32 pb-8 bg-gradient-to-b from-muted/50 to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
@@ -75,7 +72,6 @@ const Consulting = () => {
         </div>
       </section>
 
-      {/* Consulting Services - Accordion */}
       <section className="py-12 bg-background">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <Accordion type="single" collapsible className="space-y-4">
@@ -166,15 +162,13 @@ const Consulting = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 bg-gray-300">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold mb-6 text-gray-900">
             Ready to Transform Your Risk Management?
           </h2>
           <p className="text-xl text-gray-800 mb-8">
-            Let's discuss how our consulting services can help you achieve your
-            objectives
+            Let's discuss how our consulting services can help you achieve your objectives
           </p>
           <Button asChild size="lg" className="text-xl px-12 py-6 h-auto bg-transparent border-2 border-gray-400 text-gray-900 hover:bg-gray-400/10">
             <Link to="/contact">Schedule a Consultation</Link>
