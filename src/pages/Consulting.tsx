@@ -85,7 +85,7 @@ const Consulting = () => {
               Consulting Services
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              In addition to Hatfield, the TPRM AI product, Hatfield Advisory offers strategic advisory services and solutions to our clients, leveraging deep domain industry expertise in procurement, third-party risk management, supply chain operations, offshoring, and outsourcing.
+              Beyond Hatfield, our flagship AI-based TPRM solution, Hatfield Advisory provides strategic advisory services that optimize procurement and supply chain operations through integrated third-party risk management. We enable clients to achieve end-to-end process efficiency, enhance supplier transparency, and embed sustainable TPRM frameworks that drive measurable business value.
             </p>
           </div>
         </div>
