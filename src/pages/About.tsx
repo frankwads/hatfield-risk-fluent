@@ -38,10 +38,11 @@ const About = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-              About Hatfield Advisory
+              About Hatfield
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Hatfield Advisory offers Hatfield, an AI platform that streamlines TPRM workflows, as well as consulting services for the financial services industry
+              Hatfield is an AI-powered Third-Party Risk Management (TPRM) platform purpose-built to streamline risk workflows, automate assessments, and ensure seamless regulatory alignment. It integrates effortlessly into procurement and supply chain ecosystems, helping organizations strengthen governance, accelerate onboarding, and enhance operational resilience.
+              In addition, Hatfield Advisory provides consulting services to support TPRM assessments, implementation, and integration within client procurement and supply chain environments.
             </p>
           </div>
         </div>
