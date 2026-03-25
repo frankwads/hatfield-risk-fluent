@@ -85,7 +85,7 @@ const Contact = () => {
                           Email
                         </h3>
                         <p className="text-base text-muted-foreground break-all">
-                          frank.wadsworth@hatfieldadvisory.com
+                          frank.wadsworth@hatfield.ai
                         </p>
                       </div>
                     </div>

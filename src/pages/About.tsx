@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
+import AdvisoryBoard from "../components/AdvisoryBoard";
+import frankPhoto from "../../public/advisors/Frank_elite.jpg";
 
 const About = () => {
   const values = [
@@ -113,41 +115,44 @@ const About = () => {
             </h2>
             <Card className="border-border shadow-lg">
               <CardContent className="pt-8 pb-8">
-                <div className="space-y-6">
-                  <h3 className="text-3xl font-bold text-foreground text-center">
-                    Frank Wadsworth
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Frank Wadsworth is a senior financial services executive with experience building high-performing vendor and risk management programs for complex, global top-tier Wall Street enterprises. Leveraging deep experience across technology, procurement, and third-party risk management, Frank has developed Hatfield—an AI-powered third-party risk management solution purpose-built for the financial services industry.
-                  </p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Having honed his expertise at some of Wall Street's most distinguished financial institutions, Frank is known for transforming business, supply chain, and procurement operations to reduce third-party risk, unlock business value, and deliver significant, sustainable savings. He has led large-scale programs in highly matrixed environments and was recognized as a change agent who enabled global adoption of new operating models, technologies, and process improvements. In 2022, he was featured in Supply Chain, Procurement, and Sustainability magazines.
-                  </p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Frank currently serves on the Philippines Information, Communications & Technology (ICT) advisory board in New York. He previously served on the Philippines Business Process Outsourcing (BPO) Council led by the Consulate General in New York City, and on the board of the United Nations–affiliated Global Sourcing Council (GSC), a non-profit advancing sustainable and socially responsible sourcing.
-                  </p>
-                  
-                  <div className="pt-4">
-                    <h4 className="text-xl font-bold text-foreground mb-3">
-                      Areas of Expertise
-                    </h4>
-                    <ul className="space-y-2 text-muted-foreground">
-                      <li>• Strategic Planning & Transformation</li>
-                      <li>• Procurement Leadership & Cost Optimization</li>
-                      <li>• Third-Party Risk Management (TPRM)</li>
-                      <li>• Supply Chain Operations & Governance</li>
-                      <li>• Global Workforce Strategy</li>
-                      <li>• IT & Business Process Outsourcing (ITO/BPO)</li>
-                      <li>• Offshoring, Nearshoring & Vendor Consolidation</li>
-                    </ul>
+                <div className="flex flex-col md:flex-row gap-8 items-start mb-6">
+                  <div className="flex-shrink-0 mx-auto md:mx-0">
+                    <img
+                      src={frankPhoto}
+                      alt="Frank Wadsworth"
+                      className="w-48 h-48 rounded-full object-cover shadow-lg"
+                    />
                   </div>
-                  
+                  <div>
+                    <h3 className="text-3xl font-bold text-foreground mb-2">
+                      Frank Wadsworth
+                    </h3>
+                    <p className="text-muted-foreground italic mb-4">
+                      Founder & CEO, Hatfield.ai
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Frank Wadsworth is a senior financial services executive and Founder & CEO of Hatfield.ai, an AI-powered third-party risk management (TPRM) platform purpose-built for the financial services industry. He brings deep expertise across technology, procurement, supply chain, and enterprise risk management, with a focus on transforming how institutions identify, assess, and manage third-party risk.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <p className="text-muted-foreground leading-relaxed">
+                    Over the course of his career, Frank has held executive roles at leading global financial institutions, including Morgan Stanley, J.P. Morgan Chase, Merrill Lynch (Bank of America), Sumitomo Mitsui Banking Corporation, and Bloomberg. Across these organizations, he built and led high-performing vendor and risk management programs within complex, global operating environments.
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    He is recognized for designing and implementing scalable operating models that integrate technology, data, and governance to enhance risk oversight, improve decision-making, and drive measurable business outcomes. Frank has led large-scale transformation initiatives in highly matrixed environments, enabling global adoption of advanced technologies, streamlined processes, and modernized procurement and risk frameworks. His work has consistently delivered improved risk transparency, operational efficiency, and sustainable cost optimization.
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    As the architect behind Hatfield.ai, Frank is focused on redefining third-party risk management through the application of artificial intelligence, data intelligence, and automation. The platform reflects his vision to shift TPRM from a reactive compliance function to a proactive, intelligence-driven capability embedded within enterprise operations.
+                  </p>
+
                   <div className="pt-4">
                     <h4 className="text-xl font-bold text-foreground mb-3">
                       Speaking & Industry Engagement
                     </h4>
                     <p className="text-muted-foreground mb-3">
-                      Frank is a frequent guest speaker and industry contributor. He has presented at events hosted by:
+                      In addition to his executive leadership, Frank has contributed to industry dialogue on risk management and procurement transformation, with speaking engagements and participation in forums hosted by:
                     </p>
                     <ul className="space-y-2 text-muted-foreground">
                       <li>• RSA Archer</li>
@@ -157,12 +162,40 @@ const About = () => {
                       <li>• Penn State University – Supply Chain Management Association (SCMA)</li>
                     </ul>
                   </div>
+                  <div className="pt-4">
+                    <h4 className="text-xl font-bold text-foreground mb-3">
+                      Areas of Expertise
+                    </h4>
+                    <ul className="space-y-2 text-muted-foreground">
+                      <li>• Third-Party Risk Management (TPRM)</li>  
+                      <li>• Strategic Planning & Transformation</li>
+                      <li>• Procurement Leadership & Cost Optimization</li>
+                      <li>• Supply Chain Operations & Governance</li>
+                      <li>• Global Workforce Strategy</li>
+                      <li>• Outsourcing, IT & Business Process Outsourcing (ITO/BPO)</li>
+                    </ul>
+                  </div>
+                  <div className="pt-4">
+                    <h4 className="text-xl font-bold text-foreground mb-3">
+                      Advisory Roles
+                    </h4>
+                    <p className="text-muted-foreground mb-3">
+                      Frank has served in advisory roles supporting global workforce and sourcing strategy, including:
+                    </p>
+                    <ul className="space-y-2 text-muted-foreground">
+                      <li>• Philippines Information & Communications Technology (ICT) Advisory Board – New York</li>
+                      <li>• Philippines Business Process Outsourcing (BPO) Council</li>
+                      <li>• United Nations–affiliated Global Sourcing Council</li>
+                    </ul>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
+
+       <AdvisoryBoard />
 
       {/* Services Overview */}
       <section className="py-12 bg-muted/30">
