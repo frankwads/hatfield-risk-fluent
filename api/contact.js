@@ -9,7 +9,7 @@ export default async function handler(req, res) {
 
   const msg = {
     to: 'frank.wadsworth@hatfield.ai',
-    from: 'frank.w.wadsworth@gmail.com',  // must be verified in SendGrid
+    from: 'frank.wadsworth@hatfield.ai',  // must be verified in SendGrid
     subject: `New Inquiry from ${name} - hatfield.ai`,
     html: `
       <h2>New Contact Form Submission</h2>
