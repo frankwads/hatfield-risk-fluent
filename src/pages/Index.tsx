@@ -97,7 +97,7 @@ const Index = () => {
                 <DialogTrigger asChild>
                   <Button variant="secondary" size="lg" className="text-lg">
                     <Play className="mr-2" size={20} />
-                    Watch Demo
+                    Watch Introduction Video
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl w-full p-0 bg-card">
