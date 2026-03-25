@@ -5,8 +5,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
 import AdvisoryBoard from "../components/AdvisoryBoard";
-import frankPhoto from "../../public/advisors/Frank_elite.jpg";
-
+const frankPhoto = "/advisors/Frank_elite.jpg";
 const About = () => {
   const values = [
     {
