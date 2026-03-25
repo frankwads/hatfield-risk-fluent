@@ -18,21 +18,24 @@ const Contact = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for reaching out. We'll be in touch soon.",
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const res = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
     });
-    setFormData({
-      name: "",
-      email: "",
-      company: "",
-      phone: "",
-      interest: "",
-      message: "",
-    });
-  };
+    if (res.ok) {
+      toast({ title: "Message Sent!", description: "We'll be in touch soon." });
+      setFormData({ name: "", email: "", company: "", phone: "", interest: "", message: "" });
+    } else {
+      throw new Error('Failed');
+    }
+  } catch {
+    toast({ title: "Error", description: "Please try again or email us directly.", variant: "destructive" });
+  }
+};
 
   const handleChange = (
     e: React.ChangeEvent<
