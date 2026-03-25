@@ -1,15 +1,16 @@
-// api/contact.js  (place at root of project, next to package.json)
+import sgMail from '@sendgrid/mail';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const { name, email, company, phone, interest, message } = req.body;
 
-  const sgMail = require('@sendgrid/mail');
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
   const msg = {
     to: 'frank.wadsworth@hatfield.ai',
-    from: 'frank.wadsworth@hatfield.ai',  // must be verified in SendGrid
+    from: 'frank.wadsworth@hatfield.ai',
+    replyTo: email,
     subject: `New Inquiry from ${name} - hatfield.ai`,
     html: `
       <h2>New Contact Form Submission</h2>
