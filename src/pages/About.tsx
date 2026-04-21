@@ -119,7 +119,7 @@ const About = () => {
                     <img
                       src={frankPhoto}
                       alt="Frank Wadsworth"
-                      className="w-48 h-48 rounded-full object-cover shadow-lg"
+                      className="w-48 h-48 rounded-full object-cover  object-top shadow-lg"
                     />
                   </div>
                   <div>
