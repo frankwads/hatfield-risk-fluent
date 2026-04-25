@@ -8,8 +8,8 @@ export default async function handler(req, res) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
   const msg = {
-    to: 'frank.wadsworth@hatfield.ai',
-    from: 'frank.wadsworth@hatfield.ai',
+    to: 'contact@hatfield.ai',
+    from: 'noreply@hatfield.ai',
     replyTo: email,
     subject: `New Inquiry from ${name} - hatfield.ai`,
     html: `
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
     await sgMail.send(msg);
     res.status(200).json({ success: true });
   } catch (err) {
+    console.error('SendGrid error:', err.response?.body || err.message);
     res.status(500).json({ error: err.message });
   }
 }

@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import mailboxIcon from "@/assets/mailbox-icon-2.png";
 import phoneIcon from "@/assets/phone-icon.png";
+import locationIcon from "@/assets/location-icon.png";
+import linkedinIcon from "@/assets/linkedin-icon.png";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -19,29 +21,25 @@ const Contact = () => {
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-    if (res.ok) {
-      toast({ title: "Message Sent!", description: "We'll be in touch soon." });
-      setFormData({ name: "", email: "", company: "", phone: "", interest: "", message: "" });
-    } else {
-      throw new Error('Failed');
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        toast({ title: "Message Sent!", description: "We'll be in touch soon." });
+        setFormData({ name: "", email: "", company: "", phone: "", interest: "", message: "" });
+      } else {
+        throw new Error('Failed');
+      }
+    } catch {
+      toast({ title: "Error", description: "Please try again or email us directly.", variant: "destructive" });
     }
-  } catch {
-    toast({ title: "Error", description: "Please try again or email us directly.", variant: "destructive" });
-  }
-};
+  };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -84,12 +82,8 @@ const Contact = () => {
                         <img src={mailboxIcon} alt="Email" className="w-20 h-20 object-contain" />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <h3 className="text-lg font-semibold text-foreground mb-1">
-                          Email
-                        </h3>
-                        <p className="text-base text-muted-foreground break-all">
-                          frank.wadsworth@hatfield.ai
-                        </p>
+                        <h3 className="text-lg font-semibold text-foreground mb-1">Email</h3>
+                        <p className="text-base text-muted-foreground break-all">contact@hatfield.ai</p>
                       </div>
                     </div>
                   </CardContent>
@@ -102,12 +96,36 @@ const Contact = () => {
                         <img src={phoneIcon} alt="Phone" className="w-20 h-20 object-contain" />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <h3 className="text-lg font-semibold text-foreground mb-1">
-                          Phone
-                        </h3>
-                        <p className="text-base text-muted-foreground">
-                          +1 201.566.1703
-                        </p>
+                        <h3 className="text-lg font-semibold text-foreground mb-1">Phone</h3>
+                        <p className="text-base text-muted-foreground">+1 201.566.1703</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-border">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-shrink-0">
+                        <img src={locationIcon} alt="Address" className="w-20 h-20 object-contain" />
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <h3 className="text-lg font-semibold text-foreground mb-1">Address</h3>
+                        <p className="text-base text-muted-foreground">555 5th Avenue Northeast<br />Suite 833<br />St. Petersburg, FL 33701</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-border">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-shrink-0">
+                        <img src={linkedinIcon} alt="LinkedIn" className="w-20 h-20 object-contain" />
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <h3 className="text-lg font-semibold text-foreground mb-1">LinkedIn</h3>
+                        <a href="https://www.linkedin.com/company/hatfield-ai/" target="_blank" rel="noopener noreferrer" className="text-base text-muted-foreground hover:text-accent transition-colors break-all">Hatfield.ai</a>
                       </div>
                     </div>
                   </CardContent>
@@ -119,19 +137,12 @@ const Contact = () => {
             <div className="lg:col-span-2">
               <Card className="border-border shadow-lg">
                 <CardContent className="pt-6">
-                  <h2 className="text-3xl font-bold text-foreground mb-6">
-                    Send Us a Message
-                  </h2>
+                  <h2 className="text-3xl font-bold text-foreground mb-6">Send Us a Message</h2>
 
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label
-                          htmlFor="name"
-                          className="block text-sm font-medium text-foreground mb-2"
-                        >
-                          Full Name *
-                        </label>
+                        <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">Full Name *</label>
                         <input
                           type="text"
                           id="name"
@@ -145,12 +156,7 @@ const Contact = () => {
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="email"
-                          className="block text-sm font-medium text-foreground mb-2"
-                        >
-                          Email Address *
-                        </label>
+                        <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">Email Address *</label>
                         <input
                           type="email"
                           id="email"
@@ -166,12 +172,7 @@ const Contact = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label
-                          htmlFor="company"
-                          className="block text-sm font-medium text-foreground mb-2"
-                        >
-                          Company
-                        </label>
+                        <label htmlFor="company" className="block text-sm font-medium text-foreground mb-2">Company</label>
                         <input
                           type="text"
                           id="company"
@@ -184,12 +185,7 @@ const Contact = () => {
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="phone"
-                          className="block text-sm font-medium text-foreground mb-2"
-                        >
-                          Phone Number
-                        </label>
+                        <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">Phone Number</label>
                         <input
                           type="tel"
                           id="phone"
@@ -203,12 +199,7 @@ const Contact = () => {
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="interest"
-                        className="block text-sm font-medium text-foreground mb-2"
-                      >
-                        Area of Interest
-                      </label>
+                      <label htmlFor="interest" className="block text-sm font-medium text-foreground mb-2">Area of Interest</label>
                       <select
                         id="interest"
                         name="interest"
@@ -226,12 +217,7 @@ const Contact = () => {
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="message"
-                        className="block text-sm font-medium text-foreground mb-2"
-                      >
-                        Message *
-                      </label>
+                      <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">Message *</label>
                       <textarea
                         id="message"
                         name="message"
@@ -244,9 +230,7 @@ const Contact = () => {
                       />
                     </div>
 
-                    <Button type="submit" size="lg" className="w-full">
-                      Send Message
-                    </Button>
+                    <Button type="submit" size="lg" className="w-full">Send Message</Button>
                   </form>
                 </CardContent>
               </Card>
