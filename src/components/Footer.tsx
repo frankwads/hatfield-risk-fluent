@@ -12,7 +12,7 @@ const Footer = () => {
             alt="Hatfield Advisory Logo" 
             className="h-6 w-auto"
           />
-          <p>&copy; {currentYear} Hatfield Advisory. All rights reserved.</p>
+          <p>&copy; {currentYear} Hatfield Advisory LLC DBA Hatfield.ai. All rights reserved.</p>
         </div>
       </div>
     </footer>
