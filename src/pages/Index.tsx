@@ -134,7 +134,7 @@ const Index = () => {
 
               {/* SIGNAL Product Introduction */}
               <a
-                href="https://signal.hatfield.ai"
+                href="/signal"
                 className="group flex items-center gap-3 sm:ml-3 py-2 transition-opacity duration-300 hover:opacity-80"
                 aria-label="Introducing SIGNAL — Hatfield.ai Real-Time Surveillance"
               >

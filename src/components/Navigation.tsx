@@ -65,11 +65,7 @@ const Navigation = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Capabilities", path: "/#capabilities" },
-    {
-      name: "SIGNAL",
-      path: "https://signal.hatfield.ai",
-      external: true,
-    },
+    { name: "SIGNAL", path: "/signal" },
     { name: "Insights", path: "/insights" },
     { name: "About", path: "/about" },
     { name: "Consulting", path: "/consulting" },
@@ -131,41 +127,27 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) =>
-              item.external ? (
-                <a
-                  key={item.path}
-                  href={item.path}
-                  className={`text-sm font-medium transition-colors duration-300 ${
-                    isDarkText
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={(e) => handleNavClick(e, item.path)}
+                className={`text-sm font-medium transition-colors duration-300 ${
+                  isActive(item.path) ||
+                  (item.path === "/#capabilities" &&
+                    location.pathname === "/" &&
+                    location.hash === "#capabilities")
+                    ? isDarkText
+                      ? "text-[hsl(215,65%,48%)]"
+                      : "text-accent"
+                    : isDarkText
                       ? "text-[hsl(215,45%,15%)] hover:text-[hsl(215,65%,48%)]"
                       : "text-foreground hover:text-accent"
-                  }`}
-                >
-                  {item.name}
-                </a>
-              ) : (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={(e) => handleNavClick(e, item.path)}
-                  className={`text-sm font-medium transition-colors duration-300 ${
-                    isActive(item.path) ||
-                    (item.path === "/#capabilities" &&
-                      location.pathname === "/" &&
-                      location.hash === "#capabilities")
-                      ? isDarkText
-                        ? "text-[hsl(215,65%,48%)]"
-                        : "text-accent"
-                      : isDarkText
-                        ? "text-[hsl(215,45%,15%)] hover:text-[hsl(215,65%,48%)]"
-                        : "text-foreground hover:text-accent"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              )
-            )}
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
 
             {/* Contact */}
             <Button
@@ -206,31 +188,20 @@ const Navigation = () => {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 space-y-2">
-            {navItems.map((item) =>
-              item.external ? (
-                <a
-                  key={item.path}
-                  href={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 text-sm font-medium text-foreground hover:text-accent"
-                >
-                  {item.name}
-                </a>
-              ) : (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={(e) => handleNavClick(e, item.path)}
-                  className={`block py-2 text-sm font-medium ${
-                    isActive(item.path)
-                      ? "text-accent"
-                      : "text-foreground"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              )
-            )}
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={(e) => handleNavClick(e, item.path)}
+                className={`block py-2 text-sm font-medium ${
+                  isActive(item.path)
+                    ? "text-accent"
+                    : "text-foreground"
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
 
             <Button
               asChild
