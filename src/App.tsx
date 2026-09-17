@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index";
+import Signal from "./pages/Signal";
 import Insights from "./pages/Insights";
 import About from "./pages/About";
 import Consulting from "./pages/Consulting";
@@ -23,17 +24,33 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+
         <Routes>
           <Route path="/" element={<Index />} />
+
+          {/* SIGNAL */}
+          <Route path="/signal" element={<Signal />} />
+
+          {/* Insights */}
           <Route path="/insights" element={<Insights />} />
-          <Route path="/insights/managing-third-party-risks" element={<ManagingThirdPartyRisks />} />
-          <Route path="/insights/real-time-risk-monitoring" element={<RealTimeRiskMonitoring />} />
+          <Route
+            path="/insights/managing-third-party-risks"
+            element={<ManagingThirdPartyRisks />}
+          />
+          <Route
+            path="/insights/real-time-risk-monitoring"
+            element={<RealTimeRiskMonitoring />}
+          />
+
+          {/* Corporate */}
           <Route path="/about" element={<About />} />
           <Route path="/consulting" element={<Consulting />} />
           <Route path="/contact" element={<Contact />} />
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+
         <Analytics />
       </BrowserRouter>
     </TooltipProvider>
