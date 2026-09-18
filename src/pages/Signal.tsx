@@ -17,9 +17,9 @@
 //    "Watch", "Portfolio". The server's tiers are keyed 'demo', 'watch',
 //    'portfolio', and approve_client falls back to "watch" for anything
 //    it does not recognise - silently. So "Portfolio" became Watch, and
-//    "Trial" would have provisioned a free-trial prospect onto a
-//    $1,450/month subscription. Labels on screen are unchanged; only the
-//    posted value moved.
+//    "Trial" would have provisioned a free-trial prospect onto a paid
+//    subscription. Labels on screen are unchanged; only the posted value
+//    moved.
 //
 // 3. REQUIRED FIELDS NOW MATCH THE SERVER. It required company, first,
 //    email and role; the server has required last name, industry and
@@ -40,6 +40,35 @@
 //    DOMAIN send mail - a few thousand junk submissions is how
 //    hatfield.ai becomes a flagged sender and real invite links start
 //    landing in junk folders at the banks SIGNAL is sold to.
+//
+// 2026-09-17 (later the same day). TWO MORE.
+//
+// 7. THE INDUSTRY LIST IS SERVED BY THE APP. It used to be typed here -
+//    "Banking", "Capital markets", "Asset and wealth management",
+//    "Public sector" - while the product's own vocabulary reads
+//    "Financial Services (Banking)", "Capital Markets / Asset
+//    Management" and so on. Only three of the eleven matched, so most
+//    prospects picked an industry, reached the registration screen, and
+//    watched the field come back blank - which also left their
+//    Regulatory Intel feed unfocused, silently. The list now comes from
+//    GET /api/sectors, which serves dal.REG_SECTOR_LABELS: one
+//    vocabulary, no second copy to drift from.
+//
+//    FALLBACK_SECTORS below is the same vocabulary, hardcoded, so a
+//    SIGNAL outage leaves the dropdown populated rather than empty. It
+//    is deliberately the SERVER's labels and not the old marketing ones:
+//    a fallback that cannot be resolved is worse than no fallback,
+//    because it fails invisibly.
+//
+// 8. PRICES. Every published figure rose ~8% (Frank, 2026-09-17) so the
+//    cost of taking payment - card processing, Stripe Billing, Stripe
+//    Tax - sits inside the list price instead of being surcharged at
+//    checkout. Watch 1,575 / 15,750, Monitor 4,875 / 48,750, Portfolio
+//    10,250 / 102,500; out-of-portfolio FVA 65 and sanctions screen 32.
+//    These figures appear THREE times in this file (desktop matrix,
+//    mobile list, fine print) and are also held in the product's
+//    dal.TIERS. Changing one without the others is the defect that put
+//    $10 in a signed agreement while the product charged $59.
 //
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
@@ -83,6 +112,23 @@ const TIERS = [
  */
 const PRICED_TIERS = ["watch", "monitor", "portfolio"];
 
+/**
+ * The product's sector vocabulary, hardcoded ONLY as a fallback for when
+ * GET /api/sectors cannot be reached. These are the server's own labels
+ * (dal.REG_SECTOR_LABELS), so a selection made offline still resolves to
+ * a real sector when the registration screen reads it back.
+ */
+const FALLBACK_SECTORS = [
+  "Financial Services (Banking)",
+  "Insurance",
+  "Capital Markets / Asset Management",
+  "Healthcare",
+  "Technology",
+  "Energy & Utilities",
+  "Manufacturing",
+  "Transportation & Logistics",
+];
+
 const labelFor = (key: string) =>
   TIERS.find((t) => t.key === key)?.label ?? "";
 
@@ -106,6 +152,7 @@ const Signal = () => {
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<ApiResult | null>(null);
   const [invalid, setInvalid] = useState<string[]>([]);
+  const [sectors, setSectors] = useState<string[]>(FALLBACK_SECTORS);
   const turnstileRef = useRef<HTMLDivElement | null>(null);
 
   // Load the Turnstile script once, and only when a site key exists.
@@ -124,6 +171,32 @@ const Signal = () => {
     s.async = true;
     s.defer = true;
     document.head.appendChild(s);
+  }, []);
+
+  // The industry list, from the product rather than from this file.
+  // Failure is silent ON PURPOSE: the fallback is already rendered, and
+  // a prospect filling in a form does not need to be told that a
+  // background fetch missed. Anything unexpected in the payload is
+  // ignored rather than rendered, so a malformed response cannot empty
+  // the dropdown.
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/api/sectors`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const rows = data?.sectors;
+        if (cancelled || !Array.isArray(rows) || !rows.length) return;
+        const labels = rows
+          .map((s: { label?: string }) => (s?.label ?? "").trim())
+          .filter(Boolean);
+        if (labels.length) setSectors(labels);
+      })
+      .catch(() => {
+        /* keep FALLBACK_SECTORS */
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleTierChange = (tier: string) => {
@@ -433,11 +506,11 @@ const Signal = () => {
             </div>
 
             <div className="col-start-3 row-start-4 px-4 py-[15px] border-b border-[#E2E7EF] font-semibold">
-              $1,450
+              $1,575
             </div>
 
             <div className="col-start-4 row-start-4 px-4 py-[15px] border-b border-[#E2E7EF]">
-              $14,500
+              $15,750
             </div>
 
             {/* MONITOR */}
@@ -460,11 +533,11 @@ const Signal = () => {
             </div>
 
             <div className="col-start-3 row-start-5 px-4 py-[15px] border-b border-[#E2E7EF] bg-[#EEF4FC] font-semibold">
-              $4,500
+              $4,875
             </div>
 
             <div className="col-start-4 row-start-5 px-4 py-[15px] border-b border-[#E2E7EF] bg-[#EEF4FC]">
-              $45,000
+              $48,750
             </div>
 
             {/* PORTFOLIO */}
@@ -483,11 +556,11 @@ const Signal = () => {
             </div>
 
             <div className="col-start-3 row-start-6 px-4 py-[15px] border-b border-[#E2E7EF] font-semibold">
-              $9,500
+              $10,250
             </div>
 
             <div className="col-start-4 row-start-6 px-4 py-[15px] border-b border-[#E2E7EF]">
-              $95,000
+              $102,500
             </div>
 
             {/* ENTERPRISE */}
@@ -659,9 +732,9 @@ const Signal = () => {
             <div className="divide-y divide-[#E2E7EF]">
               {[
                 ["demo", "Trial", "15 pre-selected", "Free", "10 business days"],
-                ["watch", "Watch", "Up to 25", "$1,450", "$14,500"],
-                ["monitor", "Monitor", "Up to 100", "$4,500", "$45,000"],
-                ["portfolio", "Portfolio", "Up to 250", "$9,500", "$95,000"],
+                ["watch", "Watch", "Up to 25", "$1,575", "$15,750"],
+                ["monitor", "Monitor", "Up to 100", "$4,875", "$48,750"],
+                ["portfolio", "Portfolio", "Up to 250", "$10,250", "$102,500"],
                 ["enterprise", "Enterprise", "250+", "Custom", "Custom"],
               ].map(([key, tier, companies, monthly, annual]) => (
                 <div
@@ -796,13 +869,15 @@ const Signal = () => {
               </strong>{" "}
               Trial covers 15 companies we pre-select, read-only, with no
               on-demand financial or sanctions assessments. Out-of-portfolio
-              financial viability assessments are $59 each and OFAC sanctions
-              screenings are $29 each, introductory pricing. Private-company
+              financial viability assessments are $65 each and OFAC sanctions
+              screenings are $32 each, introductory pricing. Private-company
               reviews use financials you furnish and are visible only to your
               organization. Financial-health methodologies vary by company type
               and data availability. Every alert carries source evidence,
               severity and an audit trail; AI supports the analysis and your
-              organization retains decision authority.
+              organization retains decision authority. Prices are exclusive of
+              taxes; any applicable sales or value-added tax is calculated at
+              checkout from your billing address.
             </p>
           </div>
 
@@ -981,6 +1056,15 @@ const Signal = () => {
                       Industry *
                     </label>
 
+                    {/*
+                      Options come from GET /api/sectors - the product's
+                      own vocabulary - so the selection resolves when the
+                      registration screen reads it back. FALLBACK_SECTORS
+                      renders until the fetch lands, and stays if it never
+                      does. "Other" is last and deliberately outside the
+                      vocabulary: it means no sector, which is honest, and
+                      sector is optional on the server.
+                    */}
                     <select
                       id="industry"
                       name="industry"
@@ -988,16 +1072,9 @@ const Signal = () => {
                       className={fieldStyle("Industry")}
                     >
                       <option value="">Select</option>
-                      <option>Banking</option>
-                      <option>Capital markets</option>
-                      <option>Insurance</option>
-                      <option>Asset and wealth management</option>
-                      <option>Payments and fintech</option>
-                      <option>Technology</option>
-                      <option>Healthcare</option>
-                      <option>Energy and utilities</option>
-                      <option>Manufacturing and industrials</option>
-                      <option>Public sector</option>
+                      {sectors.map((s) => (
+                        <option key={s}>{s}</option>
+                      ))}
                       <option>Other</option>
                     </select>
                   </div>
