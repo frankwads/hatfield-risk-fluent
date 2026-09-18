@@ -89,6 +89,24 @@ const TURNSTILE_SITE_KEY =
   (import.meta as any).env?.VITE_TURNSTILE_SITE_KEY ?? "";
 
 /**
+ * The published sample report, served from public/ (Vercel serves that
+ * directory at the site root).
+ *
+ * 2026-09-18: both "Sample risk report" links used to point at #sample
+ * and NOTHING ON THE PAGE HAD THAT ID - so the hero button and the
+ * footer link had always scrolled nowhere and swallowed the click. A
+ * dead link on the pricing page is the worst thing a prospect can click
+ * while they are evaluating: it reads as a broken site, and they do not
+ * report it.
+ *
+ * Set to "" and the section, the hero button and the footer link all
+ * disappear together - the page cannot offer a sample it does not have.
+ * Set it to the file's path and all three appear. There is no state in
+ * which a visitor is offered something that is not there.
+ */
+const SAMPLE_REPORT_URL = "/sample-risk-report.pdf";
+
+/**
  * Tier KEYS as the server knows them, with the label this page shows.
  * The key is what gets posted. "Trial" is the published name for the
  * tier keyed 'demo' - the key is load-bearing on the server (the demo
@@ -396,12 +414,14 @@ const Signal = () => {
               Start a free trial
             </button>
 
-            <a
-              href="#sample"
-              className="inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors"
-            >
-              Sample risk report
-            </a>
+            {SAMPLE_REPORT_URL && (
+              <a
+                href="#sample"
+                className="inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors"
+              >
+                Sample risk report
+              </a>
+            )}
           </div>
         </div>
       </section>
@@ -881,6 +901,84 @@ const Signal = () => {
             </p>
           </div>
 
+          {/* SAMPLE RISK REPORT */}
+          {SAMPLE_REPORT_URL && (
+            <section
+              id="sample"
+              className="scroll-mt-8 border-t border-[#E2E7EF] pt-[46px] mt-[54px]"
+            >
+              <div className="grid lg:grid-cols-[minmax(0,1fr)_320px] gap-10 lg:gap-14 items-start">
+                <div>
+                  <p className="m-0 text-[12px] font-semibold tracking-[0.16em] text-[#2F6BFF] uppercase">
+                    See the output
+                  </p>
+
+                  <h2 className="mt-4 mb-0 text-[26px] md:text-[30px] font-semibold tracking-[-0.025em] text-[#0A1A33]">
+                    A sample risk report
+                  </h2>
+
+                  <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[62ch]">
+                    This is a real SIGNAL report on a public company, with
+                    nothing added for the brochure. It shows the shape of what
+                    lands in front of your team: what changed, why it matters,
+                    and the evidence behind it.
+                  </p>
+
+                  <ul className="list-none m-0 mt-6 p-0 grid sm:grid-cols-2 gap-x-8">
+                    <li className={domainStyle}>
+                      Financial health &mdash; reported figures, Altman Z-score,
+                      Merton default analysis and Piotroski F-Score, with the
+                      trend behind each
+                    </li>
+
+                    <li className={domainStyle}>
+                      Sanctions and watchlist position, including PEP coverage
+                    </li>
+
+                    <li className={domainStyle}>
+                      Litigation, regulatory and cybersecurity events over the
+                      review window
+                    </li>
+
+                    <li className={domainStyle}>
+                      Geographic and supply-chain exposure, with the sources
+                      each finding came from
+                    </li>
+                  </ul>
+
+                  <p className="mt-6 mb-0 text-[12px] text-[#667085] max-w-[62ch] leading-[1.6]">
+                    Every finding carries its source, a severity and an audit
+                    trail. AI supports the analysis; your organization retains
+                    decision authority.
+                  </p>
+                </div>
+
+                <div className="bg-[#F6F8FB] rounded-2xl px-6 py-7 w-full">
+                  <p className="m-0 text-[13px] font-semibold text-[#0A1A33]">
+                    Sample risk report
+                  </p>
+
+                  <p className="mt-2 mb-0 text-[12px] text-[#667085] leading-[1.6]">
+                    PDF, no sign-up required.
+                  </p>
+
+                  <a
+                    href={SAMPLE_REPORT_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors"
+                  >
+                    Open the sample report
+                  </a>
+
+                  <p className="mt-4 mb-0 text-[11px] text-[#98A2B3] leading-[1.5]">
+                    Opens in a new tab.
+                  </p>
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* REQUEST ACCESS */}
           <section
             id="request"
@@ -1272,14 +1370,18 @@ const Signal = () => {
               Request access
             </a>
 
-            {"  ·  "}
+            {SAMPLE_REPORT_URL && (
+              <>
+                {"  ·  "}
 
-            <a
-              href="#sample"
-              className="text-[#C8D3E3] no-underline hover:text-white"
-            >
-              Sample risk report
-            </a>
+                <a
+                  href="#sample"
+                  className="text-[#C8D3E3] no-underline hover:text-white"
+                >
+                  Sample risk report
+                </a>
+              </>
+            )}
 
             {"  ·  "}
 
