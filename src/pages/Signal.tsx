@@ -146,6 +146,18 @@ const TIERS = [
 const PRICED_TIERS = ["watch", "monitor", "portfolio"];
 
 /**
+ * Watch monthly, written ONCE.
+ *
+ * 2026-09-18: this figure appeared twice already - the desktop matrix
+ * cell and the mobile row array - and the narrative block above the
+ * matrix would have made three. The artwork that block came from said
+ * $1,450, the PRE-gross-up price, which would have sat a few hundred
+ * pixels above a matrix reading $1,575 on the one page where a buyer
+ * decides whether to trust our numbers. One constant, three readers.
+ */
+const WATCH_MONTHLY = "$1,575";
+
+/**
  * The product's sector vocabulary, hardcoded ONLY as a fallback for when
  * GET /api/sectors cannot be reached. These are the server's own labels
  * (dal.REG_SECTOR_LABELS), so a selection made offline still resolves to
@@ -445,26 +457,194 @@ const Signal = () => {
       <main className="pt-16 pb-[10px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px]">
 
-          {/* TENANT SUBSCRIPTION MESSAGE */}
-          <section className="text-center max-w-[900px] mx-auto mb-[58px]">
-            <p className="m-0 text-[12px] font-semibold tracking-[0.16em] text-[#2F6BFF] uppercase">
-              One subscription. Unlimited users.
+          {/* ?????????????????????????????????????????????????????????
+              NARRATIVE BLOCK (2026-09-18, Frank)
+
+              Replaces the former "One subscription. Unlimited users."
+              section, which made the same tenant-pricing point this
+              block now makes in Frank's own words. Two sections saying
+              it four seconds apart, in different numbers (100 users vs
+              1,000), read as drafting rather than design - so there is
+              one statement of the pricing model on this page, and it is
+              this one.
+
+              PRICE: the "from" figure reads WATCH_MONTHLY, the same
+              constant both pricing tables now render. The artwork this
+              block came from said $1,450 - the PRE-gross-up number -
+              which would have sat a few hundred pixels above a matrix
+              reading $1,575, on the one page where a buyer decides
+              whether to trust our figures. TIERS carries no price, so
+              there was nothing to derive it from; the constant was
+              introduced instead and the two existing hardcoded copies
+              now read it too.
+          ????????????????????????????????????????????????????????????? */}
+          <section className="max-w-[1120px] mx-auto mb-[64px]">
+
+            {/* Lede */}
+            <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-10 lg:gap-16">
+              <div className="lg:max-w-[46%]">
+                <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase leading-[1.5]">
+                  Every headline was once a signal someone missed.
+                </p>
+
+                <h2 className="mt-5 mb-0 font-serif text-[40px] md:text-[52px] leading-[1.02] tracking-[-0.03em] text-[#0A1A33]">
+                  Signal.
+                  <br />
+                  <span className="italic font-normal text-[#98A2B3]">
+                    Not noise.
+                  </span>
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-2 gap-x-10 gap-y-7 lg:pt-3 lg:min-w-[340px]">
+                <div>
+                  <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
+                    847
+                  </p>
+                  <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
+                    curated global sources
+                  </p>
+                </div>
+                <div>
+                  <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
+                    21
+                  </p>
+                  <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
+                    live intelligence surfaces
+                  </p>
+                </div>
+                <div>
+                  <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
+                    12
+                  </p>
+                  <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
+                    sanctions &amp; export-control lists
+                  </p>
+                </div>
+                <div>
+                  <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
+                    234
+                  </p>
+                  <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
+                    countries &amp; territories
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-9 mb-0 max-w-[76ch] text-[15px] md:text-[16px] leading-[1.7] text-[#475467]">
+              SIGNAL watches the companies that matter to you — suppliers,
+              counterparties, clients and targets — and tells you what changed,
+              why it matters and where to act. Before it becomes the headline.
             </p>
 
-            <p className="mt-5 mb-0 text-[16px] md:text-[17px] leading-[1.65] text-[#475467]">
-              SIGNAL subscriptions are tenant-based, not user-based. Select the
-              number of companies you need to monitor and provide access to as
-              many authorized users across your organization as required, at no
-              additional user cost.
+            {/* Noise resolving into one signal. Decorative: the figure
+                restates the sentence above it and carries no data, so it
+                is hidden from assistive tech rather than described. */}
+            <svg
+              viewBox="0 0 800 60"
+              aria-hidden="true"
+              focusable="false"
+              className="mt-8 w-full h-[54px]"
+              preserveAspectRatio="none"
+            >
+              <path d="M 0 37 L 8 22 L 15 40 L 23 23 L 30 37 L 38 22 L 46 35 L 53 23 L 61 38 L 68 21 L 76 34 L 84 24 L 91 34 L 99 20 L 106 39 L 114 26 L 122 41 L 129 19 L 137 38 L 144 22 L 152 35 L 160 26 L 167 37 L 175 26 L 182 35 L 190 25 L 198 34 L 205 23 L 213 37 L 220 20 L 228 37 L 236 22 L 243 37 L 251 22 L 258 37 L 266 24 L 274 41 L 281 19 L 289 40 L 296 21 L 304 36 L 312 25 L 319 36 L 327 26 L 334 39 L 342 23 L 350 40 L 357 24 L 365 41 L 372 20 L 380 34 L 388 25 L 395 40 L 403 23 L 410 41 L 418 24 L 426 34 L 433 22 L 441 39 L 448 24 L 456 34 L 464 24 L 471 41 L 479 21 L 486 34 L 494 25 L 496 30" fill="none" stroke="#C3CCDA" strokeWidth="1.5" />
+              <path d="M 496 30 L 600 30 L 618 30 L 630 8 L 642 52 L 654 30 L 672 30 L 762 30" fill="none" stroke="#2F6BFF" strokeWidth="2" strokeLinejoin="round" />
+              <circle cx="762" cy="30" r="4.5" fill="#2F6BFF" />
+            </svg>
+
+            <hr className="mt-10 mb-10 border-0 border-t border-[#E2E7EF]" />
+
+            {/* The problem */}
+            <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase">
+              The problem
             </p>
 
-            <p className="mt-5 mb-0 text-[18px] md:text-[20px] font-semibold tracking-[-0.02em] text-[#0A1A33]">
-              25 companies.{" "}
-              <span className="text-[#2F6BFF]">
-                10 users or 100 users.
-              </span>{" "}
-              Same subscription.
+            <div className="mt-5 flex flex-col lg:flex-row justify-between gap-8 lg:gap-16">
+              <h3 className="m-0 lg:max-w-[46%] font-serif text-[26px] md:text-[30px] leading-[1.18] tracking-[-0.025em] text-[#0A1A33]">
+                You don’t have an information problem. You have a signal problem.
+              </h3>
+
+              <p className="m-0 lg:max-w-[46%] text-[13px] leading-[1.75] text-[#475467]">
+                Today the picture is scattered across a dozen feeds — financial
+                health, litigation, cyber, sanctions, and news and social media
+                alerts. None of them talk to each other. None tell you what it
+                means for you or your portfolio. And the platforms that do
+                consolidate data are expensive, charging $10,000–$35,000 per
+                user p.a.
+              </p>
+            </div>
+
+            <hr className="mt-10 mb-10 border-0 border-t border-[#E2E7EF]" />
+
+            {/* How it works */}
+            <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase">
+              How it works
             </p>
+
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+              <div>
+                <h3 className="m-0 text-[19px] md:text-[21px] font-medium tracking-[-0.02em] text-[#0A1A33] font-serif">
+                  Know what changed.
+                </h3>
+                <p className="mt-3 mb-0 text-[13px] leading-[1.7] text-[#475467]">
+                  847 curated sources watched around the clock — regulators, courts, filings, exchanges, shipping lanes and national cyber agencies.
+                </p>
+              </div>
+              <div>
+                <h3 className="m-0 text-[19px] md:text-[21px] font-medium tracking-[-0.02em] text-[#0A1A33] font-serif">
+                  Know what matters.
+                </h3>
+                <p className="mt-3 mb-0 text-[13px] leading-[1.7] text-[#475467]">
+                  Every item tied to the right legal entity, tested for materiality and folded into one event. The noise never reaches your desk.
+                </p>
+              </div>
+              <div>
+                <h3 className="m-0 text-[19px] md:text-[21px] font-medium tracking-[-0.02em] text-[#0A1A33] font-serif">
+                  Know where to act.
+                </h3>
+                <p className="mt-3 mb-0 text-[13px] leading-[1.7] text-[#475467]">
+                  Severity-ranked, read against your portfolio and summed up in one daily brief — one click from the original source.
+                </p>
+              </div>
+            </div>
+
+            <hr className="mt-10 mb-10 border-0 border-t border-[#E2E7EF]" />
+
+            {/* Pricing model + provenance */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+              <div>
+                <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase leading-[1.5]">
+                  Priced for the portfolio, not the person
+                </p>
+
+                <h3 className="mt-5 mb-0 font-serif text-[24px] md:text-[27px] leading-[1.2] tracking-[-0.025em] text-[#0A1A33]">
+                  25 companies. 10 users or 1,000. One price.
+                </h3>
+
+                <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
+                  You pay for the companies you monitor, never for the seat. One
+                  subscription replaces a stack of feeds. Plans from{" "}
+                  {WATCH_MONTHLY} a month.
+                </p>
+              </div>
+
+              <div>
+                <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase leading-[1.5]">
+                  Built by a practitioner
+                </p>
+
+                <h3 className="mt-5 mb-0 font-serif text-[24px] md:text-[27px] leading-[1.2] tracking-[-0.025em] text-[#0A1A33]">
+                  The right information, at the right time, is the decision.
+                </h3>
+
+                <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
+                  Thirty years inside Morgan Stanley, J.P. Morgan, Merrill Lynch,
+                  Barclays, SMBC and Bloomberg — not a vendor sprinkling AI on a
+                  feed.
+                </p>
+              </div>
+            </div>
           </section>
 
           {/* DESKTOP MATRIX */}
@@ -541,7 +721,7 @@ const Signal = () => {
             </div>
 
             <div className="col-start-3 row-start-4 px-4 py-[15px] border-b border-[#E2E7EF] font-semibold">
-              $1,575
+              {WATCH_MONTHLY}
             </div>
 
             <div className="col-start-4 row-start-4 px-4 py-[15px] border-b border-[#E2E7EF]">
@@ -767,7 +947,7 @@ const Signal = () => {
             <div className="divide-y divide-[#E2E7EF]">
               {[
                 ["demo", "Trial", "15 pre-selected", "Free", "10 business days"],
-                ["watch", "Watch", "Up to 25", "$1,575", "$15,750"],
+                ["watch", "Watch", "Up to 25", WATCH_MONTHLY, "$15,750"],
                 ["monitor", "Monitor", "Up to 100", "$4,875", "$48,750"],
                 ["portfolio", "Portfolio", "Up to 250", "$10,250", "$102,500"],
                 ["enterprise", "Enterprise", "250+", "Custom", "Custom"],
