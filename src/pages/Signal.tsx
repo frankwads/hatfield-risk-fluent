@@ -89,22 +89,37 @@ const TURNSTILE_SITE_KEY =
   (import.meta as any).env?.VITE_TURNSTILE_SITE_KEY ?? "";
 
 /**
- * The published sample report, served from public/ (Vercel serves that
- * directory at the site root).
+ * The published sample report, served BY THE APP, not by this site.
  *
- * 2026-09-18: both "Sample risk report" links used to point at #sample
- * and NOTHING ON THE PAGE HAD THAT ID - so the hero button and the
- * footer link had always scrolled nowhere and swallowed the click. A
- * dead link on the pricing page is the worst thing a prospect can click
- * while they are evaluating: it reads as a broken site, and they do not
- * report it.
+ * 2026-09-18 (Frank): moved off Vercel public/ once it turned out the
+ * product already had a purpose-built route for exactly this -
+ * surveillance_svc_app.py answers GET /sample-risk-report from the PDF
+ * sitting beside the module, 404s honestly when it is absent, and its
+ * own landing CTA self-omits in that case. Hosting it there means the
+ * document is replaced by dropping a new file on the droplet: no site
+ * rebuild, no Vercel deploy, and one copy of the asset rather than two
+ * that drift.
+ *
+ * Absolute and cross-origin on purpose. The anchor below is
+ * target="_blank" with rel="noopener noreferrer" and carries NO
+ * download attribute - browsers IGNORE `download` cross-origin, so
+ * asking for one would quietly get an inline tab regardless. Inline is
+ * what we want here anyway: the prospect reads it without a file
+ * landing in their Downloads folder.
+ *
+ * 2026-09-18 (earlier the same day): both "Sample risk report" links
+ * used to point at #sample and NOTHING ON THE PAGE HAD THAT ID - so the
+ * hero button and the footer link had always scrolled nowhere and
+ * swallowed the click. A dead link on the pricing page is the worst
+ * thing a prospect can click while they are evaluating: it reads as a
+ * broken site, and they do not report it.
  *
  * Set to "" and the section, the hero button and the footer link all
  * disappear together - the page cannot offer a sample it does not have.
- * Set it to the file's path and all three appear. There is no state in
- * which a visitor is offered something that is not there.
+ * Set it to the URL and all three appear. There is no state in which a
+ * visitor is offered something that is not there.
  */
-const SAMPLE_REPORT_URL = "/sample-risk-report.pdf";
+const SAMPLE_REPORT_URL = "https://signal.hatfield.ai/sample-risk-report";
 
 /**
  * Tier KEYS as the server knows them, with the label this page shows.
