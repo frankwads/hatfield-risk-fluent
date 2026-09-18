@@ -457,7 +457,7 @@ const Signal = () => {
       <main className="pt-16 pb-[10px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px]">
 
-          {/* ?????????????????????????????????????????????????????????
+          {/* ---------------------------------------------------------
               NARRATIVE BLOCK (2026-09-18, Frank)
 
               Replaces the former "One subscription. Unlimited users."
@@ -477,7 +477,7 @@ const Signal = () => {
               there was nothing to derive it from; the constant was
               introduced instead and the two existing hardcoded copies
               now read it too.
-          ????????????????????????????????????????????????????????????? */}
+          ------------------------------------------------------------- */}
           <section className="max-w-[1120px] mx-auto mb-[64px]">
 
             {/* Lede */}
@@ -533,8 +533,8 @@ const Signal = () => {
             </div>
 
             <p className="mt-9 mb-0 max-w-[76ch] text-[15px] md:text-[16px] leading-[1.7] text-[#475467]">
-              SIGNAL watches the companies that matter to you — suppliers,
-              counterparties, clients and targets — and tells you what changed,
+              SIGNAL watches the companies that matter to you &mdash; suppliers,
+              counterparties, clients and targets &mdash; and tells you what changed,
               why it matters and where to act. Before it becomes the headline.
             </p>
 
@@ -562,15 +562,15 @@ const Signal = () => {
 
             <div className="mt-5 flex flex-col lg:flex-row justify-between gap-8 lg:gap-16">
               <h3 className="m-0 lg:max-w-[46%] font-serif text-[26px] md:text-[30px] leading-[1.18] tracking-[-0.025em] text-[#0A1A33]">
-                You don’t have an information problem. You have a signal problem.
+                You don&rsquo;t have an information problem. You have a signal problem.
               </h3>
 
               <p className="m-0 lg:max-w-[46%] text-[13px] leading-[1.75] text-[#475467]">
-                Today the picture is scattered across a dozen feeds — financial
+                Today the picture is scattered across a dozen feeds &mdash; financial
                 health, litigation, cyber, sanctions, and news and social media
                 alerts. None of them talk to each other. None tell you what it
                 means for you or your portfolio. And the platforms that do
-                consolidate data are expensive, charging $10,000–$35,000 per
+                consolidate data are expensive, charging $10,000&ndash;$35,000 per
                 user p.a.
               </p>
             </div>
@@ -588,7 +588,7 @@ const Signal = () => {
                   Know what changed.
                 </h3>
                 <p className="mt-3 mb-0 text-[13px] leading-[1.7] text-[#475467]">
-                  847 curated sources watched around the clock — regulators, courts, filings, exchanges, shipping lanes and national cyber agencies.
+                  847 curated sources watched around the clock &mdash; regulators, courts, filings, exchanges, shipping lanes and national cyber agencies.
                 </p>
               </div>
               <div>
@@ -604,7 +604,7 @@ const Signal = () => {
                   Know where to act.
                 </h3>
                 <p className="mt-3 mb-0 text-[13px] leading-[1.7] text-[#475467]">
-                  Severity-ranked, read against your portfolio and summed up in one daily brief — one click from the original source.
+                  Severity-ranked, read against your portfolio and summed up in one daily brief &mdash; one click from the original source.
                 </p>
               </div>
             </div>
@@ -640,7 +640,7 @@ const Signal = () => {
 
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
                   Thirty years inside Morgan Stanley, J.P. Morgan, Merrill Lynch,
-                  Barclays, SMBC and Bloomberg — not a vendor sprinkling AI on a
+                  Barclays, SMBC and Bloomberg &mdash; not a vendor sprinkling AI on a
                   feed.
                 </p>
               </div>
@@ -1017,12 +1017,12 @@ const Signal = () => {
                   title: "Financial & economic health",
                   items: [
                     "Financial reporting, two years, with trend analysis",
-                    "Altman Z-score — financial resilience",
+                    "Altman Z-score \u2014 financial resilience",
                     "Merton default analysis",
-                    "Piotroski F-Score — trend analysis",
+                    "Piotroski F-Score \u2014 trend analysis",
                     "Private-company manual FVA",
-                    "Macro indicators — eight-year trends, IMF projections",
-                    "Daily indicators — indices, bonds, futures, currencies",
+                    "Macro indicators \u2014 eight-year trends, IMF projections",
+                    "Daily indicators \u2014 indices, bonds, futures, currencies",
                   ],
                 },
                 {
@@ -1031,15 +1031,15 @@ const Signal = () => {
                     "Cybersecurity events and vulnerabilities",
                     "Adverse media and reputational risk",
                     "Social-media risk signals",
-                    "Sanctions and watchlist screening — OFAC, UN, UK OFSI, EU, with PEP coverage",
+                    "Sanctions and watchlist screening \u2014 OFAC, UN, UK OFSI, EU, with PEP coverage",
                     "World news and geopolitical developments",
                   ],
                 },
                 {
                   title: "Legal, regulatory & compliance",
                   items: [
-                    "Litigation alerts — civil, bankruptcy, discrimination, contract, IP, shareholder",
-                    "Applicable regulatory requirements — by sector and jurisdiction",
+                    "Litigation alerts \u2014 civil, bankruptcy, discrimination, contract, IP, shareholder",
+                    "Applicable regulatory requirements \u2014 by sector and jurisdiction",
                     "Regulatory intelligence and rule changes",
                     "Advisory alerts",
                   ],
@@ -1048,10 +1048,10 @@ const Signal = () => {
                   title: "Supply chain & location risk",
                   items: [
                     "Geographic, geopolitical and climate events",
-                    "Delivery-location exposure — disasters, State Department, CDC alerts",
+                    "Delivery-location exposure \u2014 disasters, State Department, CDC alerts",
                     "Country profiles across 230+ countries",
                     "Fourth-party dependency",
-                    "Port watch — shipping routes and choke points",
+                    "Port watch \u2014 shipping routes and choke points",
                     "Risk simulation",
                   ],
                 },
@@ -1526,7 +1526,7 @@ const Signal = () => {
                         : "bg-[#2F6BFF] hover:bg-[#245CE0] cursor-pointer"
                     }`}
                   >
-                    {sending ? "Sending…" : "Request access"}
+                    {sending ? "Sending\u2026" : "Request access"}
                   </button>
 
                   <p className="m-0 text-[12px] text-[#667085]">
@@ -1567,7 +1567,7 @@ const Signal = () => {
 
             {SAMPLE_REPORT_URL && (
               <>
-                {"  ·  "}
+                {"  \u00b7  "}
 
                 <a
                   href="#sample"
@@ -1578,7 +1578,7 @@ const Signal = () => {
               </>
             )}
 
-            {"  ·  "}
+            {"  \u00b7  "}
 
             <a
               href="https://signal.hatfield.ai"
