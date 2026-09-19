@@ -70,6 +70,23 @@
 //    dal.TIERS. Changing one without the others is the defect that put
 //    $10 in a signed agreement while the product charged $59.
 //
+// 2026-09-19. ONE MORE.
+//
+// 9. "CLIENT SIGN IN" GOES TO THE SIGN-IN SCREEN. Both copies - the
+//    header button and the footer link - pointed at the bare host,
+//    https://signal.hatfield.ai. The SIGNAL app's route() sends "/" to
+//    landing_layout(): the app's OWN marketing page, with its own
+//    pricing cards and its own "Client Sign In" button. So a client who
+//    clicked sign in here landed on a second pricing page and had to
+//    find sign-in again - and a prospect saw two differently laid-out
+//    price lists for the same product one click apart. They now go to
+//    SIGNAL_LOGIN_URL, which is "/login" on the same API_BASE the form
+//    posts to, so staging builds sign in to staging and there is no
+//    second hostname in this file to drift. Every other sign-in link in
+//    the product (billing emails, Stripe success_url, the app's own
+//    masthead) already targets /login; these two were the only ones
+//    that did not.
+//
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
@@ -84,6 +101,17 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 
 const API_BASE =
   (import.meta as any).env?.VITE_SIGNAL_API_BASE ?? "https://signal.hatfield.ai";
+
+/**
+ * Where "Client sign in" goes - the app's /login route, NOT its root.
+ *
+ * 2026-09-19 (Frank): the root of the SIGNAL app is its own landing
+ * page (surveillance_svc_app.route() falls through to landing_layout()
+ * for "/"), so linking the bare host sent clients to a second pricing
+ * page instead of the sign-in screen. Built from API_BASE so a staging
+ * build signs in to staging - one hostname in this file, not two.
+ */
+const SIGNAL_LOGIN_URL = `${API_BASE.replace(/\/+$/, "")}/login`;
 
 const TURNSTILE_SITE_KEY =
   (import.meta as any).env?.VITE_TURNSTILE_SITE_KEY ?? "";
@@ -400,8 +428,9 @@ const Signal = () => {
             </div>
           </a>
 
+          {/* 2026-09-19: /login, not the app root - see item 9 above. */}
           <a
-            href="https://signal.hatfield.ai"
+            href={SIGNAL_LOGIN_URL}
             className="px-[16px] py-[10px] border border-white/35 rounded-[7px] text-white no-underline text-[13px] font-medium hover:border-white/60 transition-colors"
           >
             Client sign in
@@ -1580,8 +1609,9 @@ const Signal = () => {
 
             {"  \u00b7  "}
 
+            {/* 2026-09-19: /login, not the app root - see item 9 above. */}
             <a
-              href="https://signal.hatfield.ai"
+              href={SIGNAL_LOGIN_URL}
               className="text-[#C8D3E3] no-underline hover:text-white"
             >
               Client sign in
