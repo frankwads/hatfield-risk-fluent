@@ -11,12 +11,16 @@ import heroHLogo from "@/assets/hero-h-logo.png";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
 import { Play, ArrowRight } from "lucide-react";
 
-// 2026-09-19: Nexus Commercial video. Served as a static file from
+// 2026-09-19: Commercial video (button now labelled "Hatfield.ai Commercial",
+// see the button comment below). Served as a static file from
 // public/videos/ (not imported from src/assets) so Vite copies it verbatim
 // and the browser can stream it. The file is a web re-encode of
 // Commercial_revised.mp4 (141.8 MB -> 35.8 MB, H.264 + AAC, moov atom moved
 // to the front with +faststart so playback starts before the download ends).
 // The original was over GitHub's 100 MB per-file limit and could not be pushed.
+// 2026-09-19 (rename): the file path and this constant name deliberately keep
+// "nexus" so the already-pushed 35.8 MB video does not have to be renamed or
+// re-pushed; only the visible wording changed.
 const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 
 const Index = () => {
@@ -104,7 +108,8 @@ const Index = () => {
 
             {/* Primary Actions + SIGNAL Introduction */}
             {/* 2026-09-19 (rev 2, Frank): order is now Explore Capabilities,
-                Introducing SIGNAL, Hatfield.ai Introduction, Nexus Commercial,
+                Introducing SIGNAL, Hatfield.ai Introduction, Hatfield.ai
+                Commercial (renamed from Nexus Commercial, rev 3),
                 all four on ONE line on desktop (xl, 1280px+ windows).
                 To make four fit inside the max-w-6xl column, the three
                 buttons drop from text-lg/px-8 to text-base/px-6 and the SIGNAL
@@ -183,12 +188,19 @@ const Index = () => {
                 </DialogContent>
               </Dialog>
 
-              {/* 2026-09-19: "Nexus Commercial" button (Frank), last in the
-                  row after Hatfield.ai Introduction. Same secondary style and
-                  modal pattern as the introduction button. The <video> only
+              {/* 2026-09-19: Commercial button (Frank), last in the row after
+                  Hatfield.ai Introduction. Same secondary style and modal
+                  pattern as the introduction button. The <video> only
                   mounts while the dialog is open, so closing the dialog stops
                   playback and the page does not download the video until
-                  someone clicks. */}
+                  someone clicks.
+                  2026-09-19 (rev 3, Frank): label renamed from "Nexus
+                  Commercial" to "Hatfield.ai Commercial", matching the
+                  "Hatfield.ai Introduction" button beside it. The video's
+                  title attribute and the no-video fallback link text were
+                  renamed with it so no "Nexus Commercial" wording is left
+                  anywhere a visitor or screen reader can see it. Video file
+                  unchanged. */}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
@@ -197,7 +209,7 @@ const Index = () => {
                     className="text-base px-6 whitespace-nowrap"
                   >
                     <Play className="mr-2" size={18} />
-                    Nexus Commercial
+                    Hatfield.ai Commercial
                   </Button>
                 </DialogTrigger>
 
@@ -205,7 +217,7 @@ const Index = () => {
                   <div className="aspect-video w-full">
                     <video
                       src={NEXUS_COMMERCIAL_SRC}
-                      title="Hatfield.ai Nexus Commercial"
+                      title="Hatfield.ai Commercial"
                       controls
                       autoPlay
                       playsInline
@@ -213,7 +225,7 @@ const Index = () => {
                       className="w-full h-full rounded-lg bg-black"
                     >
                       Your browser can't play this video.{" "}
-                      <a href={NEXUS_COMMERCIAL_SRC}>Download the Nexus Commercial</a>.
+                      <a href={NEXUS_COMMERCIAL_SRC}>Download the Hatfield.ai Commercial</a>.
                     </video>
                   </div>
                 </DialogContent>
