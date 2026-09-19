@@ -93,21 +93,28 @@ const Index = () => {
                 and SIGNAL. Styling is unchanged: the first three paragraphs
                 use the same muted body style the old first two used, and the
                 closing "Together..." line takes the emphasised style the old
-                beta-client line had. Text only; no layout or class changes. */}
+                beta-client line had. Text only; no layout or class changes.
+                2026-09-19 (rev 2, Frank): the product names that open the
+                NEXUS and SIGNAL paragraphs are bold (<strong>) so each
+                paragraph leads with its product. Same colour and size as the
+                sentence around them; the "Together..." line is already
+                bold throughout and is unchanged. */}
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
               Hatfield.ai brings third-party risk management and real-world
               risk intelligence together on one AI-native platform.
             </p>
 
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              NEXUS provides the operating system for third-party risk —
+              <strong className="font-bold">NEXUS</strong> provides the
+              operating system for third-party risk —
               managing the entire lifecycle from intake and legal-entity
               resolution through contracting, risk assessment, operational
               resilience, regulatory compliance and reporting.
             </p>
 
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              SIGNAL provides the intelligence layer — continuously monitoring
+              <strong className="font-bold">SIGNAL</strong> provides the
+              intelligence layer — continuously monitoring
               the companies that matter across financial health,
               cybersecurity, sanctions, litigation, regulatory developments,
               corporate actions, adverse media, geographic risk and other
