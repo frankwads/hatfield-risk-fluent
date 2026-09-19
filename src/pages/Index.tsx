@@ -103,28 +103,66 @@ const Index = () => {
             </p>
 
             {/* Primary Actions + SIGNAL Introduction */}
-            {/* 2026-09-19: row now holds four items (Explore, Hatfield.ai
-                Introduction, Nexus Commercial, SIGNAL), so it wraps
-                (sm:flex-wrap) instead of overflowing at tablet widths. */}
-            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 sm:gap-5">
+            {/* 2026-09-19 (rev 2, Frank): order is now Explore Capabilities,
+                Introducing SIGNAL, Hatfield.ai Introduction, Nexus Commercial,
+                all four on ONE line on desktop (xl, 1280px+ windows).
+                To make four fit inside the max-w-6xl column, the three
+                buttons drop from text-lg/px-8 to text-base/px-6 and the SIGNAL
+                title is text-sm at every size. Below xl there is not room for
+                four in a row, so the row wraps (tablet) or stacks (phone)
+                rather than overflowing off the side of the screen. */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap xl:flex-nowrap sm:items-center gap-4">
               <Button
                 size="lg"
-                className="text-lg"
+                className="text-base px-6 whitespace-nowrap"
                 onClick={() => {
                   document
                     .getElementById("capabilities")
                     ?.scrollIntoView({ behavior: "smooth" });
                 }}
               >
-                Explore Capabilities <ArrowRight className="ml-2" size={20} />
+                Explore Capabilities <ArrowRight className="ml-2" size={18} />
               </Button>
+
+              {/* SIGNAL Product Introduction */}
+              {/* 2026-09-19 (rev 2): moved from last place to second, directly
+                  after Explore Capabilities. Dividers on both sides now set
+                  it apart from the buttons around it; the old sm:ml-3 is gone
+                  because the row gap already spaces it. */}
+              <a
+                href="/signal"
+                className="group flex items-center gap-3 py-2 transition-opacity duration-300 hover:opacity-80"
+                aria-label="Introducing SIGNAL — Hatfield.ai Real-Time Surveillance"
+              >
+                <span className="hidden sm:block h-9 w-px bg-white/30" />
+
+                <span className="flex flex-col text-left">
+                  <span className="text-xs uppercase tracking-[0.18em] font-semibold text-accent">
+                    Introducing SIGNAL
+                  </span>
+
+                  <span className="text-sm text-foreground font-medium whitespace-nowrap">
+                    Hatfield.ai Real-Time Surveillance
+                    <ArrowRight
+                      className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                      size={16}
+                    />
+                  </span>
+                </span>
+
+                <span className="hidden sm:block h-9 w-px bg-white/30" />
+              </a>
 
               {/* 2026-09-19: label renamed from "Watch Introduction" to
                   "Hatfield.ai Introduction" (Frank). Video unchanged. */}
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="secondary" size="lg" className="text-lg">
-                    <Play className="mr-2" size={20} />
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="text-base px-6 whitespace-nowrap"
+                  >
+                    <Play className="mr-2" size={18} />
                     Hatfield.ai Introduction
                   </Button>
                 </DialogTrigger>
@@ -145,16 +183,20 @@ const Index = () => {
                 </DialogContent>
               </Dialog>
 
-              {/* 2026-09-19: new "Nexus Commercial" button (Frank), placed
-                  between Hatfield.ai Introduction and Introducing SIGNAL.
-                  Same secondary style and modal pattern as the introduction
-                  button. The <video> only mounts while the dialog is open,
-                  so closing the dialog stops playback and the page does not
-                  download the video until someone clicks. */}
+              {/* 2026-09-19: "Nexus Commercial" button (Frank), last in the
+                  row after Hatfield.ai Introduction. Same secondary style and
+                  modal pattern as the introduction button. The <video> only
+                  mounts while the dialog is open, so closing the dialog stops
+                  playback and the page does not download the video until
+                  someone clicks. */}
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="secondary" size="lg" className="text-lg">
-                    <Play className="mr-2" size={20} />
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="text-base px-6 whitespace-nowrap"
+                  >
+                    <Play className="mr-2" size={18} />
                     Nexus Commercial
                   </Button>
                 </DialogTrigger>
@@ -176,29 +218,6 @@ const Index = () => {
                   </div>
                 </DialogContent>
               </Dialog>
-
-              {/* SIGNAL Product Introduction */}
-              <a
-                href="/signal"
-                className="group flex items-center gap-3 sm:ml-3 py-2 transition-opacity duration-300 hover:opacity-80"
-                aria-label="Introducing SIGNAL — Hatfield.ai Real-Time Surveillance"
-              >
-                <span className="hidden sm:block h-9 w-px bg-white/30" />
-
-                <span className="flex flex-col text-left">
-                  <span className="text-xs uppercase tracking-[0.18em] font-semibold text-accent">
-                    Introducing SIGNAL
-                  </span>
-
-                  <span className="text-sm md:text-base text-foreground font-medium whitespace-nowrap">
-                    Hatfield.ai Real-Time Surveillance
-                    <ArrowRight
-                      className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1"
-                      size={16}
-                    />
-                  </span>
-                </span>
-              </a>
             </div>
           </div>
         </div>
