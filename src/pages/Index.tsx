@@ -87,23 +87,37 @@ const Index = () => {
 
           {/* Description and Buttons Below */}
           <div className="max-w-6xl">
+            {/* 2026-09-19 (Frank): hero copy replaced. The old three
+                paragraphs (secure TPRM platform / developed as a prototype /
+                inviting beta clients) now describe the two products, NEXUS
+                and SIGNAL. Styling is unchanged: the first three paragraphs
+                use the same muted body style the old first two used, and the
+                closing "Together..." line takes the emphasised style the old
+                beta-client line had. Text only; no layout or class changes. */}
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              Hatfield is a secure, intelligent TPRM platform purpose-built to
-              streamline risk workflows, automate assessments, and align
-              seamlessly with regulatory expectations.
+              Hatfield.ai brings third-party risk management and real-world
+              risk intelligence together on one AI-native platform.
             </p>
 
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              Developed as a prototype, Hatfield already rivals leading TPRM
-              platforms in workflow orchestration, reporting capabilities, and
-              compliance support. But this is just the beginning. The prototype
-              lays the foundation for a broader roadmap focused on advanced
-              intelligence, automation, and real-time risk insight.
+              NEXUS provides the operating system for third-party risk —
+              managing the entire lifecycle from intake and legal-entity
+              resolution through contracting, risk assessment, operational
+              resilience, regulatory compliance and reporting.
+            </p>
+
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
+              SIGNAL provides the intelligence layer — continuously monitoring
+              the companies that matter across financial health,
+              cybersecurity, sanctions, litigation, regulatory developments,
+              corporate actions, adverse media, geographic risk and other
+              emerging threats.
             </p>
 
             <p className="text-xl md:text-2xl text-foreground font-semibold mb-8 leading-relaxed">
-              We're inviting a select group of beta clients to help shape what
-              comes next.
+              Together, NEXUS and SIGNAL give organizations a connected view of
+              third-party risk — assess what you know, monitor what changes,
+              and act on what matters.
             </p>
 
             {/* Primary Actions + SIGNAL Introduction */}
