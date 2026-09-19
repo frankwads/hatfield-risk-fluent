@@ -11,6 +11,14 @@ import heroHLogo from "@/assets/hero-h-logo.png";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
 import { Play, ArrowRight } from "lucide-react";
 
+// 2026-09-19: Nexus Commercial video. Served as a static file from
+// public/videos/ (not imported from src/assets) so Vite copies it verbatim
+// and the browser can stream it. The file is a web re-encode of
+// Commercial_revised.mp4 (141.8 MB -> 35.8 MB, H.264 + AAC, moov atom moved
+// to the front with +faststart so playback starts before the download ends).
+// The original was over GitHub's 100 MB per-file limit and could not be pushed.
+const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
+
 const Index = () => {
   const features = [
     {
@@ -95,7 +103,10 @@ const Index = () => {
             </p>
 
             {/* Primary Actions + SIGNAL Introduction */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
+            {/* 2026-09-19: row now holds four items (Explore, Hatfield.ai
+                Introduction, Nexus Commercial, SIGNAL), so it wraps
+                (sm:flex-wrap) instead of overflowing at tablet widths. */}
+            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 sm:gap-5">
               <Button
                 size="lg"
                 className="text-lg"
@@ -108,11 +119,13 @@ const Index = () => {
                 Explore Capabilities <ArrowRight className="ml-2" size={20} />
               </Button>
 
+              {/* 2026-09-19: label renamed from "Watch Introduction" to
+                  "Hatfield.ai Introduction" (Frank). Video unchanged. */}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="secondary" size="lg" className="text-lg">
                     <Play className="mr-2" size={20} />
-                    Watch Introduction
+                    Hatfield.ai Introduction
                   </Button>
                 </DialogTrigger>
 
@@ -128,6 +141,38 @@ const Index = () => {
                       allowFullScreen
                       className="w-full h-full rounded-lg"
                     />
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* 2026-09-19: new "Nexus Commercial" button (Frank), placed
+                  between Hatfield.ai Introduction and Introducing SIGNAL.
+                  Same secondary style and modal pattern as the introduction
+                  button. The <video> only mounts while the dialog is open,
+                  so closing the dialog stops playback and the page does not
+                  download the video until someone clicks. */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="secondary" size="lg" className="text-lg">
+                    <Play className="mr-2" size={20} />
+                    Nexus Commercial
+                  </Button>
+                </DialogTrigger>
+
+                <DialogContent className="max-w-4xl w-full p-0 bg-card">
+                  <div className="aspect-video w-full">
+                    <video
+                      src={NEXUS_COMMERCIAL_SRC}
+                      title="Hatfield.ai Nexus Commercial"
+                      controls
+                      autoPlay
+                      playsInline
+                      preload="metadata"
+                      className="w-full h-full rounded-lg bg-black"
+                    >
+                      Your browser can't play this video.{" "}
+                      <a href={NEXUS_COMMERCIAL_SRC}>Download the Nexus Commercial</a>.
+                    </video>
                   </div>
                 </DialogContent>
               </Dialog>
