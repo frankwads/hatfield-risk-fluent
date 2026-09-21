@@ -87,6 +87,50 @@
 //    masthead) already targets /login; these two were the only ones
 //    that did not.
 //
+// 2026-09-21. FOUR, RECONCILING THIS PAGE WITH THE PDF ONE-PAGER.
+//
+// 10. THE POSITIONING LINE IS ON THE PAGE. "Your GPS for business
+//     decisions" sits in the masthead of EVERY artboard in the PDF and
+//     appeared nowhere here. A prospect handed the one-pager and then
+//     sent to hatfield.ai/signal lost the line they were sold on, which
+//     reads as a different product's page rather than the same one. It
+//     now sits in the header opposite the wordmark, where the artwork
+//     puts it, styled as the artwork styles it - small, tracked,
+//     uppercased in CSS so the DOM keeps sentence case for screen
+//     readers. Hidden below md: on a phone the header has room for the
+//     logo and the sign-in button and nothing else.
+//
+// 11. THE TRIAL BUTTON CARRIES THE TERM. "Start a free trial" is now
+//     "Start your free 10-business-day trial" - the artwork's own
+//     wording. The length is the point: the trial's one real
+//     restriction is how long it lasts, and a prospect who discovers it
+//     after registering feels sold to. Terminal period dropped; it is a
+//     button, not a sentence. It sits in a flex-wrap row, so on a
+//     narrow screen it takes its own line rather than crushing the
+//     sample-report button beside it.
+//
+// 12. THE FOOTER NAMES THE LEGAL ENTITY. "Hatfield Advisory LLC d/b/a
+//     Hatfield.ai, St. Petersburg, Florida". The PDF carries the d/b/a
+//     and this page did not - and a buyer at a bank reconciles the
+//     trading name against the counterparty record they are opening.
+//
+// 13. "Piotroski F-score", not "F-Score", in all three places it occurs
+//     here - the desktop matrix, the mobile domain list and the
+//     sample-report bullets. Matches the PDF, and the man's name.
+//
+// TWO PDF-SIDE FIXES WITH NO CODE IN THIS FILE, recorded here so they
+// are not lost:
+//   - The first artboard still says rival platforms charge
+//     $24,000-$34,000 per user, while two later blocks say
+//     $10,000-$35,000 per user p.a. This file has said $10,000-$35,000
+//     per user p.a. since 2026-09-17 and remains the master figure; the
+//     stale artboard is what moves.
+//   - The artwork's closing line "See what changed. See what matters.
+//     Know where to act." becomes "Know what changed. Know what
+//     matters. Know where to act." - three parallel verbs, matching the
+//     H1 below and the three "How it works" headings both documents
+//     already share.
+//
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
@@ -428,13 +472,24 @@ const Signal = () => {
             </div>
           </a>
 
-          {/* 2026-09-19: /login, not the app root - see item 9 above. */}
-          <a
-            href={SIGNAL_LOGIN_URL}
-            className="px-[16px] py-[10px] border border-white/35 rounded-[7px] text-white no-underline text-[13px] font-medium hover:border-white/60 transition-colors"
-          >
-            Client sign in
-          </a>
+          <div className="flex items-center gap-5 md:gap-7">
+            {/*
+              2026-09-21: the artwork's masthead line - see item 10
+              above. Sentence case in the DOM, uppercased in CSS, so a
+              screen reader says it rather than spelling it out.
+            */}
+            <p className="hidden md:block m-0 text-[11px] font-semibold tracking-[0.13em] text-white/70 uppercase">
+              Your GPS for business decisions
+            </p>
+
+            {/* 2026-09-19: /login, not the app root - see item 9 above. */}
+            <a
+              href={SIGNAL_LOGIN_URL}
+              className="px-[16px] py-[10px] border border-white/35 rounded-[7px] text-white no-underline text-[13px] font-medium hover:border-white/60 transition-colors"
+            >
+              Client sign in
+            </a>
+          </div>
         </div>
       </header>
 
@@ -462,12 +517,13 @@ const Signal = () => {
           </div>
 
           <div className="flex flex-wrap gap-[10px] lg:pb-1">
+            {/* 2026-09-21: the term is in the button - see item 11. */}
             <button
               type="button"
               onClick={() => selectTier("demo")}
               className="inline-block px-[18px] py-[11px] rounded-[7px] border-0 cursor-pointer text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors"
             >
-              Start a free trial
+              Start your free 10-business-day trial
             </button>
 
             {SAMPLE_REPORT_URL && (
@@ -849,7 +905,7 @@ const Signal = () => {
                 </li>
 
                 <li className={domainStyle}>
-                  Piotroski F-Score{" "}
+                  Piotroski F-score{" "}
                   <span className="text-[#667085]">
                     &mdash; trend analysis
                   </span>
@@ -1048,7 +1104,7 @@ const Signal = () => {
                     "Financial reporting, two years, with trend analysis",
                     "Altman Z-score \u2014 financial resilience",
                     "Merton default analysis",
-                    "Piotroski F-Score \u2014 trend analysis",
+                    "Piotroski F-score \u2014 trend analysis",
                     "Private-company manual FVA",
                     "Macro indicators \u2014 eight-year trends, IMF projections",
                     "Daily indicators \u2014 indices, bonds, futures, currencies",
@@ -1151,7 +1207,7 @@ const Signal = () => {
                   <ul className="list-none m-0 mt-6 p-0 grid sm:grid-cols-2 gap-x-8">
                     <li className={domainStyle}>
                       Financial health &mdash; reported figures, Altman Z-score,
-                      Merton default analysis and Piotroski F-Score, with the
+                      Merton default analysis and Piotroski F-score, with the
                       trend behind each
                     </li>
 
@@ -1582,8 +1638,9 @@ const Signal = () => {
       {/* FOOTER */}
       <footer className="bg-[#071326] text-[#8FA2BC] text-[12px] py-[27px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col sm:flex-row gap-4 justify-between">
+          {/* 2026-09-21: the d/b/a, as the PDF carries it - see item 12. */}
           <p className="m-0">
-            Hatfield Advisory LLC, St. Petersburg, Florida
+            Hatfield Advisory LLC d/b/a Hatfield.ai, St. Petersburg, Florida
           </p>
 
           <p className="m-0">
