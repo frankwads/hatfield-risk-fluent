@@ -704,7 +704,7 @@ const Signal = () => {
                 </p>
 
                 <h3 className="mt-5 mb-0 font-serif text-[24px] md:text-[27px] leading-[1.2] tracking-[-0.025em] text-[#0A1A33]">
-                  25 companies. 10 users or 1,000. One price.
+                  10 users or 1,000. One price.
                 </h3>
 
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
