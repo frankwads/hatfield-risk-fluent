@@ -62,8 +62,13 @@ const Index = () => {
       <Navigation />
 
       {/* Hero Section */}
+      {/* 2026-09-22 (Frank): hero moved up one line. Top padding reduced
+          from pt-32 (128px) to pt-24 (96px) — 32px, which is one line of
+          the hero body text (text-xl, leading-relaxed = ~32.5px). The
+          heading and everything below it in the hero rise together; no
+          other spacing, text or layout changed. */}
       <section
-        className="relative pt-32 pb-20 overflow-hidden"
+        className="relative pt-24 pb-20 overflow-hidden"
         style={{ background: "var(--gradient-hero)" }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -180,7 +185,16 @@ const Index = () => {
               </a>
 
               {/* 2026-09-19: label renamed from "Watch Introduction" to
-                  "Hatfield.ai Introduction" (Frank). Video unchanged. */}
+                  "Hatfield.ai Introduction" (Frank). Video unchanged.
+                  2026-09-22 (Frank): the video now starts playing by itself
+                  as soon as the button is clicked, always from 0:00. The
+                  embed URL carries autoplay=1 (play on load) and start=0
+                  (begin at the start). The iframe's allow list already
+                  includes "autoplay", which the browser requires before an
+                  embedded player may start on its own. The dialog removes
+                  the iframe when it closes, so every click loads a fresh
+                  player from the beginning; closing the dialog stops the
+                  video. */}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button
@@ -198,7 +212,7 @@ const Index = () => {
                     <iframe
                       width="100%"
                       height="100%"
-                      src="https://www.youtube.com/embed/l_w4UKB8KWQ"
+                      src="https://www.youtube.com/embed/l_w4UKB8KWQ?autoplay=1&start=0"
                       title="Hatfield.ai Platform Demo"
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
