@@ -226,12 +226,16 @@ const Index = () => {
                     right-alignment, lg:justify-end, is removed) and grows
                     again: desktop w-56 (224px) to w-72 (288px), twice the
                     original 144px; phone and tablet w-40/w-48 to
-                    w-44/w-52. */}
+                    w-44/w-52.
+                    2026-10-01 (rev 6, Frank): "slightly bigger". One step
+                    up at every size: desktop w-72 (288px) to w-80 (320px),
+                    about 11% larger; phone and tablet w-44/w-52 to
+                    w-48/w-56. Still centred above the two panels. */}
                 <div className="flex justify-center">
                   <img
                     src={hero3dLogo}
                     alt="Hatfield 3D Logo"
-                    className="w-44 sm:w-52 lg:w-72 h-auto object-contain"
+                    className="w-48 sm:w-56 lg:w-80 h-auto object-contain"
                   />
                 </div>
 
