@@ -23,90 +23,186 @@ import { Play, ArrowRight } from "lucide-react";
 // re-pushed; only the visible wording changed.
 const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 
-// 2026-10-01 (rev 4, Frank): the scrolling banner now carries BOTH products.
-// "add some capabilities related to signal in scrolling banner ... morph
-// headings accordingly ... feel free to update nexus capabilities as well".
-// The banner content is defined ONCE here as two groups. Each group opens
-// with a dark heading tile naming the product, followed by that product's
-// cards, so the heading travels with its own content: as the NEXUS cards
-// scroll off and the SIGNAL cards scroll on, the heading in view changes
-// with them. (A single fixed heading above the banner could not do this
-// honestly, because the banner is the full width of the page and cards
-// from both products are usually on screen at the same moment.)
-// Where the figures come from:
-//   NEXUS  - the "Hatfield.ai NEXUS" one-pager (96.8%, 70%, ~3X, 40-75%)
-//            plus "100% audit-ready by design" from the TPRM overview.
-//            The old "SLA / Track days outstanding & performance" card is
-//            dropped: it was the only card without a figure.
-//   SIGNAL - the "Hatfield.ai SIGNAL" one-pager (847, 21, 12, 234).
-// To change a card, edit the value or label here; nothing else needs
-// touching. To add a card, add a line to the group's cards list.
-const STAT_GROUPS = [
+// ---------------------------------------------------------------------------
+// HOMEPAGE TICKER CONTENT
+// 2026-10-01 (rev 7, Frank): rebuilt to the "Homepage Ticker Requirements"
+// document (NEXUS + SIGNAL + Capabilities + Why Hatfield rotation). The
+// ticker moves from statistics to a WHAT + WHY story: four rotations, each
+// tile a short uppercase headline with a one-line value statement.
+//
+// EVERYTHING the ticker says is in TICKER_ROTATIONS below and nowhere else
+// (requirement 5: content-configurable, not hard-coded into the animation).
+//   - Edit a tile:      change its headline or value text.
+//   - Reorder:          move the tile's line, or move a whole rotation block.
+//   - Switch off a tile:      add  enabled: false  to that tile.
+//   - Switch off a rotation:  set the rotation's  enabled  to false.
+//   - anchor: true      gives the dark product-anchor treatment
+//                       (NEXUS, SIGNAL, HATFIELD.AI).
+//   - href              makes the tile a link.
+//
+// Content governance (requirement 6) applied here:
+//   - REMOVED: 96.8% / #1 of 12, 70%, ~3X, 40-75% and 100% audit-ready. No
+//     NEXUS percentage or ranking appears in the ticker any more; NEXUS is
+//     told through qualitative proof (one identity, assess once, SIGNAL
+//     built in, examiner ready), per requirement 7.
+//   - REMOVED: "21 live intelligence surfaces" (requirement 7).
+//   - The optional SIGNAL scale rotation (847 sources / 12 lists / 234
+//     countries) is included but SWITCHED OFF (enabled: false), because
+//     requirements 6 and 7 allow it only once the figures are validated
+//     against production, and that has not been done: the code base shows
+//     11 sanctions/export-control lists, not 12, and the 847 source count
+//     lives in the database. Set enabled to true when they are confirmed.
+//
+// Links (requirement 5): SIGNAL goes to /signal, the same address the
+// hero's "Introducing SIGNAL" link uses. NEXUS and HATFIELD.AI go to the
+// Platform Capabilities section of this page (#capabilities) because this
+// file does not show a dedicated NEXUS or overview page address; change
+// the two href values below if one exists.
+// Punctuation: the requirements' " - " is set as an em dash and its
+// apostrophes as typographic ones, matching the rest of this page. The
+// words are exactly as supplied.
+// ---------------------------------------------------------------------------
+type TickerTile = {
+  headline: string;
+  value: string;
+  anchor?: boolean;
+  href?: string;
+  enabled?: boolean;
+};
+type TickerRotation = { id: string; enabled: boolean; tiles: TickerTile[] };
+
+const TICKER_ROTATIONS: TickerRotation[] = [
   {
-    product: "NEXUS",
-    tagline: "The operating system for third-party risk",
-    cards: [
-      { value: "100%", label: "Audit-ready by design" },
-      { value: "~3X", label: "Fewer redundant assessments & onboardings" },
-      { value: "70%", label: "Less risk-assessment overhead" },
-      { value: "40–75%", label: "Lower total cost of ownership" },
-      { value: "96.8%", label: "Capability coverage — #1 of 12 platforms" },
+    id: "A - NEXUS",
+    enabled: true,
+    tiles: [
+      { headline: "NEXUS", value: "The operating system for third-party risk.", anchor: true, href: "#capabilities" },
+      { headline: "One vendor. One identity.", value: "Eliminate duplicate records." },
+      { headline: "Intelligent intake", value: "Ask once. Route the right risk." },
+      { headline: "Assess once", value: "Reuse what remains valid." },
+      { headline: "Contract right", value: "Align terms to the engagement and risk." },
+      { headline: "SIGNAL built in", value: "Know when something changes." },
+      { headline: "Examiner ready", value: "Keep the evidence behind every decision." },
     ],
   },
   {
-    product: "SIGNAL",
-    tagline: "The intelligence layer",
-    cards: [
-      { value: "847", label: "Curated global sources" },
-      { value: "21", label: "Live intelligence surfaces" },
-      { value: "12", label: "Sanctions & export-control lists" },
-      { value: "234", label: "Countries & territories" },
+    id: "B - SIGNAL",
+    enabled: true,
+    tiles: [
+      { headline: "SIGNAL", value: "Your GPS for business decisions.", anchor: true, href: "/signal" },
+      { headline: "Financial intelligence", value: "See deterioration earlier." },
+      { headline: "Cyber intelligence", value: "Know when exposure changes." },
+      { headline: "Sanctions & regulatory", value: "Screen against authoritative sources." },
+      { headline: "Litigation & corporate actions", value: "See material events as they emerge." },
+      { headline: "Geopolitical & supply chain", value: "See disruption before it reaches you." },
+      { headline: "Economic intelligence", value: "Understand the environment around your portfolio." },
+      { headline: "Signal. Not noise.", value: "Know what changed. Know what matters. Know where to act." },
+    ],
+  },
+  {
+    id: "C - Capabilities",
+    enabled: true,
+    tiles: [
+      { headline: "Entity intelligence", value: "Know exactly who you’re dealing with." },
+      { headline: "Intelligent intake", value: "Ask once. Route the right risk." },
+      { headline: "Assessment reuse", value: "Don’t assess the same risk twice." },
+      { headline: "Contract intelligence", value: "The right agreement. The right obligations." },
+      { headline: "Continuous surveillance", value: "Know when risk changes." },
+      { headline: "Event intelligence", value: "One material event — not hundreds of alerts." },
+      { headline: "4th-party intelligence", value: "See beyond the vendor." },
+      { headline: "Operational resilience", value: "Know where disruption can reach you." },
+      { headline: "Economic intelligence", value: "Understand the environment around your portfolio." },
+      { headline: "AI with control", value: "Automate the work. Keep people in command." },
+      { headline: "Full provenance", value: "Every signal. Every source. Every decision." },
+      { headline: "Hatfield.ai", value: "From intake to intelligence.", anchor: true, href: "#capabilities" },
+    ],
+  },
+  {
+    id: "D - Why Hatfield",
+    enabled: true,
+    tiles: [
+      { headline: "Built by practitioners", value: "Designed around how the work actually gets done." },
+      { headline: "Connected. Not stitched.", value: "One architecture instead of another integration layer." },
+      { headline: "AI with control", value: "AI proposes. Logic verifies. People decide." },
+      { headline: "Source to decision", value: "Evidence and provenance stay attached." },
+      { headline: "Priced for the institution", value: "Access should follow the work — not the seat." },
+      { headline: "Built to replace", value: "Not another tool to add to the stack." },
+    ],
+  },
+  {
+    // Optional SIGNAL scale/proof rotation (requirement 7). OFF until the
+    // figures are validated against production - see the note above.
+    id: "E - SIGNAL scale (optional, off)",
+    enabled: false,
+    tiles: [
+      { headline: "847", value: "Curated global sources." },
+      { headline: "12", value: "Sanctions & export-control lists." },
+      { headline: "234", value: "Countries & territories." },
     ],
   },
 ];
 
-// The banner's tiles in scrolling order: for each product, its heading tile
-// and then its cards. Built from STAT_GROUPS so the two can never disagree.
-type StatTile =
-  | { kind: "heading"; product: string; tagline: string }
-  | { kind: "card"; value: string; label: string };
-const STAT_TILES: StatTile[] = [];
-STAT_GROUPS.forEach((group) => {
-  STAT_TILES.push({
-    kind: "heading",
-    product: group.product,
-    tagline: group.tagline,
-  });
-  group.cards.forEach((card) => {
-    STAT_TILES.push({ kind: "card", value: card.value, label: card.label });
-  });
+// ---------------------------------------------------------------------------
+// HOMEPAGE TICKER MECHANICS (no wording below this line)
+// One "pass" is every enabled tile of every enabled rotation, in order,
+// with a thin separator ahead of each rotation. Built from TICKER_ROTATIONS
+// so the two can never disagree.
+// ---------------------------------------------------------------------------
+type TickerItem = { kind: "separator" } | { kind: "tile"; tile: TickerTile };
+const TICKER_PASS: TickerItem[] = [];
+TICKER_ROTATIONS.forEach((rotation) => {
+  if (!rotation.enabled) return;
+  const tiles = rotation.tiles.filter((tile) => tile.enabled !== false);
+  if (tiles.length === 0) return;
+  TICKER_PASS.push({ kind: "separator" });
+  tiles.forEach((tile) => TICKER_PASS.push({ kind: "tile", tile }));
 });
+const TICKER_TILE_COUNT = TICKER_PASS.filter(
+  (item) => item.kind === "tile",
+).length;
 
-// 2026-10-01 (Frank, option B): the banner's own scroll animation. The
-// moving track is exactly two identical halves wide (w-max), so sliding it
-// left by 50% of its own width lands the second half precisely where the
-// first one started and the loop has no visible jump, whatever the tile
-// size. It is defined here, next to the banner, rather than reusing the
-// old "animate-scroll-infinite" class, because that class is defined
-// outside this file and its distance could not be confirmed to still match
-// once the cards got smaller.
-// 2026-10-01 (rev 2, Frank): the banner scrolls the full width of the page.
-// Each half of the track must be at least as wide as the browser window or
-// a blank gap shows at the right before the loop restarts, so each half
-// repeats the tiles STAT_REPEATS times.
-// 2026-10-01 (rev 4): one pass of the tiles is now 11 tiles x 256px =
-// 2816px (it was 4 cards = 1024px), so STAT_REPEATS drops from 4 to 2
-// (5632px per half, wider than any normal monitor) and STAT_SCROLL_SECONDS
-// goes from 120 to 165 to keep the cards moving at the same pace as before
-// (about 34px a second). Lower the number to speed the banner up.
-const STAT_REPEATS = 2;
-const STAT_LOOP_TILES: StatTile[] = Array.from(
-  { length: STAT_REPEATS * STAT_TILES.length },
-  (_, i) => STAT_TILES[i % STAT_TILES.length],
+// The moving track is two identical halves (w-max); sliding it left by 50%
+// of its own width lands the second half exactly where the first started,
+// so the loop has no jump (requirement 5). Each half must be wider than the
+// browser window or a blank gap would show, so if tiles are switched off
+// until fewer than TICKER_MIN_TILES_PER_HALF remain, the pass is repeated
+// inside each half to make up the width. With all four rotations on there
+// are 33 tiles and no repeat is needed.
+const TICKER_MIN_TILES_PER_HALF = 24;
+const TICKER_REPEATS = Math.max(
+  1,
+  Math.ceil(TICKER_MIN_TILES_PER_HALF / Math.max(1, TICKER_TILE_COUNT)),
 );
-const STAT_SCROLL_SECONDS = 165;
-const STAT_SCROLL_KEYFRAMES =
-  "@keyframes hatfield-stat-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }";
+const TICKER_HALF: TickerItem[] = Array.from(
+  { length: TICKER_REPEATS * TICKER_PASS.length },
+  (_, i) => TICKER_PASS[i % TICKER_PASS.length],
+);
+
+// Speed. Tiles are now as wide as their text, so the pace is set per tile
+// rather than per pixel: TICKER_SECONDS_PER_TILE is how long each tile takes
+// to pass a fixed point. 8 keeps roughly the pace of the previous banner.
+// Lower it to speed the ticker up; the total loop time follows the number
+// of tiles automatically, so adding or removing tiles never changes pace.
+const TICKER_SECONDS_PER_TILE = 8;
+const TICKER_LOOP_SECONDS =
+  TICKER_REPEATS * TICKER_TILE_COUNT * TICKER_SECONDS_PER_TILE;
+
+// Motion rules (requirement 4): continuous linear scroll, no easing or
+// attention effects; PAUSES while the pointer is over the ticker or a tile
+// has keyboard focus; and for visitors whose device asks for reduced
+// motion the animation is switched off entirely, the duplicate half is
+// hidden, and the strip becomes a still row they can scroll sideways.
+const TICKER_CSS = `
+@keyframes hatfield-ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.hatfield-ticker-track { animation: hatfield-ticker-scroll ${TICKER_LOOP_SECONDS}s linear infinite; }
+.hatfield-ticker:hover .hatfield-ticker-track,
+.hatfield-ticker:focus-within .hatfield-ticker-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .hatfield-ticker { overflow-x: auto; }
+  .hatfield-ticker-track { animation: none; }
+  .hatfield-ticker-duplicate { display: none; }
+}
+`;
 
 const Index = () => {
   const features = [
@@ -404,71 +500,111 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Key Stats Section */}
-        {/* 2026-10-01 (Frank, option B): the banner is a slim band that sits
-            directly under the hero so both are visible on one screen. The
-            tiles scroll endlessly, right to left, the full width of the
-            page (rev 2).
-            2026-10-01 (rev 4, Frank): "remove the heading introducing
-            hatfield.ai and minimize unnecessary white space in banner".
-            - The "Introducing Hatfield.ai" heading above the cards is gone.
-            - Padding above and below the cards drops from py-5 (20px) to
-              py-3 (12px) and the cards from 6.5rem to 6rem tall, so the
-              band is about 120px high (it was about 208px with the
-              heading). The hero above takes up the space this frees.
-            - The band now shows NEXUS and SIGNAL: a dark heading tile for
-              each product scrolls in ahead of that product's cards (see
-              STAT_GROUPS at the top of the file).
-            - The track is rendered twice for the loop; the second copy is
-              hidden from screen readers. */}
-        <section data-stat-section className="bg-white overflow-hidden py-3">
-          <style>{STAT_SCROLL_KEYFRAMES}</style>
+        {/* Homepage Ticker (was "Key Stats Section") */}
+        {/* 2026-10-01 (Frank, option B): a slim band directly under the hero
+            so both are visible on one screen; scrolls endlessly, right to
+            left, the full width of the page (rev 2); no heading above it
+            and minimal padding (rev 4).
+            2026-10-01 (rev 7, Frank): rebuilt to the Homepage Ticker
+            Requirements document. What a visitor sees:
+            - Four rotations in order: NEXUS, SIGNAL, Capabilities, Why
+              Hatfield. Every tile is an uppercase headline with a one-line
+              value statement beneath it (wording: TICKER_ROTATIONS at the
+              top of the file).
+            - Product anchor tiles (NEXUS, SIGNAL, HATFIELD.AI) keep the
+              dark navy treatment and are links; capability tiles keep the
+              existing lighter treatment and are not clickable.
+            - Tiles are now as wide as their text instead of a fixed 240px,
+              so no headline or value line wraps on tablet or desktop. On a
+              phone a tile is capped at 80% of the screen width and its text
+              may wrap, which shows fewer tiles at full-size type rather
+              than shrinking the type.
+            - A thin vertical line separates one rotation from the next.
+            - Band height is unchanged (h-24 tiles, py-3), same palette.
+            - The ticker pauses on hover and on keyboard focus and honours
+              the reduced-motion setting (rules: TICKER_CSS).
+            - The track is rendered twice for the seamless loop; the second
+              copy is hidden from screen readers and its links are skipped
+              by the Tab key, so nothing is announced or focused twice. */}
+        {TICKER_TILE_COUNT > 0 && (
+          <section data-stat-section className="bg-white py-3">
+            <style>{TICKER_CSS}</style>
 
-          <div className="relative overflow-hidden">
-            <div
-              className="flex w-max"
-              style={{
-                animation: `hatfield-stat-scroll ${STAT_SCROLL_SECONDS}s linear infinite`,
-              }}
-            >
-              {[0, 1].map((copy) => (
-                <div
-                  key={copy}
-                  className="flex gap-4 pr-4 flex-shrink-0"
-                  aria-hidden={copy === 1}
-                >
-                  {STAT_LOOP_TILES.map((tile, tileIndex) =>
-                    tile.kind === "heading" ? (
-                      <div
-                        key={tileIndex}
-                        className="bg-[hsl(215,45%,15%)] px-6 rounded-lg text-white w-60 h-24 flex flex-col justify-center"
-                      >
-                        <div className="text-2xl font-bold tracking-[0.18em] leading-none mb-2">
-                          {tile.product}
+            <div className="hatfield-ticker relative overflow-hidden">
+              <div className="hatfield-ticker-track flex w-max">
+                {[0, 1].map((copy) => (
+                  <div
+                    key={copy}
+                    className={
+                      "flex items-center gap-4 pr-4 flex-shrink-0" +
+                      (copy === 1 ? " hatfield-ticker-duplicate" : "")
+                    }
+                    aria-hidden={copy === 1}
+                  >
+                    {TICKER_HALF.map((item, itemIndex) => {
+                      if (item.kind === "separator") {
+                        return (
+                          <span
+                            key={itemIndex}
+                            aria-hidden="true"
+                            className="h-12 w-px flex-shrink-0 bg-[hsl(215,25%,75%)]"
+                          />
+                        );
+                      }
+
+                      const tile = item.tile;
+                      const tileClassName =
+                        "h-24 px-6 rounded-lg flex flex-col justify-center flex-shrink-0 max-w-[80vw] sm:max-w-none " +
+                        (tile.anchor
+                          ? "bg-[hsl(215,45%,15%)] text-white"
+                          : "bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)] border border-gray-300");
+                      const tileBody = (
+                        <>
+                          <span
+                            className={
+                              "block font-bold uppercase leading-tight sm:whitespace-nowrap " +
+                              (tile.anchor
+                                ? "text-xl tracking-[0.18em]"
+                                : "text-base tracking-[0.08em]")
+                            }
+                          >
+                            {tile.headline}
+                          </span>
+                          <span
+                            className={
+                              "block mt-1.5 text-sm font-medium leading-snug sm:whitespace-nowrap " +
+                              (tile.anchor ? "text-white/80" : "")
+                            }
+                          >
+                            {tile.value}
+                          </span>
+                        </>
+                      );
+
+                      return tile.href ? (
+                        <a
+                          key={itemIndex}
+                          href={tile.href}
+                          tabIndex={copy === 1 ? -1 : undefined}
+                          className={
+                            tileClassName +
+                            " transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(215,65%,48%)]"
+                          }
+                        >
+                          {tileBody}
+                        </a>
+                      ) : (
+                        <div key={itemIndex} className={tileClassName}>
+                          {tileBody}
                         </div>
-                        <div className="text-sm font-medium leading-snug text-white/80">
-                          {tile.tagline}
-                        </div>
-                      </div>
-                    ) : (
-                      <div
-                        key={tileIndex}
-                        className="bg-[hsl(215,25%,75%)] px-6 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-60 h-24 flex flex-col justify-center"
-                      >
-                        <div className="text-4xl font-bold leading-none mb-1.5 whitespace-nowrap">
-                          {tile.value}
-                        </div>
-                        <div className="text-sm font-medium leading-snug">
-                          {tile.label}
-                        </div>
-                      </div>
-                    ),
-                  )}
-                </div>
-              ))}
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </div>
 
       {/* Features Section */}
