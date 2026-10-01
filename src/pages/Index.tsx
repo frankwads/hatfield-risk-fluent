@@ -23,6 +23,44 @@ import { Play, ArrowRight } from "lucide-react";
 // re-pushed; only the visible wording changed.
 const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 
+// 2026-10-01 (Frank, option B): the four stat cards of the scrolling
+// "Introducing Hatfield.ai" banner, defined ONCE. The banner renders this
+// list twice, back to back, to make the endless loop; before today the
+// eight cards were written out by hand as two copies of the same markup.
+// Wording and order are unchanged.
+const STAT_CARDS = [
+  { value: "100%", label: "Audit Ready" },
+  { value: "~3X", label: "Reduction in redundant processing" },
+  { value: "70%", label: "Reduction in risk assessment overhead" },
+  { value: "SLA", label: "Track days outstanding & performance" },
+];
+
+// 2026-10-01 (Frank, option B): the banner's own scroll animation. The
+// moving track is exactly two identical sets of cards wide (w-max), so
+// sliding it left by 50% of its own width lands the second set precisely
+// where the first one started and the loop has no visible jump, whatever
+// the card size. It is defined here, next to the banner, rather than
+// reusing the old "animate-scroll-infinite" class, because that class is
+// defined outside this file and its distance could not be confirmed to
+// still match once the cards got smaller.
+// 2026-10-01 (rev 2, Frank): the banner now scrolls the full width of the
+// page. One set of four cards is only 1024px wide, narrower than a desktop
+// window, so on its own it would leave a blank gap at the right before the
+// loop restarted. Each half of the track therefore repeats the four cards
+// STAT_REPEATS times (4 x 1024px = 4096px, wider than any normal monitor),
+// which keeps cards on screen edge to edge at every moment of the loop.
+// STAT_SCROLL_SECONDS is the time for one half to pass; it went from 30 to
+// 120 because the half is now four times as long, so the cards move at the
+// same pace as before. Lower the number to speed the banner up.
+const STAT_REPEATS = 4;
+const STAT_LOOP_CARDS = Array.from(
+  { length: STAT_REPEATS * STAT_CARDS.length },
+  (_, i) => STAT_CARDS[i % STAT_CARDS.length],
+);
+const STAT_SCROLL_SECONDS = 120;
+const STAT_SCROLL_KEYFRAMES =
+  "@keyframes hatfield-stat-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }";
+
 const Index = () => {
   const features = [
     {
@@ -66,283 +104,296 @@ const Index = () => {
           from pt-32 (128px) to pt-24 (96px) — 32px, which is one line of
           the hero body text (text-xl, leading-relaxed = ~32.5px). The
           heading and everything below it in the hero rise together; no
-          other spacing, text or layout changed. */}
-      <section
-        className="relative pt-24 pb-20 overflow-hidden"
-        style={{ background: "var(--gradient-hero)" }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Headline + Logo Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-10">
-            <div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
-                AI-powered third-party risk&nbsp;management
-              </h1>
-            </div>
+          other spacing, text or layout changed.
+          2026-10-01 (Frank, option B): the hero is now a two-column split
+          on desktop (lg, 1024px+ windows) so that it and the scrolling
+          banner below fit in one screen. Left column: headline, opening
+          sentence, the "Together..." line and the four actions. Right
+          column: the 3D logo with the NEXUS and SIGNAL paragraphs as two
+          panels beneath it. Every word of the copy and every button is
+          unchanged; only their arrangement and sizes changed. Bottom
+          padding drops from pb-20 to pb-10; pt-24 is kept.
+          The grid has three blocks. On desktop blocks 1 and 3 stack in the
+          left column and block 2 spans the right column. On tablet and
+          phone they simply stack in reading order 1, 2, 3 — headline and
+          opening sentence, then logo + NEXUS + SIGNAL, then "Together..."
+          and the buttons — the same order the page read in before.
+          2026-10-01 (rev 2, Frank): "the home page should be sized so you
+          don't see beyond the scrolling banner". The hero and the banner
+          are now wrapped in one first-screen block that is exactly as tall
+          as the browser window (min-h-screen = 100% of the window height).
+          The banner keeps its natural height at the bottom of that block
+          and the hero stretches (flex-1) to fill everything above it, with
+          its content centred vertically in the space, so the bottom edge
+          of the banner sits on the bottom edge of the window and Platform
+          Capabilities only appears once the visitor scrolls. This works
+          because the Navigation bar floats over the top of the hero rather
+          than taking up its own row (that is what pt-24 has always made
+          room for). If the window is too short to hold the hero and the
+          banner, the block grows past the window instead of cutting
+          anything off, so nothing is ever clipped.
+          Also rev 2: "third-party" in the headline can no longer split
+          across two lines (it was breaking as "third-" / "party"). */}
+      <div className="min-h-screen flex flex-col">
+        <section
+          className="relative pt-24 pb-10 overflow-hidden flex-1 flex items-center"
+          style={{ background: "var(--gradient-hero)" }}
+        >
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-6">
+              {/* Block 1: headline + opening sentence (left column, top) */}
+              <div className="lg:col-start-1 lg:row-start-1 lg:self-end">
+                <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-tight mb-5">
+                  AI-powered{" "}
+                  <span className="whitespace-nowrap">third-party</span>{" "}
+                  risk&nbsp;management
+                </h1>
 
-            {/* Hero Image */}
-            <div className="flex justify-center lg:justify-end items-center">
-              <img
-                src={hero3dLogo}
-                alt="Hatfield 3D Logo"
-                className="w-48 sm:w-64 md:w-80 lg:w-96 h-auto object-contain"
-              />
-            </div>
-          </div>
+                {/* 2026-09-19 (Frank): hero copy replaced. The old three
+                    paragraphs (secure TPRM platform / developed as a prototype /
+                    inviting beta clients) now describe the two products, NEXUS
+                    and SIGNAL. 2026-09-19 (rev 2, Frank): the product names
+                    that open the NEXUS and SIGNAL paragraphs are bold
+                    (<strong>) so each paragraph leads with its product, same
+                    colour and size as the sentence around them.
+                    2026-10-01 (option B): body copy is text-lg (was
+                    text-lg/md:text-xl) so the hero is short enough to share
+                    the screen with the banner. */}
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Hatfield.ai brings third-party risk management and real-world
+                  risk intelligence together on one AI-native platform.
+                </p>
+              </div>
 
-          {/* Description and Buttons Below */}
-          <div className="max-w-6xl">
-            {/* 2026-09-19 (Frank): hero copy replaced. The old three
-                paragraphs (secure TPRM platform / developed as a prototype /
-                inviting beta clients) now describe the two products, NEXUS
-                and SIGNAL. Styling is unchanged: the first three paragraphs
-                use the same muted body style the old first two used, and the
-                closing "Together..." line takes the emphasised style the old
-                beta-client line had. Text only; no layout or class changes.
-                2026-09-19 (rev 2, Frank): the product names that open the
-                NEXUS and SIGNAL paragraphs are bold (<strong>) so each
-                paragraph leads with its product. Same colour and size as the
-                sentence around them; the "Together..." line is already
-                bold throughout and is unchanged. */}
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              Hatfield.ai brings third-party risk management and real-world
-              risk intelligence together on one AI-native platform.
-            </p>
+              {/* Block 2: logo + NEXUS and SIGNAL panels (right column) */}
+              <div className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center flex flex-col gap-4">
+                <div className="flex justify-center lg:justify-end">
+                  <img
+                    src={hero3dLogo}
+                    alt="Hatfield 3D Logo"
+                    className="w-32 sm:w-40 lg:w-36 h-auto object-contain"
+                  />
+                </div>
 
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              <strong className="font-bold">NEXUS</strong> provides the
-              operating system for third-party risk —
-              managing the entire lifecycle from intake and legal-entity
-              resolution through contracting, risk assessment, operational
-              resilience, regulatory compliance and reporting.
-            </p>
+                <p className="rounded-lg border border-white/20 bg-white/5 p-5 text-base text-muted-foreground leading-relaxed">
+                  <strong className="font-bold">NEXUS</strong> provides the
+                  operating system for third-party risk —
+                  managing the entire lifecycle from intake and legal-entity
+                  resolution through contracting, risk assessment, operational
+                  resilience, regulatory compliance and reporting.
+                </p>
 
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              <strong className="font-bold">SIGNAL</strong> provides the
-              intelligence layer — continuously monitoring
-              the companies that matter across financial health,
-              cybersecurity, sanctions, litigation, regulatory developments,
-              corporate actions, adverse media, geographic risk and other
-              emerging threats.
-            </p>
+                <p className="rounded-lg border border-white/20 bg-white/5 p-5 text-base text-muted-foreground leading-relaxed">
+                  <strong className="font-bold">SIGNAL</strong> provides the
+                  intelligence layer — continuously monitoring
+                  the companies that matter across financial health,
+                  cybersecurity, sanctions, litigation, regulatory developments,
+                  corporate actions, adverse media, geographic risk and other
+                  emerging threats.
+                </p>
+              </div>
 
-            <p className="text-xl md:text-2xl text-foreground font-semibold mb-8 leading-relaxed">
-              Together, NEXUS and SIGNAL give organizations a connected view of
-              third-party risk — assess what you know, monitor what changes,
-              and act on what matters.
-            </p>
+              {/* Block 3: "Together..." line + actions (left column, bottom) */}
+              <div className="lg:col-start-1 lg:row-start-2 lg:self-start">
+                <p className="text-lg lg:text-xl text-foreground font-semibold mb-6 leading-relaxed">
+                  Together, NEXUS and SIGNAL give organizations a connected view
+                  of third-party risk — assess what you know, monitor what
+                  changes, and act on what matters.
+                </p>
 
-            {/* Primary Actions + SIGNAL Introduction */}
-            {/* 2026-09-19 (rev 2, Frank): order is now Explore Capabilities,
-                Introducing SIGNAL, Hatfield.ai Introduction, Hatfield.ai
-                Commercial (renamed from Nexus Commercial, rev 3),
-                all four on ONE line on desktop (xl, 1280px+ windows).
-                To make four fit inside the max-w-6xl column, the three
-                buttons drop from text-lg/px-8 to text-base/px-6 and the SIGNAL
-                title is text-sm at every size. Below xl there is not room for
-                four in a row, so the row wraps (tablet) or stacks (phone)
-                rather than overflowing off the side of the screen. */}
-            <div className="flex flex-col sm:flex-row sm:flex-wrap xl:flex-nowrap sm:items-center gap-4">
-              <Button
-                size="lg"
-                className="text-base px-6 whitespace-nowrap"
-                onClick={() => {
-                  document
-                    .getElementById("capabilities")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                Explore Capabilities <ArrowRight className="ml-2" size={18} />
-              </Button>
-
-              {/* SIGNAL Product Introduction */}
-              {/* 2026-09-19 (rev 2): moved from last place to second, directly
-                  after Explore Capabilities. Dividers on both sides now set
-                  it apart from the buttons around it; the old sm:ml-3 is gone
-                  because the row gap already spaces it. */}
-              <a
-                href="/signal"
-                className="group flex items-center gap-3 py-2 transition-opacity duration-300 hover:opacity-80"
-                aria-label="Introducing SIGNAL — Hatfield.ai Real-Time Surveillance"
-              >
-                <span className="hidden sm:block h-9 w-px bg-white/30" />
-
-                <span className="flex flex-col text-left">
-                  <span className="text-xs uppercase tracking-[0.18em] font-semibold text-accent">
-                    Introducing SIGNAL
-                  </span>
-
-                  <span className="text-sm text-foreground font-medium whitespace-nowrap">
-                    Hatfield.ai Real-Time Surveillance
-                    <ArrowRight
-                      className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1"
-                      size={16}
-                    />
-                  </span>
-                </span>
-
-                <span className="hidden sm:block h-9 w-px bg-white/30" />
-              </a>
-
-              {/* 2026-09-19: label renamed from "Watch Introduction" to
-                  "Hatfield.ai Introduction" (Frank). Video unchanged.
-                  2026-09-22 (Frank): the video now starts playing by itself
-                  as soon as the button is clicked, always from 0:00. The
-                  embed URL carries autoplay=1 (play on load) and start=0
-                  (begin at the start). The iframe's allow list already
-                  includes "autoplay", which the browser requires before an
-                  embedded player may start on its own. The dialog removes
-                  the iframe when it closes, so every click loads a fresh
-                  player from the beginning; closing the dialog stops the
-                  video. */}
-              <Dialog>
-                <DialogTrigger asChild>
+                {/* Primary Actions + SIGNAL Introduction */}
+                {/* 2026-09-19 (rev 2, Frank): order is Explore Capabilities,
+                    Introducing SIGNAL, Hatfield.ai Introduction, Hatfield.ai
+                    Commercial (renamed from Nexus Commercial, rev 3).
+                    2026-10-01 (option B): the row now lives in the left half
+                    of the hero, which is too narrow for four in a line, so
+                    the old xl:flex-nowrap is removed and the row wraps: on
+                    desktop Explore Capabilities + Introducing SIGNAL sit on
+                    the first line and the two video buttons on the second.
+                    Order, labels, sizes and behaviour are unchanged. On a
+                    phone the four still stack one per line. */}
+                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4">
                   <Button
-                    variant="secondary"
                     size="lg"
                     className="text-base px-6 whitespace-nowrap"
+                    onClick={() => {
+                      document
+                        .getElementById("capabilities")
+                        ?.scrollIntoView({ behavior: "smooth" });
+                    }}
                   >
-                    <Play className="mr-2" size={18} />
-                    Hatfield.ai Introduction
+                    Explore Capabilities <ArrowRight className="ml-2" size={18} />
                   </Button>
-                </DialogTrigger>
 
-                <DialogContent className="max-w-4xl w-full p-0 bg-card">
-                  <div className="aspect-video w-full">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src="https://www.youtube.com/embed/l_w4UKB8KWQ?autoplay=1&start=0"
-                      title="Hatfield.ai Platform Demo"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      className="w-full h-full rounded-lg"
-                    />
-                  </div>
-                </DialogContent>
-              </Dialog>
-
-              {/* 2026-09-19: Commercial button (Frank), last in the row after
-                  Hatfield.ai Introduction. Same secondary style and modal
-                  pattern as the introduction button. The <video> only
-                  mounts while the dialog is open, so closing the dialog stops
-                  playback and the page does not download the video until
-                  someone clicks.
-                  2026-09-19 (rev 3, Frank): label renamed from "Nexus
-                  Commercial" to "Hatfield.ai Commercial", matching the
-                  "Hatfield.ai Introduction" button beside it. The video's
-                  title attribute and the no-video fallback link text were
-                  renamed with it so no "Nexus Commercial" wording is left
-                  anywhere a visitor or screen reader can see it. Video file
-                  unchanged. */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    className="text-base px-6 whitespace-nowrap"
+                  {/* SIGNAL Product Introduction */}
+                  {/* 2026-09-19 (rev 2): moved from last place to second,
+                      directly after Explore Capabilities. Dividers on both
+                      sides set it apart from the buttons around it. */}
+                  <a
+                    href="/signal"
+                    className="group flex items-center gap-3 py-2 transition-opacity duration-300 hover:opacity-80"
+                    aria-label="Introducing SIGNAL — Hatfield.ai Real-Time Surveillance"
                   >
-                    <Play className="mr-2" size={18} />
-                    Hatfield.ai Commercial
-                  </Button>
-                </DialogTrigger>
+                    <span className="hidden sm:block h-9 w-px bg-white/30" />
 
-                <DialogContent className="max-w-4xl w-full p-0 bg-card">
-                  <div className="aspect-video w-full">
-                    <video
-                      src={NEXUS_COMMERCIAL_SRC}
-                      title="Hatfield.ai Commercial"
-                      controls
-                      autoPlay
-                      playsInline
-                      preload="metadata"
-                      className="w-full h-full rounded-lg bg-black"
-                    >
-                      Your browser can't play this video.{" "}
-                      <a href={NEXUS_COMMERCIAL_SRC}>Download the Hatfield.ai Commercial</a>.
-                    </video>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                    <span className="flex flex-col text-left">
+                      <span className="text-xs uppercase tracking-[0.18em] font-semibold text-accent">
+                        Introducing SIGNAL
+                      </span>
+
+                      <span className="text-sm text-foreground font-medium whitespace-nowrap">
+                        Hatfield.ai Real-Time Surveillance
+                        <ArrowRight
+                          className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                          size={16}
+                        />
+                      </span>
+                    </span>
+
+                    <span className="hidden sm:block h-9 w-px bg-white/30" />
+                  </a>
+
+                  {/* 2026-09-19: label renamed from "Watch Introduction" to
+                      "Hatfield.ai Introduction" (Frank). Video unchanged.
+                      2026-09-22 (Frank): the video now starts playing by itself
+                      as soon as the button is clicked, always from 0:00. The
+                      embed URL carries autoplay=1 (play on load) and start=0
+                      (begin at the start). The iframe's allow list already
+                      includes "autoplay", which the browser requires before an
+                      embedded player may start on its own. The dialog removes
+                      the iframe when it closes, so every click loads a fresh
+                      player from the beginning; closing the dialog stops the
+                      video. */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        className="text-base px-6 whitespace-nowrap"
+                      >
+                        <Play className="mr-2" size={18} />
+                        Hatfield.ai Introduction
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="max-w-4xl w-full p-0 bg-card">
+                      <div className="aspect-video w-full">
+                        <iframe
+                          width="100%"
+                          height="100%"
+                          src="https://www.youtube.com/embed/l_w4UKB8KWQ?autoplay=1&start=0"
+                          title="Hatfield.ai Platform Demo"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="w-full h-full rounded-lg"
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
+                  {/* 2026-09-19: Commercial button (Frank), last in the row
+                      after Hatfield.ai Introduction. Same secondary style and
+                      modal pattern as the introduction button. The <video>
+                      only mounts while the dialog is open, so closing the
+                      dialog stops playback and the page does not download the
+                      video until someone clicks.
+                      2026-09-19 (rev 3, Frank): label renamed from "Nexus
+                      Commercial" to "Hatfield.ai Commercial", matching the
+                      "Hatfield.ai Introduction" button beside it. The video's
+                      title attribute and the no-video fallback link text were
+                      renamed with it so no "Nexus Commercial" wording is left
+                      anywhere a visitor or screen reader can see it. Video
+                      file unchanged. */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        className="text-base px-6 whitespace-nowrap"
+                      >
+                        <Play className="mr-2" size={18} />
+                        Hatfield.ai Commercial
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="max-w-4xl w-full p-0 bg-card">
+                      <div className="aspect-video w-full">
+                        <video
+                          src={NEXUS_COMMERCIAL_SRC}
+                          title="Hatfield.ai Commercial"
+                          controls
+                          autoPlay
+                          playsInline
+                          preload="metadata"
+                          className="w-full h-full rounded-lg bg-black"
+                        >
+                          Your browser can't play this video.{" "}
+                          <a href={NEXUS_COMMERCIAL_SRC}>Download the Hatfield.ai Commercial</a>.
+                        </video>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Key Stats Section */}
-      <section
-        data-stat-section
-        className="pb-16 pt-8 bg-white overflow-hidden"
-      >
-        <div className="flex items-center justify-center mb-8 pt-4">
-          <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[hsl(215,45%,15%)] leading-tight">
-            Introducing Hatfield.
+        {/* Key Stats Section */}
+        {/* 2026-10-01 (Frank, option B): the banner is a slim band that sits
+            directly under the hero so both are visible on one screen.
+            - Title is "Introducing Hatfield.ai" (was "Introducing Hatfield.").
+            - The cards STILL SCROLL, endlessly, right to left. They are
+              smaller (w-60 x 6.5rem, was w-80 x h-72) with the same colours,
+              border and wording.
+            - The cards come from STAT_CARDS (repeated into STAT_LOOP_CARDS,
+              see the top of the file) and the track is rendered twice; the
+              second copy is hidden from screen readers.
+            2026-10-01 (rev 2, Frank): the title is back ABOVE the cards,
+            centred, at every screen size (rev 1 pinned it at the left on
+            desktop), and the cards scroll the FULL width of the page, edge
+            to edge, as they did originally. The left-side title column and
+            its alignment padding are removed. */}
+        <section data-stat-section className="bg-white overflow-hidden py-5">
+          <style>{STAT_SCROLL_KEYFRAMES}</style>
+
+          <p className="px-4 mb-4 text-3xl lg:text-4xl font-bold text-[hsl(215,45%,15%)] leading-tight text-center">
+            Introducing Hatfield.ai
           </p>
-        </div>
 
-        <div className="relative">
-          <div className="flex animate-scroll-infinite">
-            {/* First set of cards */}
-            <div className="flex gap-6 px-3 flex-shrink-0">
-              <div className="bg-[hsl(215,25%,75%)] p-12 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-80 h-72 flex flex-col justify-center">
-                <div className="text-6xl font-bold mb-4">100%</div>
-                <div className="text-xl font-medium">Audit Ready</div>
-              </div>
-
-              <div className="bg-[hsl(215,25%,75%)] p-12 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-80 h-72 flex flex-col justify-center">
-                <div className="text-6xl font-bold mb-4">~3X</div>
-                <div className="text-xl font-medium">
-                  Reduction in redundant processing
+          <div className="relative overflow-hidden">
+            <div
+              className="flex w-max"
+              style={{
+                animation: `hatfield-stat-scroll ${STAT_SCROLL_SECONDS}s linear infinite`,
+              }}
+            >
+              {[0, 1].map((copy) => (
+                <div
+                  key={copy}
+                  className="flex gap-4 pr-4 flex-shrink-0"
+                  aria-hidden={copy === 1}
+                >
+                  {STAT_LOOP_CARDS.map((card, cardIndex) => (
+                    <div
+                      key={cardIndex}
+                      className="bg-[hsl(215,25%,75%)] px-6 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-60 h-[6.5rem] flex flex-col justify-center"
+                    >
+                      <div className="text-4xl font-bold leading-none mb-2">
+                        {card.value}
+                      </div>
+                      <div className="text-sm font-medium leading-snug">
+                        {card.label}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-
-              <div className="bg-[hsl(215,25%,75%)] p-12 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-80 h-72 flex flex-col justify-center">
-                <div className="text-6xl font-bold mb-4">70%</div>
-                <div className="text-xl font-medium">
-                  Reduction in risk assessment overhead
-                </div>
-              </div>
-
-              <div className="bg-[hsl(215,25%,75%)] p-12 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-80 h-72 flex flex-col justify-center">
-                <div className="text-6xl font-bold mb-4">SLA</div>
-                <div className="text-xl font-medium">
-                  Track days outstanding & performance
-                </div>
-              </div>
-            </div>
-
-            {/* Duplicate set for infinite scroll effect */}
-            <div className="flex gap-6 px-3 flex-shrink-0">
-              <div className="bg-[hsl(215,25%,75%)] p-12 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-80 h-72 flex flex-col justify-center">
-                <div className="text-6xl font-bold mb-4">100%</div>
-                <div className="text-xl font-medium">Audit Ready</div>
-              </div>
-
-              <div className="bg-[hsl(215,25%,75%)] p-12 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-80 h-72 flex flex-col justify-center">
-                <div className="text-6xl font-bold mb-4">~3X</div>
-                <div className="text-xl font-medium">
-                  Reduction in redundant processing
-                </div>
-              </div>
-
-              <div className="bg-[hsl(215,25%,75%)] p-12 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-80 h-72 flex flex-col justify-center">
-                <div className="text-6xl font-bold mb-4">70%</div>
-                <div className="text-xl font-medium">
-                  Reduction in risk assessment overhead
-                </div>
-              </div>
-
-              <div className="bg-[hsl(215,25%,75%)] p-12 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-80 h-72 flex flex-col justify-center">
-                <div className="text-6xl font-bold mb-4">SLA</div>
-                <div className="text-xl font-medium">
-                  Track days outstanding & performance
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* Features Section */}
       <section
