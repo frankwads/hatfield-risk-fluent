@@ -23,41 +23,88 @@ import { Play, ArrowRight } from "lucide-react";
 // re-pushed; only the visible wording changed.
 const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 
-// 2026-10-01 (Frank, option B): the four stat cards of the scrolling
-// "Introducing Hatfield.ai" banner, defined ONCE. The banner renders this
-// list twice, back to back, to make the endless loop; before today the
-// eight cards were written out by hand as two copies of the same markup.
-// Wording and order are unchanged.
-const STAT_CARDS = [
-  { value: "100%", label: "Audit Ready" },
-  { value: "~3X", label: "Reduction in redundant processing" },
-  { value: "70%", label: "Reduction in risk assessment overhead" },
-  { value: "SLA", label: "Track days outstanding & performance" },
+// 2026-10-01 (rev 4, Frank): the scrolling banner now carries BOTH products.
+// "add some capabilities related to signal in scrolling banner ... morph
+// headings accordingly ... feel free to update nexus capabilities as well".
+// The banner content is defined ONCE here as two groups. Each group opens
+// with a dark heading tile naming the product, followed by that product's
+// cards, so the heading travels with its own content: as the NEXUS cards
+// scroll off and the SIGNAL cards scroll on, the heading in view changes
+// with them. (A single fixed heading above the banner could not do this
+// honestly, because the banner is the full width of the page and cards
+// from both products are usually on screen at the same moment.)
+// Where the figures come from:
+//   NEXUS  - the "Hatfield.ai NEXUS" one-pager (96.8%, 70%, ~3X, 40-75%)
+//            plus "100% audit-ready by design" from the TPRM overview.
+//            The old "SLA / Track days outstanding & performance" card is
+//            dropped: it was the only card without a figure.
+//   SIGNAL - the "Hatfield.ai SIGNAL" one-pager (847, 21, 12, 234).
+// To change a card, edit the value or label here; nothing else needs
+// touching. To add a card, add a line to the group's cards list.
+const STAT_GROUPS = [
+  {
+    product: "NEXUS",
+    tagline: "The operating system for third-party risk",
+    cards: [
+      { value: "100%", label: "Audit-ready by design" },
+      { value: "~3X", label: "Fewer redundant assessments & onboardings" },
+      { value: "70%", label: "Less risk-assessment overhead" },
+      { value: "40–75%", label: "Lower total cost of ownership" },
+      { value: "96.8%", label: "Capability coverage — #1 of 12 platforms" },
+    ],
+  },
+  {
+    product: "SIGNAL",
+    tagline: "The intelligence layer",
+    cards: [
+      { value: "847", label: "Curated global sources" },
+      { value: "21", label: "Live intelligence surfaces" },
+      { value: "12", label: "Sanctions & export-control lists" },
+      { value: "234", label: "Countries & territories" },
+    ],
+  },
 ];
 
+// The banner's tiles in scrolling order: for each product, its heading tile
+// and then its cards. Built from STAT_GROUPS so the two can never disagree.
+type StatTile =
+  | { kind: "heading"; product: string; tagline: string }
+  | { kind: "card"; value: string; label: string };
+const STAT_TILES: StatTile[] = [];
+STAT_GROUPS.forEach((group) => {
+  STAT_TILES.push({
+    kind: "heading",
+    product: group.product,
+    tagline: group.tagline,
+  });
+  group.cards.forEach((card) => {
+    STAT_TILES.push({ kind: "card", value: card.value, label: card.label });
+  });
+});
+
 // 2026-10-01 (Frank, option B): the banner's own scroll animation. The
-// moving track is exactly two identical sets of cards wide (w-max), so
-// sliding it left by 50% of its own width lands the second set precisely
-// where the first one started and the loop has no visible jump, whatever
-// the card size. It is defined here, next to the banner, rather than
-// reusing the old "animate-scroll-infinite" class, because that class is
-// defined outside this file and its distance could not be confirmed to
-// still match once the cards got smaller.
-// 2026-10-01 (rev 2, Frank): the banner now scrolls the full width of the
-// page. One set of four cards is only 1024px wide, narrower than a desktop
-// window, so on its own it would leave a blank gap at the right before the
-// loop restarted. Each half of the track therefore repeats the four cards
-// STAT_REPEATS times (4 x 1024px = 4096px, wider than any normal monitor),
-// which keeps cards on screen edge to edge at every moment of the loop.
-// STAT_SCROLL_SECONDS is the time for one half to pass; it went from 30 to
-// 120 because the half is now four times as long, so the cards move at the
-// same pace as before. Lower the number to speed the banner up.
-const STAT_REPEATS = 4;
-const STAT_LOOP_CARDS = Array.from(
-  { length: STAT_REPEATS * STAT_CARDS.length },
-  (_, i) => STAT_CARDS[i % STAT_CARDS.length],
+// moving track is exactly two identical halves wide (w-max), so sliding it
+// left by 50% of its own width lands the second half precisely where the
+// first one started and the loop has no visible jump, whatever the tile
+// size. It is defined here, next to the banner, rather than reusing the
+// old "animate-scroll-infinite" class, because that class is defined
+// outside this file and its distance could not be confirmed to still match
+// once the cards got smaller.
+// 2026-10-01 (rev 2, Frank): the banner scrolls the full width of the page.
+// Each half of the track must be at least as wide as the browser window or
+// a blank gap shows at the right before the loop restarts, so each half
+// repeats the tiles STAT_REPEATS times.
+// 2026-10-01 (rev 4): one pass of the tiles is now 11 tiles x 256px =
+// 2816px (it was 4 cards = 1024px), so STAT_REPEATS drops from 4 to 2
+// (5632px per half, wider than any normal monitor) and STAT_SCROLL_SECONDS
+// goes from 120 to 165 to keep the cards moving at the same pace as before
+// (about 34px a second). Lower the number to speed the banner up.
+const STAT_REPEATS = 2;
+const STAT_LOOP_TILES: StatTile[] = Array.from(
+  { length: STAT_REPEATS * STAT_TILES.length },
+  (_, i) => STAT_TILES[i % STAT_TILES.length],
 );
-const STAT_SCROLL_SECONDS = 120;
+const STAT_SCROLL_SECONDS = 165;
 const STAT_SCROLL_KEYFRAMES =
   "@keyframes hatfield-stat-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }";
 
@@ -167,11 +214,17 @@ const Index = () => {
 
               {/* Block 2: logo + NEXUS and SIGNAL panels (right column) */}
               <div className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center flex flex-col gap-4">
+                {/* 2026-10-01 (rev 3, Frank): logo made more prominent.
+                    Desktop width goes from w-36 (144px) to w-56 (224px),
+                    about one and a half times the size; phone and tablet
+                    go from w-32/w-40 to w-40/w-48. Position is unchanged
+                    (right-aligned above the NEXUS panel on desktop, centred
+                    on phone and tablet). */}
                 <div className="flex justify-center lg:justify-end">
                   <img
                     src={hero3dLogo}
                     alt="Hatfield 3D Logo"
-                    className="w-32 sm:w-40 lg:w-36 h-auto object-contain"
+                    className="w-40 sm:w-48 lg:w-56 h-auto object-contain"
                   />
                 </div>
 
@@ -342,25 +395,23 @@ const Index = () => {
 
         {/* Key Stats Section */}
         {/* 2026-10-01 (Frank, option B): the banner is a slim band that sits
-            directly under the hero so both are visible on one screen.
-            - Title is "Introducing Hatfield.ai" (was "Introducing Hatfield.").
-            - The cards STILL SCROLL, endlessly, right to left. They are
-              smaller (w-60 x 6.5rem, was w-80 x h-72) with the same colours,
-              border and wording.
-            - The cards come from STAT_CARDS (repeated into STAT_LOOP_CARDS,
-              see the top of the file) and the track is rendered twice; the
-              second copy is hidden from screen readers.
-            2026-10-01 (rev 2, Frank): the title is back ABOVE the cards,
-            centred, at every screen size (rev 1 pinned it at the left on
-            desktop), and the cards scroll the FULL width of the page, edge
-            to edge, as they did originally. The left-side title column and
-            its alignment padding are removed. */}
-        <section data-stat-section className="bg-white overflow-hidden py-5">
+            directly under the hero so both are visible on one screen. The
+            tiles scroll endlessly, right to left, the full width of the
+            page (rev 2).
+            2026-10-01 (rev 4, Frank): "remove the heading introducing
+            hatfield.ai and minimize unnecessary white space in banner".
+            - The "Introducing Hatfield.ai" heading above the cards is gone.
+            - Padding above and below the cards drops from py-5 (20px) to
+              py-3 (12px) and the cards from 6.5rem to 6rem tall, so the
+              band is about 120px high (it was about 208px with the
+              heading). The hero above takes up the space this frees.
+            - The band now shows NEXUS and SIGNAL: a dark heading tile for
+              each product scrolls in ahead of that product's cards (see
+              STAT_GROUPS at the top of the file).
+            - The track is rendered twice for the loop; the second copy is
+              hidden from screen readers. */}
+        <section data-stat-section className="bg-white overflow-hidden py-3">
           <style>{STAT_SCROLL_KEYFRAMES}</style>
-
-          <p className="px-4 mb-4 text-3xl lg:text-4xl font-bold text-[hsl(215,45%,15%)] leading-tight text-center">
-            Introducing Hatfield.ai
-          </p>
 
           <div className="relative overflow-hidden">
             <div
@@ -375,19 +426,33 @@ const Index = () => {
                   className="flex gap-4 pr-4 flex-shrink-0"
                   aria-hidden={copy === 1}
                 >
-                  {STAT_LOOP_CARDS.map((card, cardIndex) => (
-                    <div
-                      key={cardIndex}
-                      className="bg-[hsl(215,25%,75%)] px-6 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-60 h-[6.5rem] flex flex-col justify-center"
-                    >
-                      <div className="text-4xl font-bold leading-none mb-2">
-                        {card.value}
+                  {STAT_LOOP_TILES.map((tile, tileIndex) =>
+                    tile.kind === "heading" ? (
+                      <div
+                        key={tileIndex}
+                        className="bg-[hsl(215,45%,15%)] px-6 rounded-lg text-white w-60 h-24 flex flex-col justify-center"
+                      >
+                        <div className="text-2xl font-bold tracking-[0.18em] leading-none mb-2">
+                          {tile.product}
+                        </div>
+                        <div className="text-sm font-medium leading-snug text-white/80">
+                          {tile.tagline}
+                        </div>
                       </div>
-                      <div className="text-sm font-medium leading-snug">
-                        {card.label}
+                    ) : (
+                      <div
+                        key={tileIndex}
+                        className="bg-[hsl(215,25%,75%)] px-6 rounded-lg text-[hsl(215,45%,15%)] border border-gray-300 w-60 h-24 flex flex-col justify-center"
+                      >
+                        <div className="text-4xl font-bold leading-none mb-1.5 whitespace-nowrap">
+                          {tile.value}
+                        </div>
+                        <div className="text-sm font-medium leading-snug">
+                          {tile.label}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </div>
               ))}
             </div>
