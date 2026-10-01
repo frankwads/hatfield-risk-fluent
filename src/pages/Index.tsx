@@ -219,12 +219,19 @@ const Index = () => {
                     about one and a half times the size; phone and tablet
                     go from w-32/w-40 to w-40/w-48. Position is unchanged
                     (right-aligned above the NEXUS panel on desktop, centred
-                    on phone and tablet). */}
-                <div className="flex justify-center lg:justify-end">
+                    on phone and tablet).
+                    2026-10-01 (rev 5, Frank): "center h logo over nexus and
+                    signal boxes and increase size". The logo is now centred
+                    above the two panels at every screen size (the desktop
+                    right-alignment, lg:justify-end, is removed) and grows
+                    again: desktop w-56 (224px) to w-72 (288px), twice the
+                    original 144px; phone and tablet w-40/w-48 to
+                    w-44/w-52. */}
+                <div className="flex justify-center">
                   <img
                     src={hero3dLogo}
                     alt="Hatfield 3D Logo"
-                    className="w-40 sm:w-48 lg:w-56 h-auto object-contain"
+                    className="w-44 sm:w-52 lg:w-72 h-auto object-contain"
                   />
                 </div>
 
