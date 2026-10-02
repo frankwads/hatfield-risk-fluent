@@ -265,51 +265,54 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
 // If the sequence is narrower than the window the WHOLE sequence is
 // repeated, never a fragment.
 //
-// 2026-10-02 (rev 14, Frank): second remediation pass, to the follow-up
-// requirements. Rev 12 moved the belt from JavaScript, writing a new
-// position on every frame. So:
-//   1. The belt is moved by ONE CSS animation on the track, which the
-//      browser runs on the graphics hardware. The per-frame JavaScript loop
-//      (requestAnimationFrame, distance, timestamps, style writes) is
-//      removed entirely.
-//   2. The rev 12 geometry is kept. JavaScript now only MEASURES: it reads
-//      the first sequence's layout width (offsetWidth, the exact layout
-//      figure the duplicate is placed by) and hands the animation two
-//      values: --ticker-distance (that width) and --ticker-duration
-//      (width / TICKER_PIXELS_PER_SECOND). It re-measures on resize and
-//      when fonts finish loading. Nothing is written per frame.
-//   3. Only the track is animated; no sequence and no tile animates.
-//   4. Pause on hover and keyboard focus is done by the browser
-//      (animation-play-state: paused), which freezes the belt where it is
-//      and resumes from the same place. Reduced motion is unchanged.
-//   5. DIAGNOSTIC (TICKER_EDGE_TEST below): with the test ON, the light
-//      tiles lose their one-pixel outline and the block separators go from
-//      1 pixel to 2 pixels wide.
+// 2026-10-02 (rev 14, Frank): the belt is moved by ONE CSS animation on the
+// track. JavaScript only MEASURES: it reads the first sequence's layout
+// width (offsetWidth) and hands the animation --ticker-distance (that
+// width) and --ticker-duration (width / TICKER_PIXELS_PER_SECOND). It
+// re-measures on resize and when fonts finish loading. Nothing is written
+// per frame. Only the track is animated. Pause on hover and keyboard focus
+// is done by the browser (animation-play-state: paused). The diagnostic
+// switch TICKER_EDGE_TEST removes the light tiles' one-pixel outline and
+// widens the block separators to 2 pixels.
 //
-// 2026-10-02 (rev 15, Frank): third test. The recording with the edge test
-// ON still showed judder, so the thin borders were not the underlying
-// cause. What remains is how text and hard vertical edges look while the
-// whole strip moves by a FRACTION of a pixel each frame: at 40 pixels a
-// second a 60 Hz screen advances about two thirds of a pixel per refresh.
-// This revision changes ONE thing: the speed goes from 40 to 60 pixels a
-// second, which on a 60 Hz screen is nominally one whole pixel per refresh.
-// TICKER_EDGE_TEST is deliberately LEFT ON so that speed is the only
-// variable. Nothing else in the mechanics or styling is touched. If 60 is
-// clearly smoother but feels fast, the compromise to try next is 50 to 60.
+// 2026-10-02 (rev 15, Frank): speed test at 60 pixels a second. Result: too
+// fast, and the judder was still visible, so matching movement to whole
+// pixels was not the cure.
+//
+// 2026-10-02 (rev 17, Frank): slow, calm pass. Two things change together:
+//   1. Speed goes from 60 to 30 pixels a second. That is half the rev 15
+//      pace and three quarters of the original 40. With this much to read,
+//      the aim is a slow, continuously gliding ticker, not a news crawl.
+//   2. The animation CSS is simplified so the browser chooses its own best
+//      way to draw moving text, instead of being forced onto a 3D layer:
+//        - keyframes use translateX() in place of translate3d();
+//        - backface-visibility: hidden is removed from the track;
+//        - the static transform: translateZ(0) is removed from the track;
+//        - will-change: transform is KEPT;
+//        - the linear infinite CSS animation is KEPT;
+//        - the measured width and duration calculation are KEPT.
+//      Forcing an extra 3D layer can make moving text rasterize worse, not
+//      better, which is what this pass tests.
+// Unchanged: the single-track + exact duplicate + measured-width design,
+// TICKER_EDGE_TEST = true, and all content, typography, spacing, card
+// sizes and sequence.
+// If 30 pixels a second still visibly stutters, velocity is not the lever:
+// the cause would be browser text rasterization, and the next step would be
+// a different implementation strategy, not another speed.
 // ---------------------------------------------------------------------------
-const TICKER_PIXELS_PER_SECOND = 60;
+const TICKER_PIXELS_PER_SECOND = 30;
 
 // rev 14 diagnostic switch. true = borders off, separators 2px (the test).
 // false = the normal design (1px tile outline, 1px separators).
-// rev 15: left at true on purpose for the speed test.
+// rev 17: still true on purpose.
 const TICKER_EDGE_TEST = true;
 
 // One animated element: the track. Until it has been measured the distance
 // is 0, so the belt simply stands still.
 const TICKER_CSS = `
 @keyframes hatfield-ticker-scroll {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(calc(-1 * var(--ticker-distance)), 0, 0); }
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-1 * var(--ticker-distance))); }
 }
 .hatfield-ticker-track {
   --ticker-distance: 0px;
@@ -317,8 +320,6 @@ const TICKER_CSS = `
   display: flex;
   width: max-content;
   will-change: transform;
-  backface-visibility: hidden;
-  transform: translateZ(0);
   animation: hatfield-ticker-scroll var(--ticker-duration) linear infinite;
 }
 .hatfield-ticker:hover .hatfield-ticker-track,
@@ -818,10 +819,10 @@ const Index = () => {
             2026-10-02 (rev 12, Frank): the ticker is its own component,
             HomepageTicker (defined above Index), because it measures itself.
             2026-10-02 (rev 14, Frank): moved by one CSS animation.
-            2026-10-02 (rev 15, Frank): speed test at 60 pixels a second;
-            see the rev 15 note above TICKER_PIXELS_PER_SECOND. What a
-            visitor sees is unchanged, apart from the faster pace and the
-            temporary edge test described there:
+            2026-10-02 (rev 17, Frank): slowed to 30 pixels a second with a
+            simpler animation; see the rev 17 note above
+            TICKER_PIXELS_PER_SECOND. What a visitor sees is unchanged, apart
+            from the slower pace and the temporary edge test described there:
             - Blocks that alternate NEXUS, SIGNAL, NEXUS, SIGNAL... and end
               on one Hatfield.ai tile. Each block opens with its dark navy
               NEXUS or SIGNAL box, followed by three or four capability
