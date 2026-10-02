@@ -258,72 +258,61 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
 ).length;
 
 // ---------------------------------------------------------------------------
-// 2026-10-02 (rev 12, Frank): smooth-scrolling remediation. The ticker
-// became ONE conveyor belt: one track holding the complete sequence and an
-// exact duplicate, moved at a constant pixels-per-second speed worked out
-// from the MEASURED width of the sequence, never from the number of tiles.
-// If the sequence is narrower than the window the WHOLE sequence is
-// repeated, never a fragment.
+// 2026-10-02 (rev 19, Frank): "let's try option 1 then". STEP AND REST.
 //
-// 2026-10-02 (rev 14, Frank): the belt is moved by ONE CSS animation on the
-// track. JavaScript only MEASURES: it reads the first sequence's layout
-// width (offsetWidth) and hands the animation --ticker-distance (that
-// width) and --ticker-duration (width / TICKER_PIXELS_PER_SECOND). It
-// re-measures on resize and when fonts finish loading. Nothing is written
-// per frame. Only the track is animated. Pause on hover and keyboard focus
-// is done by the browser (animation-play-state: paused). The diagnostic
-// switch TICKER_EDGE_TEST removes the light tiles' one-pixel outline and
-// widens the block separators to 2 pixels.
+// Why: revs 9 to 18 tried to make a continuous crawl look smooth (slower,
+// faster, graphics-layer hints, one track, two halves, animation-frame
+// loop, CSS animation, borders off, the old strip's exact speed). None
+// worked, and the tests on 2026-10-02 showed why:
+//   - a measurement on the live page found the movement steady (the same
+//     distance every frame, no dropped frames, CPU near zero);
+//   - cutting the strip to the width of the old card strip made no
+//     difference, so the strip's width was not the cause.
+// The browser was doing what it was told. What looked jerky was small,
+// sharp text sliding slowly: a screen shows motion as about 60 still
+// positions a second, and the eye picks that up on fine text. The old
+// "Introducing Hatfield." strip hid it with 60-pixel numerals on big cards.
+// No speed or rendering setting removes it, so the crawl is retired.
 //
-// 2026-10-02 (rev 15, Frank): speed test at 60 pixels a second. Too fast,
-// and the judder was still visible.
+// What the ticker does now:
+//   - The row RESTS, perfectly still, so the tiles can be read. Text that
+//     is not moving is drawn sharp.
+//   - Every TICKER_REST_MS it GLIDES one tile to the left, taking
+//     TICKER_GLIDE_MS, with a gentle ease in and out, then rests again. The
+//     glide is quick enough that the stepping does not register.
+//   - Each rest lines the next tile up at the left edge (TICKER_INSET_PX in
+//     from the edge), landing on a whole pixel.
+//   - It loops for ever with no visible restart: the row is the complete
+//     sequence followed by an exact duplicate, and when the first sequence
+//     has fully passed the row is moved back, instantly and invisibly, to
+//     where it started.
+//   - Hovering over the ticker, or tabbing into it, holds it at rest. It
+//     carries on from the same tile afterwards.
+//   - Reduced-motion setting: no automatic movement; the duplicate is
+//     hidden and the row can be scrolled sideways by hand.
+//   - If one complete sequence is narrower than the window, the WHOLE
+//     sequence is repeated to fill it; a sequence is never cut part-way.
+//   - React renders the tiles once. Movement is written straight to the
+//     row through a ref, so there is no React state change per step.
+// Unchanged: all wording, the order, the dark NEXUS / SIGNAL boxes, the
+// colours, tile sizes, links and the band height.
+// Removed with the crawl: TICKER_PIXELS_PER_SECOND, the scroll keyframes
+// and the TICKER_EDGE_TEST diagnostic. The light tiles have their normal
+// one-pixel outline again and the block separators are one pixel wide.
 //
-// 2026-10-02 (rev 17, Frank): 30 pixels a second, and the animation CSS
-// simplified so the browser chooses its own way to draw moving text:
-// translateX() in place of translate3d(), no backface-visibility, no static
-// translateZ(0); will-change: transform kept.
-//
-// 2026-10-02 (rev 18, Frank): "i dont think the ticker scroller in attached
-// old legacy code is jerky - can we replicate speed (not content)". The old
-// "Introducing Hatfield." card strip used, from src/index.css:
-//     @keyframes scroll-infinite { 0% translateX(0) -> 100% translateX(-50%) }
-//     .animate-scroll-infinite { animation: scroll-infinite 20s linear infinite; }
-// Its moving element was as wide as the browser window, so -50% meant half
-// the WINDOW width every 20 seconds: speed = window width / 40. On a
-// 1920-pixel-wide window that is 48 pixels a second, which is the figure
-// used here (1440 wide would have been 36). Only the speed is copied. The
-// old strip's content, card size and its once-per-loop jump are not.
-// Note the old strip used the same technique this one already uses since
-// rev 17 (a linear CSS animation of translateX), so speed is the only
-// difference left to match in the mechanics.
+// To tune: TICKER_REST_MS is how long the row stays still (4 seconds);
+// TICKER_GLIDE_MS is how long each move takes (0.6 seconds). With 33 tiles
+// a full cycle is about two and a half minutes.
 // ---------------------------------------------------------------------------
-const TICKER_PIXELS_PER_SECOND = 48;
+const TICKER_REST_MS = 4000;
+const TICKER_GLIDE_MS = 600;
+const TICKER_INSET_PX = 16;
 
-// rev 14 diagnostic switch. true = borders off, separators 2px (the test).
-// false = the normal design (1px tile outline, 1px separators).
-// Still true on purpose, so speed is the only thing changed in rev 18.
-const TICKER_EDGE_TEST = true;
-
-// One animated element: the track. Until it has been measured the distance
-// is 0, so the belt simply stands still.
 const TICKER_CSS = `
-@keyframes hatfield-ticker-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(calc(-1 * var(--ticker-distance))); }
-}
-.hatfield-ticker-track {
-  --ticker-distance: 0px;
-  --ticker-duration: 1s;
-  display: flex;
-  width: max-content;
-  will-change: transform;
-  animation: hatfield-ticker-scroll var(--ticker-duration) linear infinite;
-}
-.hatfield-ticker:hover .hatfield-ticker-track,
-.hatfield-ticker:focus-within .hatfield-ticker-track { animation-play-state: paused; }
+.hatfield-ticker-track { display: flex; width: max-content; }
 @media (prefers-reduced-motion: reduce) {
   .hatfield-ticker { overflow-x: auto; }
-  .hatfield-ticker-track { animation: none; will-change: auto; transform: none; }
+  .hatfield-ticker-track { transform: none !important; transition: none !important; }
   .hatfield-ticker-duplicate { display: none; }
 }
 `;
@@ -332,6 +321,9 @@ const HomepageTicker = () => {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const sequenceRef = useRef<HTMLDivElement>(null);
+  // Which tile is at the left edge. Kept in a ref so it survives a
+  // re-layout and the ticker carries on from the same tile.
+  const indexRef = useRef(0);
   // How many times the whole sequence is repeated inside one copy. 1 unless
   // the window is wider than one complete sequence.
   const [repeats, setRepeats] = useState(1);
@@ -342,9 +334,28 @@ const HomepageTicker = () => {
     const sequence = sequenceRef.current;
     if (!viewport || !track || !sequence) return;
 
-    // Measure only. No animation frame loop and no per-frame style writes.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let stops: number[] = [];
+    let sequenceWidth = 0;
+    let hovering = false;
+    let focused = false;
+    let resetTimer = 0;
+
+    // Put the row at stop number `index`. Stop numbers 0..n-1 are the tiles
+    // of the first sequence; stop n is the first tile of the duplicate,
+    // which looks identical to stop 0.
+    const place = (index: number, glide: boolean) => {
+      if (stops.length === 0) return;
+      const position =
+        index < stops.length ? stops[index] : sequenceWidth + stops[0];
+      track.style.transition = glide
+        ? `transform ${TICKER_GLIDE_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`
+        : "none";
+      track.style.transform = `translateX(${-Math.round(position)}px)`;
+    };
+
     const measure = () => {
-      const sequenceWidth = sequence.offsetWidth;
+      sequenceWidth = sequence.offsetWidth;
       if (sequenceWidth <= 0) return;
 
       const passWidth = sequenceWidth / repeats;
@@ -354,12 +365,50 @@ const HomepageTicker = () => {
         return;
       }
 
-      track.style.setProperty("--ticker-distance", `${sequenceWidth}px`);
-      track.style.setProperty(
-        "--ticker-duration",
-        `${sequenceWidth / TICKER_PIXELS_PER_SECOND}s`,
-      );
+      stops = Array.from(
+        sequence.querySelectorAll<HTMLElement>("[data-ticker-tile]"),
+      ).map((tile) => tile.offsetLeft - TICKER_INSET_PX);
+
+      if (indexRef.current >= stops.length) indexRef.current = 0;
+      if (!reduceMotion.matches) place(indexRef.current, false);
     };
+
+    const step = () => {
+      if (reduceMotion.matches || hovering || focused) return;
+      if (stops.length === 0) return;
+
+      indexRef.current += 1;
+      place(indexRef.current, true);
+
+      // After the glide onto the duplicate's first tile, move the row back
+      // to the real first tile without animation. The two look identical,
+      // so the visitor sees nothing.
+      if (indexRef.current >= stops.length) {
+        window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(() => {
+          indexRef.current = 0;
+          place(0, false);
+        }, TICKER_GLIDE_MS + 50);
+      }
+    };
+
+    const onEnter = () => {
+      hovering = true;
+    };
+    const onLeave = () => {
+      hovering = false;
+    };
+    const onFocusIn = () => {
+      focused = true;
+    };
+    const onFocusOut = () => {
+      focused = false;
+    };
+
+    viewport.addEventListener("mouseenter", onEnter);
+    viewport.addEventListener("mouseleave", onLeave);
+    viewport.addEventListener("focusin", onFocusIn);
+    viewport.addEventListener("focusout", onFocusOut);
 
     // Fires on window resize and when fonts load and change the text widths.
     const resizeObserver = new ResizeObserver(measure);
@@ -367,9 +416,19 @@ const HomepageTicker = () => {
     resizeObserver.observe(sequence);
 
     measure();
+    const stepTimer = window.setInterval(
+      step,
+      TICKER_REST_MS + TICKER_GLIDE_MS,
+    );
 
     return () => {
+      window.clearInterval(stepTimer);
+      window.clearTimeout(resetTimer);
       resizeObserver.disconnect();
+      viewport.removeEventListener("mouseenter", onEnter);
+      viewport.removeEventListener("mouseleave", onLeave);
+      viewport.removeEventListener("focusin", onFocusIn);
+      viewport.removeEventListener("focusout", onFocusOut);
     };
   }, [repeats]);
 
@@ -387,7 +446,7 @@ const HomepageTicker = () => {
               key={copy}
               ref={copy === 0 ? sequenceRef : undefined}
               className={
-                "flex items-center gap-4 pr-4 flex-shrink-0" +
+                "relative flex items-center gap-4 pr-4 flex-shrink-0" +
                 (copy === 1 ? " hatfield-ticker-duplicate" : "")
               }
               aria-hidden={copy === 1}
@@ -401,10 +460,7 @@ const HomepageTicker = () => {
                       <span
                         key={key}
                         aria-hidden="true"
-                        className={
-                          "h-12 flex-shrink-0 bg-[hsl(215,25%,75%)] " +
-                          (TICKER_EDGE_TEST ? "w-[2px]" : "w-px")
-                        }
+                        className="h-12 w-px flex-shrink-0 bg-[hsl(215,25%,75%)]"
                       />
                     );
                   }
@@ -414,8 +470,7 @@ const HomepageTicker = () => {
                     "h-24 px-6 rounded-lg flex flex-col justify-center flex-shrink-0 max-w-[80vw] sm:max-w-none " +
                     (tile.anchor
                       ? "bg-[hsl(215,45%,15%)] text-white"
-                      : "bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)]" +
-                        (TICKER_EDGE_TEST ? "" : " border border-gray-300"));
+                      : "bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)] border border-gray-300");
                   const tileBody = (
                     <>
                       {/* rev 8: small product label on non-anchor tiles */}
@@ -448,6 +503,7 @@ const HomepageTicker = () => {
                   return tile.href ? (
                     <a
                       key={key}
+                      data-ticker-tile
                       href={tile.href}
                       tabIndex={copy === 1 ? -1 : undefined}
                       className={
@@ -458,7 +514,7 @@ const HomepageTicker = () => {
                       {tileBody}
                     </a>
                   ) : (
-                    <div key={key} className={tileClassName}>
+                    <div key={key} data-ticker-tile className={tileClassName}>
                       {tileBody}
                     </div>
                   );
@@ -806,20 +862,18 @@ const Index = () => {
 
         {/* Homepage Ticker (was "Key Stats Section") */}
         {/* 2026-10-01 (Frank, option B): a slim band directly under the hero
-            so both are visible on one screen; scrolls endlessly, right to
-            left, the full width of the page (rev 2); no heading above it
-            and minimal padding (rev 4).
+            so both are visible on one screen, the full width of the page
+            (rev 2); no heading above it and minimal padding (rev 4).
             2026-10-01 (rev 7, Frank): rebuilt to the Homepage Ticker
             Requirements document.
             2026-10-02 (rev 8, Frank): alternating sequence.
             2026-10-02 (rev 9, Frank): a dark product box opens every block.
             2026-10-02 (rev 12, Frank): the ticker is its own component,
             HomepageTicker (defined above Index), because it measures itself.
-            2026-10-02 (rev 14, Frank): moved by one CSS animation.
-            2026-10-02 (rev 18, Frank): speed set to match the old
-            "Introducing Hatfield." card strip; see the rev 18 note above
-            TICKER_PIXELS_PER_SECOND. What a visitor sees is unchanged, apart
-            from the pace and the temporary edge test described there:
+            2026-10-02 (rev 19, Frank): step and rest. The row no longer
+            crawls; it rests, then glides one tile to the left, then rests
+            again. See the rev 19 note above TICKER_REST_MS. What a visitor
+            sees:
             - Blocks that alternate NEXUS, SIGNAL, NEXUS, SIGNAL... and end
               on one Hatfield.ai tile. Each block opens with its dark navy
               NEXUS or SIGNAL box, followed by three or four capability
@@ -831,12 +885,12 @@ const Index = () => {
               show a small NEXUS or SIGNAL label above the headline.
             - Tiles are as wide as their text, so no headline or value line
               wraps on tablet or desktop. On a phone a tile is capped at 80%
-              of the screen width and its text may wrap, which shows fewer
-              tiles at full-size type rather than shrinking the type.
+              of the screen width and its text may wrap.
             - A thin vertical line separates one block from the next.
             - Band height is unchanged (h-24 tiles, py-3), same palette.
-            - The ticker pauses on hover and on keyboard focus, resumes from
-              the same position, and honours the reduced-motion setting.
+            - The ticker holds still while the pointer is over it or a tile
+              has keyboard focus, carries on from the same tile, and honours
+              the reduced-motion setting.
             - The sequence is rendered twice for the seamless loop; the
               second copy is hidden from screen readers and its links are
               skipped by the Tab key, so nothing is announced or focused
