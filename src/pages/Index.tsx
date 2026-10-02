@@ -275,36 +275,33 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
 // switch TICKER_EDGE_TEST removes the light tiles' one-pixel outline and
 // widens the block separators to 2 pixels.
 //
-// 2026-10-02 (rev 15, Frank): speed test at 60 pixels a second. Result: too
-// fast, and the judder was still visible, so matching movement to whole
-// pixels was not the cure.
+// 2026-10-02 (rev 15, Frank): speed test at 60 pixels a second. Too fast,
+// and the judder was still visible.
 //
-// 2026-10-02 (rev 17, Frank): slow, calm pass. Two things change together:
-//   1. Speed goes from 60 to 30 pixels a second. That is half the rev 15
-//      pace and three quarters of the original 40. With this much to read,
-//      the aim is a slow, continuously gliding ticker, not a news crawl.
-//   2. The animation CSS is simplified so the browser chooses its own best
-//      way to draw moving text, instead of being forced onto a 3D layer:
-//        - keyframes use translateX() in place of translate3d();
-//        - backface-visibility: hidden is removed from the track;
-//        - the static transform: translateZ(0) is removed from the track;
-//        - will-change: transform is KEPT;
-//        - the linear infinite CSS animation is KEPT;
-//        - the measured width and duration calculation are KEPT.
-//      Forcing an extra 3D layer can make moving text rasterize worse, not
-//      better, which is what this pass tests.
-// Unchanged: the single-track + exact duplicate + measured-width design,
-// TICKER_EDGE_TEST = true, and all content, typography, spacing, card
-// sizes and sequence.
-// If 30 pixels a second still visibly stutters, velocity is not the lever:
-// the cause would be browser text rasterization, and the next step would be
-// a different implementation strategy, not another speed.
+// 2026-10-02 (rev 17, Frank): 30 pixels a second, and the animation CSS
+// simplified so the browser chooses its own way to draw moving text:
+// translateX() in place of translate3d(), no backface-visibility, no static
+// translateZ(0); will-change: transform kept.
+//
+// 2026-10-02 (rev 18, Frank): "i dont think the ticker scroller in attached
+// old legacy code is jerky - can we replicate speed (not content)". The old
+// "Introducing Hatfield." card strip used, from src/index.css:
+//     @keyframes scroll-infinite { 0% translateX(0) -> 100% translateX(-50%) }
+//     .animate-scroll-infinite { animation: scroll-infinite 20s linear infinite; }
+// Its moving element was as wide as the browser window, so -50% meant half
+// the WINDOW width every 20 seconds: speed = window width / 40. On a
+// 1920-pixel-wide window that is 48 pixels a second, which is the figure
+// used here (1440 wide would have been 36). Only the speed is copied. The
+// old strip's content, card size and its once-per-loop jump are not.
+// Note the old strip used the same technique this one already uses since
+// rev 17 (a linear CSS animation of translateX), so speed is the only
+// difference left to match in the mechanics.
 // ---------------------------------------------------------------------------
-const TICKER_PIXELS_PER_SECOND = 30;
+const TICKER_PIXELS_PER_SECOND = 48;
 
 // rev 14 diagnostic switch. true = borders off, separators 2px (the test).
 // false = the normal design (1px tile outline, 1px separators).
-// rev 17: still true on purpose.
+// Still true on purpose, so speed is the only thing changed in rev 18.
 const TICKER_EDGE_TEST = true;
 
 // One animated element: the track. Until it has been measured the distance
@@ -819,10 +816,10 @@ const Index = () => {
             2026-10-02 (rev 12, Frank): the ticker is its own component,
             HomepageTicker (defined above Index), because it measures itself.
             2026-10-02 (rev 14, Frank): moved by one CSS animation.
-            2026-10-02 (rev 17, Frank): slowed to 30 pixels a second with a
-            simpler animation; see the rev 17 note above
+            2026-10-02 (rev 18, Frank): speed set to match the old
+            "Introducing Hatfield." card strip; see the rev 18 note above
             TICKER_PIXELS_PER_SECOND. What a visitor sees is unchanged, apart
-            from the slower pace and the temporary edge test described there:
+            from the pace and the temporary edge test described there:
             - Blocks that alternate NEXUS, SIGNAL, NEXUS, SIGNAL... and end
               on one Hatfield.ai tile. Each block opens with its dark navy
               NEXUS or SIGNAL box, followed by three or four capability
