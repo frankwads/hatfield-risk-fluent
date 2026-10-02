@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -219,63 +220,246 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
   (item) => item.kind === "tile",
 ).length;
 
-// The strip is two identical halves laid side by side. Each half slides
-// left by exactly its own width, so the second half lands where the first
-// started and the loop has no jump (requirement 5). Each half must be wider
-// than the browser window or a blank gap would show, so if tiles are
-// switched off until fewer than TICKER_MIN_TILES_PER_HALF remain, the pass
-// is repeated inside each half to make up the width. With all eight blocks
-// on there are 33 tiles and no repeat is needed.
-const TICKER_MIN_TILES_PER_HALF = 24;
-const TICKER_REPEATS = Math.max(
-  1,
-  Math.ceil(TICKER_MIN_TILES_PER_HALF / Math.max(1, TICKER_TILE_COUNT)),
-);
-const TICKER_HALF: TickerItem[] = Array.from(
-  { length: TICKER_REPEATS * TICKER_PASS.length },
-  (_, i) => TICKER_PASS[i % TICKER_PASS.length],
-);
+// ---------------------------------------------------------------------------
+// 2026-10-02 (rev 12, Frank): smooth-scrolling remediation, to the
+// "Homepage ticker - smooth-scrolling remediation requirements". A screen
+// recording showed the strip advancing in small visible steps. Only the
+// scrolling mechanics change here; the wording, sequence, colours, tile
+// sizes and NEXUS / SIGNAL alternation are untouched.
+//
+// What was wrong (revs 7 to 11): the strip was moved by a CSS keyframe
+// animation whose length was worked out from the NUMBER of tiles (seconds
+// per tile), although the tiles are very different widths, and in rev 11
+// the two halves were animated separately and had to stay in step.
+//
+// What it does now: the ticker is treated as ONE conveyor belt.
+//   1. ONE moving track holds the complete sequence followed by an exact
+//      duplicate. One transform is applied, to the track only.
+//   2. Speed is a constant TICKER_PIXELS_PER_SECOND (40, tune within about
+//      35 to 45). It no longer depends on how many tiles there are or how
+//      long their text is.
+//   3. The real width of the first sequence is MEASURED after layout
+//      (getBoundingClientRect), and re-measured if the window is resized or
+//      the fonts finish loading and change the widths.
+//   4. Movement is driven by requestAnimationFrame and is TIME based: each
+//      frame adds (seconds since the last frame x pixels per second) to the
+//      distance travelled. A 60 Hz screen, a 120 Hz screen and a dropped
+//      frame all give the same apparent speed.
+//   5. The position is distance modulo the sequence width, so when the
+//      first sequence has fully passed, the duplicate is exactly where the
+//      first one started. There is no restart and no seam.
+//   6. Only transform: translate3d is animated. No tile animates.
+//   7. Pause on hover and on keyboard focus simply stops adding distance,
+//      so the strip freezes where it is and resumes from the same place.
+//   8. Reduced motion: no automatic movement; the duplicate is hidden and
+//      the row can be scrolled sideways by hand (rules: TICKER_CSS).
+//   9. If one complete sequence is narrower than the window, the WHOLE
+//      sequence is repeated enough times to exceed it, and that is what
+//      gets duplicated. A sequence is never cut part-way. The old
+//      TICKER_MIN_TILES_PER_HALF / TICKER_REPEATS estimate is removed.
+//  10. React renders the tiles once. The animation writes the transform
+//      straight to the track element through a ref, so there is no React
+//      state update per frame.
+// ---------------------------------------------------------------------------
+const TICKER_PIXELS_PER_SECOND = 40;
 
-// Speed. Tiles are as wide as their text, so the pace is set per tile
-// rather than per pixel: TICKER_SECONDS_PER_TILE is how long each tile takes
-// to pass a fixed point. Lower it to speed the ticker up; the total loop
-// time follows the number of tiles automatically, so adding or removing
-// tiles never changes pace.
-// 2026-10-02 (rev 9, Frank): slowed from 8 to 12 seconds per tile.
-// 2026-10-02 (rev 11, Frank): "smooth out ticker headlines - feels a little
-// jerky". Set to 10. At 12 the strip moved well under one screen pixel per
-// frame, and movement that slow shows as tiny steps on some displays; 10 is
-// still slower than the original 8.
-const TICKER_SECONDS_PER_TILE = 10;
-const TICKER_LOOP_SECONDS =
-  TICKER_REPEATS * TICKER_TILE_COUNT * TICKER_SECONDS_PER_TILE;
-
-// Motion rules (requirement 4): continuous linear scroll, no easing or
-// attention effects; PAUSES while the pointer is over the ticker or a tile
-// has keyboard focus; and for visitors whose device asks for reduced
-// motion the animation is switched off entirely, the duplicate half is
-// hidden, and the strip becomes a still row they can scroll sideways.
-// 2026-10-02 (rev 9, smoothing): translate3d plus will-change: transform
-// ask the browser to slide the strip on the graphics hardware.
-// 2026-10-02 (rev 11, smoothing, part 2): until now the WHOLE strip (both
-// halves, roughly 25,000 pixels wide) was one moving piece. A piece that
-// large is bigger than most graphics hardware will hold as a single layer,
-// so the browser fell back to redrawing it as it moved, and that redrawing
-// is what reads as jerkiness. Each half is now animated on its own (the
-// class hatfield-ticker-half), sliding left by 100% of its own width. Each
-// moving piece is half the size, both move in step, and the visitor sees
-// exactly the same continuous strip.
+// The track is one composited layer (will-change on the track only, never
+// on the tiles). The transform itself is written by the animation loop.
 const TICKER_CSS = `
-@keyframes hatfield-ticker-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-100%, 0, 0); } }
-.hatfield-ticker-half { animation: hatfield-ticker-scroll ${TICKER_LOOP_SECONDS}s linear infinite; will-change: transform; backface-visibility: hidden; }
-.hatfield-ticker:hover .hatfield-ticker-half,
-.hatfield-ticker:focus-within .hatfield-ticker-half { animation-play-state: paused; }
+.hatfield-ticker-track { display: flex; width: max-content; will-change: transform; backface-visibility: hidden; transform: translate3d(0, 0, 0); }
 @media (prefers-reduced-motion: reduce) {
   .hatfield-ticker { overflow-x: auto; }
-  .hatfield-ticker-half { animation: none; will-change: auto; }
+  .hatfield-ticker-track { will-change: auto; transform: none !important; }
   .hatfield-ticker-duplicate { display: none; }
 }
 `;
+
+const HomepageTicker = () => {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const sequenceRef = useRef<HTMLDivElement>(null);
+  // Distance travelled, in pixels, kept in a ref so it survives a re-layout
+  // and is never reset to zero.
+  const distanceRef = useRef(0);
+  // How many times the whole sequence is repeated inside one copy. 1 unless
+  // the window is wider than one complete sequence (point 9 above).
+  const [repeats, setRepeats] = useState(1);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    const sequence = sequenceRef.current;
+    if (!viewport || !track || !sequence) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let sequenceWidth = 0;
+    let lastTimestamp = 0;
+    let hovering = false;
+    let focused = false;
+    let frame = 0;
+
+    const measure = () => {
+      sequenceWidth = sequence.getBoundingClientRect().width;
+      const passWidth = sequenceWidth / repeats;
+      if (passWidth > 0) {
+        const needed = Math.max(
+          1,
+          Math.ceil(viewport.clientWidth / passWidth),
+        );
+        if (needed !== repeats) setRepeats(needed);
+      }
+    };
+
+    const step = (timestamp: number) => {
+      if (lastTimestamp === 0) lastTimestamp = timestamp;
+      // Seconds since the previous frame. Capped so that returning to a
+      // background tab does not show as a sudden skip.
+      const elapsed = Math.min((timestamp - lastTimestamp) / 1000, 0.25);
+      lastTimestamp = timestamp;
+
+      if (reduceMotion.matches) {
+        track.style.transform = "";
+      } else if (sequenceWidth > 0) {
+        if (!hovering && !focused) {
+          distanceRef.current =
+            (distanceRef.current + elapsed * TICKER_PIXELS_PER_SECOND) %
+            sequenceWidth;
+        }
+        track.style.transform = `translate3d(${-distanceRef.current}px, 0, 0)`;
+      }
+
+      frame = requestAnimationFrame(step);
+    };
+
+    const onEnter = () => {
+      hovering = true;
+    };
+    const onLeave = () => {
+      hovering = false;
+    };
+    const onFocusIn = () => {
+      focused = true;
+    };
+    const onFocusOut = () => {
+      focused = false;
+    };
+
+    viewport.addEventListener("mouseenter", onEnter);
+    viewport.addEventListener("mouseleave", onLeave);
+    viewport.addEventListener("focusin", onFocusIn);
+    viewport.addEventListener("focusout", onFocusOut);
+
+    const resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(viewport);
+    resizeObserver.observe(sequence);
+
+    measure();
+    frame = requestAnimationFrame(step);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      viewport.removeEventListener("mouseenter", onEnter);
+      viewport.removeEventListener("mouseleave", onLeave);
+      viewport.removeEventListener("focusin", onFocusIn);
+      viewport.removeEventListener("focusout", onFocusOut);
+    };
+  }, [repeats]);
+
+  return (
+    <section data-stat-section className="bg-white py-3">
+      <style>{TICKER_CSS}</style>
+
+      <div
+        ref={viewportRef}
+        className="hatfield-ticker relative overflow-hidden"
+      >
+        <div ref={trackRef} className="hatfield-ticker-track">
+          {[0, 1].map((copy) => (
+            <div
+              key={copy}
+              ref={copy === 0 ? sequenceRef : undefined}
+              className={
+                "flex items-center gap-4 pr-4 flex-shrink-0" +
+                (copy === 1 ? " hatfield-ticker-duplicate" : "")
+              }
+              aria-hidden={copy === 1}
+            >
+              {Array.from({ length: repeats }).flatMap((_, repeatIndex) =>
+                TICKER_PASS.map((item, itemIndex) => {
+                  const key = `${repeatIndex}-${itemIndex}`;
+
+                  if (item.kind === "separator") {
+                    return (
+                      <span
+                        key={key}
+                        aria-hidden="true"
+                        className="h-12 w-px flex-shrink-0 bg-[hsl(215,25%,75%)]"
+                      />
+                    );
+                  }
+
+                  const tile = item.tile;
+                  const tileClassName =
+                    "h-24 px-6 rounded-lg flex flex-col justify-center flex-shrink-0 max-w-[80vw] sm:max-w-none " +
+                    (tile.anchor
+                      ? "bg-[hsl(215,45%,15%)] text-white"
+                      : "bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)] border border-gray-300");
+                  const tileBody = (
+                    <>
+                      {/* rev 8: small product label on non-anchor tiles */}
+                      {tile.product && !tile.anchor && (
+                        <span className="block mb-1 text-[10px] font-semibold uppercase leading-none tracking-[0.18em] opacity-70">
+                          {tile.product}
+                        </span>
+                      )}
+                      <span
+                        className={
+                          "block font-bold uppercase leading-tight sm:whitespace-nowrap " +
+                          (tile.anchor
+                            ? "text-xl tracking-[0.18em]"
+                            : "text-base tracking-[0.08em]")
+                        }
+                      >
+                        {tile.headline}
+                      </span>
+                      <span
+                        className={
+                          "block mt-1.5 text-sm font-medium leading-snug sm:whitespace-nowrap " +
+                          (tile.anchor ? "text-white/80" : "")
+                        }
+                      >
+                        {tile.value}
+                      </span>
+                    </>
+                  );
+
+                  return tile.href ? (
+                    <a
+                      key={key}
+                      href={tile.href}
+                      tabIndex={copy === 1 ? -1 : undefined}
+                      className={
+                        tileClassName +
+                        " transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(215,65%,48%)]"
+                      }
+                    >
+                      {tileBody}
+                    </a>
+                  ) : (
+                    <div key={key} className={tileClassName}>
+                      {tileBody}
+                    </div>
+                  );
+                }),
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const Index = () => {
   const features = [
@@ -621,11 +805,11 @@ const Index = () => {
             2026-10-01 (rev 7, Frank): rebuilt to the Homepage Ticker
             Requirements document.
             2026-10-02 (rev 8, Frank): alternating sequence.
-            2026-10-02 (rev 9, Frank): a dark product box opens every block,
-            and the scroll is slower and smoother.
-            2026-10-02 (rev 11, Frank): smoother again. Each half of the
-            strip now moves as its own piece (see TICKER_CSS). What a
-            visitor sees is unchanged:
+            2026-10-02 (rev 9, Frank): a dark product box opens every block.
+            2026-10-02 (rev 12, Frank): the ticker is now its own component,
+            HomepageTicker (defined above Index), because its smooth
+            scrolling needs to measure itself and run an animation loop.
+            What a visitor sees is unchanged:
             - Blocks that alternate NEXUS, SIGNAL, NEXUS, SIGNAL... and end
               on one Hatfield.ai tile. Each block opens with its dark navy
               NEXUS or SIGNAL box, followed by three or four capability
@@ -641,96 +825,13 @@ const Index = () => {
               tiles at full-size type rather than shrinking the type.
             - A thin vertical line separates one block from the next.
             - Band height is unchanged (h-24 tiles, py-3), same palette.
-            - The ticker pauses on hover and on keyboard focus and honours
-              the reduced-motion setting (rules: TICKER_CSS).
-            - The strip is rendered twice for the seamless loop; the second
-              copy is hidden from screen readers and its links are skipped
-              by the Tab key, so nothing is announced or focused twice. */}
-        {TICKER_TILE_COUNT > 0 && (
-          <section data-stat-section className="bg-white py-3">
-            <style>{TICKER_CSS}</style>
-
-            <div className="hatfield-ticker relative overflow-hidden">
-              <div className="flex w-max">
-                {[0, 1].map((copy) => (
-                  <div
-                    key={copy}
-                    className={
-                      "hatfield-ticker-half flex items-center gap-4 pr-4 flex-shrink-0" +
-                      (copy === 1 ? " hatfield-ticker-duplicate" : "")
-                    }
-                    aria-hidden={copy === 1}
-                  >
-                    {TICKER_HALF.map((item, itemIndex) => {
-                      if (item.kind === "separator") {
-                        return (
-                          <span
-                            key={itemIndex}
-                            aria-hidden="true"
-                            className="h-12 w-px flex-shrink-0 bg-[hsl(215,25%,75%)]"
-                          />
-                        );
-                      }
-
-                      const tile = item.tile;
-                      const tileClassName =
-                        "h-24 px-6 rounded-lg flex flex-col justify-center flex-shrink-0 max-w-[80vw] sm:max-w-none " +
-                        (tile.anchor
-                          ? "bg-[hsl(215,45%,15%)] text-white"
-                          : "bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)] border border-gray-300");
-                      const tileBody = (
-                        <>
-                          {/* rev 8: small product label on non-anchor tiles */}
-                          {tile.product && !tile.anchor && (
-                            <span className="block mb-1 text-[10px] font-semibold uppercase leading-none tracking-[0.18em] opacity-70">
-                              {tile.product}
-                            </span>
-                          )}
-                          <span
-                            className={
-                              "block font-bold uppercase leading-tight sm:whitespace-nowrap " +
-                              (tile.anchor
-                                ? "text-xl tracking-[0.18em]"
-                                : "text-base tracking-[0.08em]")
-                            }
-                          >
-                            {tile.headline}
-                          </span>
-                          <span
-                            className={
-                              "block mt-1.5 text-sm font-medium leading-snug sm:whitespace-nowrap " +
-                              (tile.anchor ? "text-white/80" : "")
-                            }
-                          >
-                            {tile.value}
-                          </span>
-                        </>
-                      );
-
-                      return tile.href ? (
-                        <a
-                          key={itemIndex}
-                          href={tile.href}
-                          tabIndex={copy === 1 ? -1 : undefined}
-                          className={
-                            tileClassName +
-                            " transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(215,65%,48%)]"
-                          }
-                        >
-                          {tileBody}
-                        </a>
-                      ) : (
-                        <div key={itemIndex} className={tileClassName}>
-                          {tileBody}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+            - The ticker pauses on hover and on keyboard focus, resumes from
+              the same position, and honours the reduced-motion setting.
+            - The sequence is rendered twice for the seamless loop; the
+              second copy is hidden from screen readers and its links are
+              skipped by the Tab key, so nothing is announced or focused
+              twice. */}
+        {TICKER_TILE_COUNT > 0 && <HomepageTicker />}
       </div>
 
       {/* Features Section */}
