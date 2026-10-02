@@ -10,7 +10,7 @@ import heroNetwork from "@/assets/hero-network.jpg";
 import logoColor from "@/assets/logo-color.png";
 import heroHLogo from "@/assets/hero-h-logo.png";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
-import { Play, ArrowRight, FileText } from "lucide-react";
+import { Play, ArrowRight } from "lucide-react";
 
 // 2026-09-19: Commercial video (button now labelled "Hatfield.ai Commercial",
 // see the button comment below). Served as a static file from
@@ -34,6 +34,40 @@ const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 // To publish a revised PDF, replace the file and keep the name.
 const NEXUS_PDF_SRC = "/docs/Hatfield_NEXUS.pdf";
 const SIGNAL_PDF_SRC = "/docs/Hatfield_SIGNAL.pdf";
+
+// 2026-10-02 (rev 13, Frank): "can we use trademark pdf icons (red and
+// white)" / "still blue pdf icons versus what i requested". The blue outline
+// icon and its small "PDF" caption are replaced by this red-and-white badge:
+// a red document with a folded corner and "PDF" in white across it. It is
+// drawn here as an inline SVG, so there is no image file to add. It is a
+// generic PDF badge in the familiar red and white; it is deliberately NOT
+// Adobe's own logo artwork, which is Adobe's trademark.
+const PdfBadge = () => (
+  <svg
+    viewBox="0 0 32 40"
+    width="34"
+    height="42"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path
+      d="M4 0h17l11 11v25a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z"
+      fill="#D92D20"
+    />
+    <path d="M21 0l11 11h-8a3 3 0 0 1-3-3V0z" fill="#F9B4AE" />
+    <text
+      x="16"
+      y="29"
+      textAnchor="middle"
+      fontFamily="Arial, Helvetica, sans-serif"
+      fontSize="10"
+      fontWeight="700"
+      fill="#FFFFFF"
+    >
+      PDF
+    </text>
+  </svg>
+);
 
 // ---------------------------------------------------------------------------
 // HOMEPAGE TICKER CONTENT
@@ -221,55 +255,69 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
 ).length;
 
 // ---------------------------------------------------------------------------
-// 2026-10-02 (rev 12, Frank): smooth-scrolling remediation, to the
-// "Homepage ticker - smooth-scrolling remediation requirements". A screen
-// recording showed the strip advancing in small visible steps. Only the
-// scrolling mechanics change here; the wording, sequence, colours, tile
-// sizes and NEXUS / SIGNAL alternation are untouched.
+// 2026-10-02 (rev 12, Frank): smooth-scrolling remediation. The ticker
+// became ONE conveyor belt: one track holding the complete sequence and an
+// exact duplicate, moved at a constant pixels-per-second speed worked out
+// from the MEASURED width of the sequence, never from the number of tiles.
+// If the sequence is narrower than the window the WHOLE sequence is
+// repeated, never a fragment.
 //
-// What was wrong (revs 7 to 11): the strip was moved by a CSS keyframe
-// animation whose length was worked out from the NUMBER of tiles (seconds
-// per tile), although the tiles are very different widths, and in rev 11
-// the two halves were animated separately and had to stay in step.
-//
-// What it does now: the ticker is treated as ONE conveyor belt.
-//   1. ONE moving track holds the complete sequence followed by an exact
-//      duplicate. One transform is applied, to the track only.
-//   2. Speed is a constant TICKER_PIXELS_PER_SECOND (40, tune within about
-//      35 to 45). It no longer depends on how many tiles there are or how
-//      long their text is.
-//   3. The real width of the first sequence is MEASURED after layout
-//      (getBoundingClientRect), and re-measured if the window is resized or
-//      the fonts finish loading and change the widths.
-//   4. Movement is driven by requestAnimationFrame and is TIME based: each
-//      frame adds (seconds since the last frame x pixels per second) to the
-//      distance travelled. A 60 Hz screen, a 120 Hz screen and a dropped
-//      frame all give the same apparent speed.
-//   5. The position is distance modulo the sequence width, so when the
-//      first sequence has fully passed, the duplicate is exactly where the
-//      first one started. There is no restart and no seam.
-//   6. Only transform: translate3d is animated. No tile animates.
-//   7. Pause on hover and on keyboard focus simply stops adding distance,
-//      so the strip freezes where it is and resumes from the same place.
-//   8. Reduced motion: no automatic movement; the duplicate is hidden and
-//      the row can be scrolled sideways by hand (rules: TICKER_CSS).
-//   9. If one complete sequence is narrower than the window, the WHOLE
-//      sequence is repeated enough times to exceed it, and that is what
-//      gets duplicated. A sequence is never cut part-way. The old
-//      TICKER_MIN_TILES_PER_HALF / TICKER_REPEATS estimate is removed.
-//  10. React renders the tiles once. The animation writes the transform
-//      straight to the track element through a ref, so there is no React
-//      state update per frame.
+// 2026-10-02 (rev 14, Frank): second remediation pass, to the follow-up
+// requirements. Rev 12 moved the belt from JavaScript, writing a new
+// position on every frame. At 40 pixels a second that is about two thirds
+// of a pixel per frame, and text and one-pixel edges shifted by fractions
+// of a pixel from the main thread can still shimmer. So:
+//   1. The belt is moved by ONE CSS animation on the track, which the
+//      browser runs on the graphics hardware. The per-frame JavaScript loop
+//      (requestAnimationFrame, distance, timestamps, style writes) is
+//      removed entirely.
+//   2. The rev 12 geometry is kept. JavaScript now only MEASURES: it reads
+//      the first sequence's layout width (offsetWidth, the exact layout
+//      figure the duplicate is placed by) and hands the animation two
+//      values: --ticker-distance (that width) and --ticker-duration
+//      (width / TICKER_PIXELS_PER_SECOND). It re-measures on resize and
+//      when fonts finish loading. Nothing is written per frame.
+//   3. Only the track is animated; no sequence and no tile animates.
+//   4. Pause on hover and keyboard focus is done by the browser
+//      (animation-play-state: paused), which freezes the belt where it is
+//      and resumes from the same place. Reduced motion is unchanged.
+//   5. Speed stays at 40 pixels a second. Slowing it further would make
+//      each frame's step smaller and the shimmer worse.
+//   6. DIAGNOSTIC (TICKER_EDGE_TEST below): thin one-pixel vertical edges
+//      make sub-pixel movement easy to see. With the test ON, the light
+//      tiles lose their one-pixel outline and the block separators go from
+//      1 pixel to 2 pixels wide. If a recording with the test ON is clearly
+//      smoother, the remaining judder was edge shimmer and the fix is to
+//      soften those edges. Set it to false to restore the normal look.
 // ---------------------------------------------------------------------------
 const TICKER_PIXELS_PER_SECOND = 40;
 
-// The track is one composited layer (will-change on the track only, never
-// on the tiles). The transform itself is written by the animation loop.
+// rev 14 diagnostic switch. true = borders off, separators 2px (the test).
+// false = the normal design (1px tile outline, 1px separators).
+const TICKER_EDGE_TEST = true;
+
+// One animated element: the track. Until it has been measured the distance
+// is 0, so the belt simply stands still.
 const TICKER_CSS = `
-.hatfield-ticker-track { display: flex; width: max-content; will-change: transform; backface-visibility: hidden; transform: translate3d(0, 0, 0); }
+@keyframes hatfield-ticker-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(calc(-1 * var(--ticker-distance)), 0, 0); }
+}
+.hatfield-ticker-track {
+  --ticker-distance: 0px;
+  --ticker-duration: 1s;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  animation: hatfield-ticker-scroll var(--ticker-duration) linear infinite;
+}
+.hatfield-ticker:hover .hatfield-ticker-track,
+.hatfield-ticker:focus-within .hatfield-ticker-track { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
   .hatfield-ticker { overflow-x: auto; }
-  .hatfield-ticker-track { will-change: auto; transform: none !important; }
+  .hatfield-ticker-track { animation: none; will-change: auto; transform: none; }
   .hatfield-ticker-duplicate { display: none; }
 }
 `;
@@ -278,11 +326,8 @@ const HomepageTicker = () => {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const sequenceRef = useRef<HTMLDivElement>(null);
-  // Distance travelled, in pixels, kept in a ref so it survives a re-layout
-  // and is never reset to zero.
-  const distanceRef = useRef(0);
   // How many times the whole sequence is repeated inside one copy. 1 unless
-  // the window is wider than one complete sequence (point 9 above).
+  // the window is wider than one complete sequence.
   const [repeats, setRepeats] = useState(1);
 
   useEffect(() => {
@@ -291,78 +336,34 @@ const HomepageTicker = () => {
     const sequence = sequenceRef.current;
     if (!viewport || !track || !sequence) return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let sequenceWidth = 0;
-    let lastTimestamp = 0;
-    let hovering = false;
-    let focused = false;
-    let frame = 0;
-
+    // Measure only. No animation frame loop and no per-frame style writes.
     const measure = () => {
-      sequenceWidth = sequence.getBoundingClientRect().width;
+      const sequenceWidth = sequence.offsetWidth;
+      if (sequenceWidth <= 0) return;
+
       const passWidth = sequenceWidth / repeats;
-      if (passWidth > 0) {
-        const needed = Math.max(
-          1,
-          Math.ceil(viewport.clientWidth / passWidth),
-        );
-        if (needed !== repeats) setRepeats(needed);
-      }
-    };
-
-    const step = (timestamp: number) => {
-      if (lastTimestamp === 0) lastTimestamp = timestamp;
-      // Seconds since the previous frame. Capped so that returning to a
-      // background tab does not show as a sudden skip.
-      const elapsed = Math.min((timestamp - lastTimestamp) / 1000, 0.25);
-      lastTimestamp = timestamp;
-
-      if (reduceMotion.matches) {
-        track.style.transform = "";
-      } else if (sequenceWidth > 0) {
-        if (!hovering && !focused) {
-          distanceRef.current =
-            (distanceRef.current + elapsed * TICKER_PIXELS_PER_SECOND) %
-            sequenceWidth;
-        }
-        track.style.transform = `translate3d(${-distanceRef.current}px, 0, 0)`;
+      const needed = Math.max(1, Math.ceil(viewport.clientWidth / passWidth));
+      if (needed !== repeats) {
+        setRepeats(needed);
+        return;
       }
 
-      frame = requestAnimationFrame(step);
+      track.style.setProperty("--ticker-distance", `${sequenceWidth}px`);
+      track.style.setProperty(
+        "--ticker-duration",
+        `${sequenceWidth / TICKER_PIXELS_PER_SECOND}s`,
+      );
     };
 
-    const onEnter = () => {
-      hovering = true;
-    };
-    const onLeave = () => {
-      hovering = false;
-    };
-    const onFocusIn = () => {
-      focused = true;
-    };
-    const onFocusOut = () => {
-      focused = false;
-    };
-
-    viewport.addEventListener("mouseenter", onEnter);
-    viewport.addEventListener("mouseleave", onLeave);
-    viewport.addEventListener("focusin", onFocusIn);
-    viewport.addEventListener("focusout", onFocusOut);
-
+    // Fires on window resize and when fonts load and change the text widths.
     const resizeObserver = new ResizeObserver(measure);
     resizeObserver.observe(viewport);
     resizeObserver.observe(sequence);
 
     measure();
-    frame = requestAnimationFrame(step);
 
     return () => {
-      cancelAnimationFrame(frame);
       resizeObserver.disconnect();
-      viewport.removeEventListener("mouseenter", onEnter);
-      viewport.removeEventListener("mouseleave", onLeave);
-      viewport.removeEventListener("focusin", onFocusIn);
-      viewport.removeEventListener("focusout", onFocusOut);
     };
   }, [repeats]);
 
@@ -394,7 +395,10 @@ const HomepageTicker = () => {
                       <span
                         key={key}
                         aria-hidden="true"
-                        className="h-12 w-px flex-shrink-0 bg-[hsl(215,25%,75%)]"
+                        className={
+                          "h-12 flex-shrink-0 bg-[hsl(215,25%,75%)] " +
+                          (TICKER_EDGE_TEST ? "w-[2px]" : "w-px")
+                        }
                       />
                     );
                   }
@@ -404,7 +408,8 @@ const HomepageTicker = () => {
                     "h-24 px-6 rounded-lg flex flex-col justify-center flex-shrink-0 max-w-[80vw] sm:max-w-none " +
                     (tile.anchor
                       ? "bg-[hsl(215,45%,15%)] text-white"
-                      : "bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)] border border-gray-300");
+                      : "bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)]" +
+                        (TICKER_EDGE_TEST ? "" : " border border-gray-300"));
                   const tileBody = (
                     <>
                       {/* rev 8: small product label on non-anchor tiles */}
@@ -594,14 +599,15 @@ const Index = () => {
 
                 {/* 2026-10-02 (rev 11, Frank): the NEXUS and SIGNAL panels
                     are now links. Clicking anywhere on a panel opens that
-                    product's three-page PDF in a new browser tab, and a PDF
-                    icon with the word "PDF" sits at the right of each panel
-                    so a visitor can see it is clickable. The wording, border,
-                    background, padding and text size of the panels are
-                    unchanged; the panel brightens slightly on hover and shows
-                    a focus outline for keyboard users. The files come from
-                    public/docs/ (NEXUS_PDF_SRC and SIGNAL_PDF_SRC at the top
-                    of this file). */}
+                    product's three-page PDF in a new browser tab. The
+                    wording, border, background, padding and text size of the
+                    panels are unchanged; the panel brightens slightly on
+                    hover and shows a focus outline for keyboard users. The
+                    files come from public/docs/ (NEXUS_PDF_SRC and
+                    SIGNAL_PDF_SRC at the top of this file).
+                    2026-10-02 (rev 13, Frank): the icon at the right of each
+                    panel is now the red-and-white PDF badge (PdfBadge, top of
+                    this file) in place of the blue outline icon and caption. */}
                 <a
                   href={NEXUS_PDF_SRC}
                   target="_blank"
@@ -617,11 +623,8 @@ const Index = () => {
                     resilience, regulatory compliance and reporting.
                   </span>
 
-                  <span className="flex flex-col items-center gap-1 flex-shrink-0 text-accent transition-transform duration-300 group-hover:-translate-y-0.5">
-                    <FileText size={28} aria-hidden="true" />
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">
-                      PDF
-                    </span>
+                  <span className="flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5">
+                    <PdfBadge />
                   </span>
                 </a>
 
@@ -641,11 +644,8 @@ const Index = () => {
                     emerging threats.
                   </span>
 
-                  <span className="flex flex-col items-center gap-1 flex-shrink-0 text-accent transition-transform duration-300 group-hover:-translate-y-0.5">
-                    <FileText size={28} aria-hidden="true" />
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">
-                      PDF
-                    </span>
+                  <span className="flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5">
+                    <PdfBadge />
                   </span>
                 </a>
               </div>
@@ -806,10 +806,11 @@ const Index = () => {
             Requirements document.
             2026-10-02 (rev 8, Frank): alternating sequence.
             2026-10-02 (rev 9, Frank): a dark product box opens every block.
-            2026-10-02 (rev 12, Frank): the ticker is now its own component,
-            HomepageTicker (defined above Index), because its smooth
-            scrolling needs to measure itself and run an animation loop.
-            What a visitor sees is unchanged:
+            2026-10-02 (rev 12, Frank): the ticker is its own component,
+            HomepageTicker (defined above Index), because it measures itself.
+            2026-10-02 (rev 14, Frank): moved by one CSS animation; see the
+            rev 14 note above TICKER_PIXELS_PER_SECOND. What a visitor sees
+            is unchanged, apart from the temporary edge test described there:
             - Blocks that alternate NEXUS, SIGNAL, NEXUS, SIGNAL... and end
               on one Hatfield.ai tile. Each block opens with its dark navy
               NEXUS or SIGNAL box, followed by three or four capability
