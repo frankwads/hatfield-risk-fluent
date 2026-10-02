@@ -9,7 +9,7 @@ import heroNetwork from "@/assets/hero-network.jpg";
 import logoColor from "@/assets/logo-color.png";
 import heroHLogo from "@/assets/hero-h-logo.png";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
-import { Play, ArrowRight } from "lucide-react";
+import { Play, ArrowRight, FileText } from "lucide-react";
 
 // 2026-09-19: Commercial video (button now labelled "Hatfield.ai Commercial",
 // see the button comment below). Served as a static file from
@@ -22,6 +22,17 @@ import { Play, ArrowRight } from "lucide-react";
 // "nexus" so the already-pushed 35.8 MB video does not have to be renamed or
 // re-pushed; only the visible wording changed.
 const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
+
+// 2026-10-02 (rev 11, Frank): "add pdf icons to nexus and signal boxes and
+// link to revised pdf docs for each if either box is clicked on". The two
+// product overviews are served as static files from public/docs/, the same
+// way the commercial video is served from public/videos/. The files must be
+// placed there under exactly these names:
+//   public/docs/Hatfield_NEXUS.pdf
+//   public/docs/Hatfield_SIGNAL.pdf
+// To publish a revised PDF, replace the file and keep the name.
+const NEXUS_PDF_SRC = "/docs/Hatfield_NEXUS.pdf";
+const SIGNAL_PDF_SRC = "/docs/Hatfield_SIGNAL.pdf";
 
 // ---------------------------------------------------------------------------
 // HOMEPAGE TICKER CONTENT
@@ -208,13 +219,13 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
   (item) => item.kind === "tile",
 ).length;
 
-// The moving track is two identical halves (w-max); sliding it left by 50%
-// of its own width lands the second half exactly where the first started,
-// so the loop has no jump (requirement 5). Each half must be wider than the
-// browser window or a blank gap would show, so if tiles are switched off
-// until fewer than TICKER_MIN_TILES_PER_HALF remain, the pass is repeated
-// inside each half to make up the width. With all eight blocks on there
-// are 33 tiles and no repeat is needed.
+// The strip is two identical halves laid side by side. Each half slides
+// left by exactly its own width, so the second half lands where the first
+// started and the loop has no jump (requirement 5). Each half must be wider
+// than the browser window or a blank gap would show, so if tiles are
+// switched off until fewer than TICKER_MIN_TILES_PER_HALF remain, the pass
+// is repeated inside each half to make up the width. With all eight blocks
+// on there are 33 tiles and no repeat is needed.
 const TICKER_MIN_TILES_PER_HALF = 24;
 const TICKER_REPEATS = Math.max(
   1,
@@ -230,10 +241,12 @@ const TICKER_HALF: TickerItem[] = Array.from(
 // to pass a fixed point. Lower it to speed the ticker up; the total loop
 // time follows the number of tiles automatically, so adding or removing
 // tiles never changes pace.
-// 2026-10-02 (rev 9, Frank): "the animation seems jerky - can we possibly
-// slow it down and smooth it out". Slowed from 8 to 12 seconds per tile,
-// which is two thirds of the previous speed.
-const TICKER_SECONDS_PER_TILE = 12;
+// 2026-10-02 (rev 9, Frank): slowed from 8 to 12 seconds per tile.
+// 2026-10-02 (rev 11, Frank): "smooth out ticker headlines - feels a little
+// jerky". Set to 10. At 12 the strip moved well under one screen pixel per
+// frame, and movement that slow shows as tiny steps on some displays; 10 is
+// still slower than the original 8.
+const TICKER_SECONDS_PER_TILE = 10;
 const TICKER_LOOP_SECONDS =
   TICKER_REPEATS * TICKER_TILE_COUNT * TICKER_SECONDS_PER_TILE;
 
@@ -242,21 +255,24 @@ const TICKER_LOOP_SECONDS =
 // has keyboard focus; and for visitors whose device asks for reduced
 // motion the animation is switched off entirely, the duplicate half is
 // hidden, and the strip becomes a still row they can scroll sideways.
-// 2026-10-02 (rev 9, smoothing): the track is very wide, and moving it with
-// a plain translateX left the browser redrawing it on the main thread,
-// which is what showed as jerkiness. The keyframes now use translate3d and
-// the track declares will-change: transform (with backface-visibility
-// hidden), which asks the browser to keep the whole track on its own
-// graphics layer and slide that layer, so the movement is carried by the
-// graphics hardware and stays even.
+// 2026-10-02 (rev 9, smoothing): translate3d plus will-change: transform
+// ask the browser to slide the strip on the graphics hardware.
+// 2026-10-02 (rev 11, smoothing, part 2): until now the WHOLE strip (both
+// halves, roughly 25,000 pixels wide) was one moving piece. A piece that
+// large is bigger than most graphics hardware will hold as a single layer,
+// so the browser fell back to redrawing it as it moved, and that redrawing
+// is what reads as jerkiness. Each half is now animated on its own (the
+// class hatfield-ticker-half), sliding left by 100% of its own width. Each
+// moving piece is half the size, both move in step, and the visitor sees
+// exactly the same continuous strip.
 const TICKER_CSS = `
-@keyframes hatfield-ticker-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
-.hatfield-ticker-track { animation: hatfield-ticker-scroll ${TICKER_LOOP_SECONDS}s linear infinite; will-change: transform; backface-visibility: hidden; }
-.hatfield-ticker:hover .hatfield-ticker-track,
-.hatfield-ticker:focus-within .hatfield-ticker-track { animation-play-state: paused; }
+@keyframes hatfield-ticker-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-100%, 0, 0); } }
+.hatfield-ticker-half { animation: hatfield-ticker-scroll ${TICKER_LOOP_SECONDS}s linear infinite; will-change: transform; backface-visibility: hidden; }
+.hatfield-ticker:hover .hatfield-ticker-half,
+.hatfield-ticker:focus-within .hatfield-ticker-half { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
   .hatfield-ticker { overflow-x: auto; }
-  .hatfield-ticker-track { animation: none; will-change: auto; }
+  .hatfield-ticker-half { animation: none; will-change: auto; }
   .hatfield-ticker-duplicate { display: none; }
 }
 `;
@@ -392,22 +408,62 @@ const Index = () => {
                   />
                 </div>
 
-                <p className="rounded-lg border border-white/20 bg-white/5 p-5 text-base text-muted-foreground leading-relaxed">
-                  <strong className="font-bold">NEXUS</strong> provides the
-                  operating system for third-party risk —
-                  managing the entire lifecycle from intake and legal-entity
-                  resolution through contracting, risk assessment, operational
-                  resilience, regulatory compliance and reporting.
-                </p>
+                {/* 2026-10-02 (rev 11, Frank): the NEXUS and SIGNAL panels
+                    are now links. Clicking anywhere on a panel opens that
+                    product's three-page PDF in a new browser tab, and a PDF
+                    icon with the word "PDF" sits at the right of each panel
+                    so a visitor can see it is clickable. The wording, border,
+                    background, padding and text size of the panels are
+                    unchanged; the panel brightens slightly on hover and shows
+                    a focus outline for keyboard users. The files come from
+                    public/docs/ (NEXUS_PDF_SRC and SIGNAL_PDF_SRC at the top
+                    of this file). */}
+                <a
+                  href={NEXUS_PDF_SRC}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="NEXUS overview, PDF, opens in a new tab"
+                  className="group flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <span className="flex-1 text-base text-muted-foreground leading-relaxed">
+                    <strong className="font-bold">NEXUS</strong> provides the
+                    operating system for third-party risk —
+                    managing the entire lifecycle from intake and legal-entity
+                    resolution through contracting, risk assessment, operational
+                    resilience, regulatory compliance and reporting.
+                  </span>
 
-                <p className="rounded-lg border border-white/20 bg-white/5 p-5 text-base text-muted-foreground leading-relaxed">
-                  <strong className="font-bold">SIGNAL</strong> provides the
-                  intelligence layer — continuously monitoring
-                  the companies that matter across financial health,
-                  cybersecurity, sanctions, litigation, regulatory developments,
-                  corporate actions, adverse media, geographic risk and other
-                  emerging threats.
-                </p>
+                  <span className="flex flex-col items-center gap-1 flex-shrink-0 text-accent transition-transform duration-300 group-hover:-translate-y-0.5">
+                    <FileText size={28} aria-hidden="true" />
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">
+                      PDF
+                    </span>
+                  </span>
+                </a>
+
+                <a
+                  href={SIGNAL_PDF_SRC}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="SIGNAL overview, PDF, opens in a new tab"
+                  className="group flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <span className="flex-1 text-base text-muted-foreground leading-relaxed">
+                    <strong className="font-bold">SIGNAL</strong> provides the
+                    intelligence layer — continuously monitoring
+                    the companies that matter across financial health,
+                    cybersecurity, sanctions, litigation, regulatory developments,
+                    corporate actions, adverse media, geographic risk and other
+                    emerging threats.
+                  </span>
+
+                  <span className="flex flex-col items-center gap-1 flex-shrink-0 text-accent transition-transform duration-300 group-hover:-translate-y-0.5">
+                    <FileText size={28} aria-hidden="true" />
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">
+                      PDF
+                    </span>
+                  </span>
+                </a>
               </div>
 
               {/* Block 3: "Together..." line + actions (left column, bottom) */}
@@ -566,7 +622,10 @@ const Index = () => {
             Requirements document.
             2026-10-02 (rev 8, Frank): alternating sequence.
             2026-10-02 (rev 9, Frank): a dark product box opens every block,
-            and the scroll is slower and smoother. What a visitor sees:
+            and the scroll is slower and smoother.
+            2026-10-02 (rev 11, Frank): smoother again. Each half of the
+            strip now moves as its own piece (see TICKER_CSS). What a
+            visitor sees is unchanged:
             - Blocks that alternate NEXUS, SIGNAL, NEXUS, SIGNAL... and end
               on one Hatfield.ai tile. Each block opens with its dark navy
               NEXUS or SIGNAL box, followed by three or four capability
@@ -584,7 +643,7 @@ const Index = () => {
             - Band height is unchanged (h-24 tiles, py-3), same palette.
             - The ticker pauses on hover and on keyboard focus and honours
               the reduced-motion setting (rules: TICKER_CSS).
-            - The track is rendered twice for the seamless loop; the second
+            - The strip is rendered twice for the seamless loop; the second
               copy is hidden from screen readers and its links are skipped
               by the Tab key, so nothing is announced or focused twice. */}
         {TICKER_TILE_COUNT > 0 && (
@@ -592,12 +651,12 @@ const Index = () => {
             <style>{TICKER_CSS}</style>
 
             <div className="hatfield-ticker relative overflow-hidden">
-              <div className="hatfield-ticker-track flex w-max">
+              <div className="flex w-max">
                 {[0, 1].map((copy) => (
                   <div
                     key={copy}
                     className={
-                      "flex items-center gap-4 pr-4 flex-shrink-0" +
+                      "hatfield-ticker-half flex items-center gap-4 pr-4 flex-shrink-0" +
                       (copy === 1 ? " hatfield-ticker-duplicate" : "")
                     }
                     aria-hidden={copy === 1}
