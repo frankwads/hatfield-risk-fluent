@@ -31,27 +31,29 @@ const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 //
 // 2026-10-02 (rev 8, Frank): "instead of having one long stream about
 // signal, have 3 or 4 items on nexus and then 3 or 4 items on signal and
-// keep alternating". The four long rotations (NEXUS 7, SIGNAL 8,
-// Capabilities 12, Why Hatfield 6 = 33 tiles) are replaced by ONE
-// alternating sequence of 28 tiles: NEXUS 4, SIGNAL 4, NEXUS 4, SIGNAL 4,
-// NEXUS 4, SIGNAL 4, NEXUS 3, then one closing Hatfield.ai tile. No product
-// runs longer than four tiles.
+// keep alternating". One alternating sequence: NEXUS, SIGNAL, NEXUS,
+// SIGNAL, NEXUS, SIGNAL, NEXUS, then one closing Hatfield.ai tile.
 //   - Wording is taken from the final NEXUS and SIGNAL three-page PDFs
 //     (2026-10-02), so the ticker and the collateral say the same things.
 //   - The four original homepage stats return WITHOUT percentages:
 //     "~3X" is "Eliminate redundant processing", "70%" is "Reduce
 //     assessment overhead", "100% Audit Ready" is "Audit ready", and "SLA"
 //     is "SLA tracking".
-//   - Duplicates from rev 7 are gone (Intelligent intake, AI with control,
-//     Economic intelligence and assessment reuse each appeared twice).
-//   - Every non-anchor tile now carries a small NEXUS or SIGNAL label above
-//     its headline (the "product" field), so a visitor can tell which
-//     product a tile belongs to at any point in the scroll.
-//   - The switched-off "SIGNAL scale" rotation (847 / 12 / 234) is removed.
-//     Its figures were out of date and it was never shown.
+//   - Every non-anchor tile carries a small NEXUS or SIGNAL label above
+//     its headline (the "product" field).
 //
-// EVERYTHING the ticker says is in TICKER_ROTATIONS below and nowhere else
-// (requirement 5: content-configurable, not hard-coded into the animation).
+// 2026-10-02 (rev 9, Frank): "we should include dark blue signal and nexus
+// boxes between all nexus and signal boxes". Every NEXUS block now opens
+// with the dark NEXUS box and every SIGNAL block with the dark SIGNAL box,
+// so each switch of product is announced by its dark box. The two boxes are
+// defined ONCE (NEXUS_ANCHOR and SIGNAL_ANCHOR below) and reused, so their
+// wording and link are changed in one place. The sequence is now 33 tiles:
+// seven dark product boxes, 25 capability tiles and the closing
+// Hatfield.ai box.
+//
+// EVERYTHING the ticker says is in NEXUS_ANCHOR, SIGNAL_ANCHOR and
+// TICKER_ROTATIONS below and nowhere else (requirement 5:
+// content-configurable, not hard-coded into the animation).
 //   - Edit a tile:      change its headline or value text.
 //   - Reorder:          move the tile's line, or move a whole block.
 //   - Switch off a tile:      add  enabled: false  to that tile.
@@ -65,7 +67,7 @@ const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 // or list count appears in the ticker. The only figure is the three named
 // financial-health models.
 //
-// Links (requirement 5): only the three anchor tiles are links. SIGNAL goes
+// Links (requirement 5): only the dark anchor boxes are links. SIGNAL goes
 // to /signal, the same address the hero's "Introducing SIGNAL" link uses.
 // NEXUS goes to /contact (the "Book a briefing" destination used on the
 // NEXUS PDF) because there is no dedicated NEXUS page. HATFIELD.AI goes to
@@ -82,12 +84,27 @@ type TickerTile = {
 };
 type TickerRotation = { id: string; enabled: boolean; tiles: TickerTile[] };
 
+// rev 9: the two dark product boxes, defined once and reused at the start
+// of every block of their product.
+const NEXUS_ANCHOR: TickerTile = {
+  headline: "NEXUS",
+  value: "The operating system for third-party risk.",
+  anchor: true,
+  href: "/contact",
+};
+const SIGNAL_ANCHOR: TickerTile = {
+  headline: "SIGNAL",
+  value: "Your GPS for business decisions.",
+  anchor: true,
+  href: "/signal",
+};
+
 const TICKER_ROTATIONS: TickerRotation[] = [
   {
     id: "1 - NEXUS",
     enabled: true,
     tiles: [
-      { headline: "NEXUS", value: "The operating system for third-party risk.", anchor: true, href: "/contact" },
+      NEXUS_ANCHOR,
       { product: "NEXUS", headline: "Stop managing third-party risk in pieces", value: "One relationship. One lifecycle. One defensible record." },
       { product: "NEXUS", headline: "Connected. Not stitched.", value: "You don’t have a third-party problem. You have a fragmentation problem." },
       { product: "NEXUS", headline: "One authoritative identity", value: "Every third party resolves to one legal entity." },
@@ -97,7 +114,7 @@ const TICKER_ROTATIONS: TickerRotation[] = [
     id: "2 - SIGNAL",
     enabled: true,
     tiles: [
-      { headline: "SIGNAL", value: "Your GPS for business decisions.", anchor: true, href: "/signal" },
+      SIGNAL_ANCHOR,
       { product: "SIGNAL", headline: "The signal is already there", value: "Know before risk alerts become your news headline." },
       { product: "SIGNAL", headline: "Signal. Not noise.", value: "You don’t have an information problem. You have a signal problem." },
       { product: "SIGNAL", headline: "The company is the story", value: "SIGNAL sees the whole picture." },
@@ -107,6 +124,7 @@ const TICKER_ROTATIONS: TickerRotation[] = [
     id: "3 - NEXUS",
     enabled: true,
     tiles: [
+      NEXUS_ANCHOR,
       { product: "NEXUS", headline: "Eliminate redundant processing", value: "Onboard once. Assess once." },
       { product: "NEXUS", headline: "Reduce assessment overhead", value: "Valid prior assessments and evidence are reused, not repeated." },
       { product: "NEXUS", headline: "Contract right", value: "Reviewed by two AI models and mapped to the regulators that govern you." },
@@ -117,6 +135,7 @@ const TICKER_ROTATIONS: TickerRotation[] = [
     id: "4 - SIGNAL",
     enabled: true,
     tiles: [
+      SIGNAL_ANCHOR,
       { product: "SIGNAL", headline: "Know what changed", value: "Financials, cyber, sanctions, litigation, regulation and supply chain." },
       { product: "SIGNAL", headline: "Know what matters", value: "Tested for materiality and consolidated into one event." },
       { product: "SIGNAL", headline: "Know where to act", value: "Severity-ranked and summed up in one daily brief." },
@@ -127,6 +146,7 @@ const TICKER_ROTATIONS: TickerRotation[] = [
     id: "5 - NEXUS",
     enabled: true,
     tiles: [
+      NEXUS_ANCHOR,
       { product: "NEXUS", headline: "AI automates. Your people decide.", value: "AI proposes. Logic verifies. Your people decide." },
       { product: "NEXUS", headline: "Audit ready", value: "Every decision on the record." },
       { product: "NEXUS", headline: "SLA tracking", value: "Days outstanding and performance, by domain and team." },
@@ -137,6 +157,7 @@ const TICKER_ROTATIONS: TickerRotation[] = [
     id: "6 - SIGNAL",
     enabled: true,
     tiles: [
+      SIGNAL_ANCHOR,
       { product: "SIGNAL", headline: "Are we watching the right company?", value: "Every name resolved to its registered legal entity." },
       { product: "SIGNAL", headline: "Not separate feeds", value: "One intelligence picture." },
       { product: "SIGNAL", headline: "A thirteenth question? Ask SIGNAL.", value: "Answers from your own portfolio evidence." },
@@ -147,6 +168,7 @@ const TICKER_ROTATIONS: TickerRotation[] = [
     id: "7 - NEXUS",
     enabled: true,
     tiles: [
+      NEXUS_ANCHOR,
       { product: "NEXUS", headline: "The relationship changes", value: "NEXUS keeps the thread." },
       { product: "NEXUS", headline: "Built to replace, not to add", value: "One platform. No suite to buy. No per-vendor data fees." },
       { product: "NEXUS", headline: "Your risk appetite, not ours", value: "Settings your administrators change on screen. No code." },
@@ -165,8 +187,9 @@ const TICKER_ROTATIONS: TickerRotation[] = [
 // HOMEPAGE TICKER MECHANICS (no wording below this line)
 // One "pass" is every enabled tile of every enabled block, in order, with a
 // thin separator ahead of each block. Built from TICKER_ROTATIONS so the two
-// can never disagree. Because the blocks now alternate NEXUS / SIGNAL, the
-// separator marks every switch from one product to the other.
+// can never disagree. Because the blocks alternate NEXUS / SIGNAL, the
+// separator and the dark box that follows it mark every switch from one
+// product to the other.
 // ---------------------------------------------------------------------------
 type TickerItem = { kind: "separator" } | { kind: "tile"; tile: TickerTile };
 const TICKER_PASS: TickerItem[] = [];
@@ -187,7 +210,7 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
 // browser window or a blank gap would show, so if tiles are switched off
 // until fewer than TICKER_MIN_TILES_PER_HALF remain, the pass is repeated
 // inside each half to make up the width. With all eight blocks on there
-// are 28 tiles and no repeat is needed.
+// are 33 tiles and no repeat is needed.
 const TICKER_MIN_TILES_PER_HALF = 24;
 const TICKER_REPEATS = Math.max(
   1,
@@ -198,12 +221,15 @@ const TICKER_HALF: TickerItem[] = Array.from(
   (_, i) => TICKER_PASS[i % TICKER_PASS.length],
 );
 
-// Speed. Tiles are now as wide as their text, so the pace is set per tile
+// Speed. Tiles are as wide as their text, so the pace is set per tile
 // rather than per pixel: TICKER_SECONDS_PER_TILE is how long each tile takes
-// to pass a fixed point. 8 keeps roughly the pace of the previous banner.
-// Lower it to speed the ticker up; the total loop time follows the number
-// of tiles automatically, so adding or removing tiles never changes pace.
-const TICKER_SECONDS_PER_TILE = 8;
+// to pass a fixed point. Lower it to speed the ticker up; the total loop
+// time follows the number of tiles automatically, so adding or removing
+// tiles never changes pace.
+// 2026-10-02 (rev 9, Frank): "the animation seems jerky - can we possibly
+// slow it down and smooth it out". Slowed from 8 to 12 seconds per tile,
+// which is two thirds of the previous speed.
+const TICKER_SECONDS_PER_TILE = 12;
 const TICKER_LOOP_SECONDS =
   TICKER_REPEATS * TICKER_TILE_COUNT * TICKER_SECONDS_PER_TILE;
 
@@ -212,14 +238,21 @@ const TICKER_LOOP_SECONDS =
 // has keyboard focus; and for visitors whose device asks for reduced
 // motion the animation is switched off entirely, the duplicate half is
 // hidden, and the strip becomes a still row they can scroll sideways.
+// 2026-10-02 (rev 9, smoothing): the track is very wide, and moving it with
+// a plain translateX left the browser redrawing it on the main thread,
+// which is what showed as jerkiness. The keyframes now use translate3d and
+// the track declares will-change: transform (with backface-visibility
+// hidden), which asks the browser to keep the whole track on its own
+// graphics layer and slide that layer, so the movement is carried by the
+// graphics hardware and stays even.
 const TICKER_CSS = `
-@keyframes hatfield-ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-.hatfield-ticker-track { animation: hatfield-ticker-scroll ${TICKER_LOOP_SECONDS}s linear infinite; }
+@keyframes hatfield-ticker-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+.hatfield-ticker-track { animation: hatfield-ticker-scroll ${TICKER_LOOP_SECONDS}s linear infinite; will-change: transform; backface-visibility: hidden; }
 .hatfield-ticker:hover .hatfield-ticker-track,
 .hatfield-ticker:focus-within .hatfield-ticker-track { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
   .hatfield-ticker { overflow-x: auto; }
-  .hatfield-ticker-track { animation: none; }
+  .hatfield-ticker-track { animation: none; will-change: auto; }
   .hatfield-ticker-duplicate { display: none; }
 }
 `;
@@ -527,22 +560,23 @@ const Index = () => {
             and minimal padding (rev 4).
             2026-10-01 (rev 7, Frank): rebuilt to the Homepage Ticker
             Requirements document.
-            2026-10-02 (rev 8, Frank): alternating sequence. What a visitor
-            sees:
-            - Blocks of three or four tiles that alternate NEXUS, SIGNAL,
-              NEXUS, SIGNAL... and end on one Hatfield.ai tile. Every tile
-              is an uppercase headline with a one-line value statement
-              beneath it (wording: TICKER_ROTATIONS at the top of the file).
-            - Product anchor tiles (NEXUS, SIGNAL, HATFIELD.AI) keep the
-              dark navy treatment and are links; the other tiles keep the
-              lighter treatment, are not clickable, and now show a small
-              NEXUS or SIGNAL label above the headline.
+            2026-10-02 (rev 8, Frank): alternating sequence.
+            2026-10-02 (rev 9, Frank): a dark product box opens every block,
+            and the scroll is slower and smoother. What a visitor sees:
+            - Blocks that alternate NEXUS, SIGNAL, NEXUS, SIGNAL... and end
+              on one Hatfield.ai tile. Each block opens with its dark navy
+              NEXUS or SIGNAL box, followed by three or four capability
+              tiles. Every tile is an uppercase headline with a one-line
+              value statement beneath it (wording: NEXUS_ANCHOR,
+              SIGNAL_ANCHOR and TICKER_ROTATIONS at the top of the file).
+            - The dark boxes (NEXUS, SIGNAL, HATFIELD.AI) are links; the
+              other tiles keep the lighter treatment, are not clickable, and
+              show a small NEXUS or SIGNAL label above the headline.
             - Tiles are as wide as their text, so no headline or value line
               wraps on tablet or desktop. On a phone a tile is capped at 80%
               of the screen width and its text may wrap, which shows fewer
               tiles at full-size type rather than shrinking the type.
-            - A thin vertical line separates one block from the next, so it
-              marks every switch between NEXUS and SIGNAL.
+            - A thin vertical line separates one block from the next.
             - Band height is unchanged (h-24 tiles, py-3), same palette.
             - The ticker pauses on hover and on keyboard focus and honours
               the reduced-motion setting (rules: TICKER_CSS).
