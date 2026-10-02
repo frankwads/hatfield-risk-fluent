@@ -51,6 +51,10 @@ const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 // seven dark product boxes, 25 capability tiles and the closing
 // Hatfield.ai box.
 //
+// 2026-10-02 (rev 10, Frank): the tile "AI automates. Your people decide."
+// is now "AI automates. You decide.", matching the NEXUS PDF. Its value
+// line keeps "Your people decide" so the human-in-the-loop point stays.
+//
 // EVERYTHING the ticker says is in NEXUS_ANCHOR, SIGNAL_ANCHOR and
 // TICKER_ROTATIONS below and nowhere else (requirement 5:
 // content-configurable, not hard-coded into the animation).
@@ -147,7 +151,7 @@ const TICKER_ROTATIONS: TickerRotation[] = [
     enabled: true,
     tiles: [
       NEXUS_ANCHOR,
-      { product: "NEXUS", headline: "AI automates. Your people decide.", value: "AI proposes. Logic verifies. Your people decide." },
+      { product: "NEXUS", headline: "AI automates. You decide.", value: "AI proposes. Logic verifies. Your people decide." },
       { product: "NEXUS", headline: "Audit ready", value: "Every decision on the record." },
       { product: "NEXUS", headline: "SLA tracking", value: "Days outstanding and performance, by domain and team." },
       { product: "NEXUS", headline: "The examiner arrives", value: "Eight regulatory reports on demand." },
