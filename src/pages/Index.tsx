@@ -26,45 +26,56 @@ const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 // ---------------------------------------------------------------------------
 // HOMEPAGE TICKER CONTENT
 // 2026-10-01 (rev 7, Frank): rebuilt to the "Homepage Ticker Requirements"
-// document (NEXUS + SIGNAL + Capabilities + Why Hatfield rotation). The
-// ticker moves from statistics to a WHAT + WHY story: four rotations, each
-// tile a short uppercase headline with a one-line value statement.
+// document: a WHAT + WHY story, each tile a short uppercase headline with a
+// one-line value statement.
+//
+// 2026-10-02 (rev 8, Frank): "instead of having one long stream about
+// signal, have 3 or 4 items on nexus and then 3 or 4 items on signal and
+// keep alternating". The four long rotations (NEXUS 7, SIGNAL 8,
+// Capabilities 12, Why Hatfield 6 = 33 tiles) are replaced by ONE
+// alternating sequence of 28 tiles: NEXUS 4, SIGNAL 4, NEXUS 4, SIGNAL 4,
+// NEXUS 4, SIGNAL 4, NEXUS 3, then one closing Hatfield.ai tile. No product
+// runs longer than four tiles.
+//   - Wording is taken from the final NEXUS and SIGNAL three-page PDFs
+//     (2026-10-02), so the ticker and the collateral say the same things.
+//   - The four original homepage stats return WITHOUT percentages:
+//     "~3X" is "Eliminate redundant processing", "70%" is "Reduce
+//     assessment overhead", "100% Audit Ready" is "Audit ready", and "SLA"
+//     is "SLA tracking".
+//   - Duplicates from rev 7 are gone (Intelligent intake, AI with control,
+//     Economic intelligence and assessment reuse each appeared twice).
+//   - Every non-anchor tile now carries a small NEXUS or SIGNAL label above
+//     its headline (the "product" field), so a visitor can tell which
+//     product a tile belongs to at any point in the scroll.
+//   - The switched-off "SIGNAL scale" rotation (847 / 12 / 234) is removed.
+//     Its figures were out of date and it was never shown.
 //
 // EVERYTHING the ticker says is in TICKER_ROTATIONS below and nowhere else
 // (requirement 5: content-configurable, not hard-coded into the animation).
 //   - Edit a tile:      change its headline or value text.
-//   - Reorder:          move the tile's line, or move a whole rotation block.
+//   - Reorder:          move the tile's line, or move a whole block.
 //   - Switch off a tile:      add  enabled: false  to that tile.
-//   - Switch off a rotation:  set the rotation's  enabled  to false.
+//   - Switch off a block:     set the block's  enabled  to false.
 //   - anchor: true      gives the dark product-anchor treatment
 //                       (NEXUS, SIGNAL, HATFIELD.AI).
+//   - product           the small label shown above a non-anchor tile.
 //   - href              makes the tile a link.
 //
-// Content governance (requirement 6) applied here:
-//   - REMOVED: 96.8% / #1 of 12, 70%, ~3X, 40-75% and 100% audit-ready. No
-//     NEXUS percentage or ranking appears in the ticker any more; NEXUS is
-//     told through qualitative proof (one identity, assess once, SIGNAL
-//     built in, examiner ready), per requirement 7.
-//   - REMOVED: "21 live intelligence surfaces" (requirement 7).
-//   - The optional SIGNAL scale rotation (847 sources / 12 lists / 234
-//     countries) is included but SWITCHED OFF (enabled: false), because
-//     requirements 6 and 7 allow it only once the figures are validated
-//     against production, and that has not been done: the code base shows
-//     11 sanctions/export-control lists, not 12, and the 847 source count
-//     lives in the database. Set enabled to true when they are confirmed.
+// Content governance (requirement 6): no percentage, ranking, source count
+// or list count appears in the ticker. The only figure is the three named
+// financial-health models.
 //
-// Links (requirement 5): SIGNAL goes to /signal, the same address the
-// hero's "Introducing SIGNAL" link uses. NEXUS and HATFIELD.AI go to the
-// Platform Capabilities section of this page (#capabilities) because this
-// file does not show a dedicated NEXUS or overview page address; change
-// the two href values below if one exists.
-// Punctuation: the requirements' " - " is set as an em dash and its
-// apostrophes as typographic ones, matching the rest of this page. The
-// words are exactly as supplied.
+// Links (requirement 5): only the three anchor tiles are links. SIGNAL goes
+// to /signal, the same address the hero's "Introducing SIGNAL" link uses.
+// NEXUS goes to /contact (the "Book a briefing" destination used on the
+// NEXUS PDF) because there is no dedicated NEXUS page. HATFIELD.AI goes to
+// the Platform Capabilities section of this page (#capabilities).
+// Punctuation: apostrophes are typographic, matching the rest of this page.
 // ---------------------------------------------------------------------------
 type TickerTile = {
   headline: string;
   value: string;
+  product?: "NEXUS" | "SIGNAL";
   anchor?: boolean;
   href?: string;
   enabled?: boolean;
@@ -73,80 +84,89 @@ type TickerRotation = { id: string; enabled: boolean; tiles: TickerTile[] };
 
 const TICKER_ROTATIONS: TickerRotation[] = [
   {
-    id: "A - NEXUS",
+    id: "1 - NEXUS",
     enabled: true,
     tiles: [
-      { headline: "NEXUS", value: "The operating system for third-party risk.", anchor: true, href: "#capabilities" },
-      { headline: "One vendor. One identity.", value: "Eliminate duplicate records." },
-      { headline: "Intelligent intake", value: "Ask once. Route the right risk." },
-      { headline: "Assess once", value: "Reuse what remains valid." },
-      { headline: "Contract right", value: "Align terms to the engagement and risk." },
-      { headline: "SIGNAL built in", value: "Know when something changes." },
-      { headline: "Examiner ready", value: "Keep the evidence behind every decision." },
+      { headline: "NEXUS", value: "The operating system for third-party risk.", anchor: true, href: "/contact" },
+      { product: "NEXUS", headline: "Stop managing third-party risk in pieces", value: "One relationship. One lifecycle. One defensible record." },
+      { product: "NEXUS", headline: "Connected. Not stitched.", value: "You don’t have a third-party problem. You have a fragmentation problem." },
+      { product: "NEXUS", headline: "One authoritative identity", value: "Every third party resolves to one legal entity." },
     ],
   },
   {
-    id: "B - SIGNAL",
+    id: "2 - SIGNAL",
     enabled: true,
     tiles: [
       { headline: "SIGNAL", value: "Your GPS for business decisions.", anchor: true, href: "/signal" },
-      { headline: "Financial intelligence", value: "See deterioration earlier." },
-      { headline: "Cyber intelligence", value: "Know when exposure changes." },
-      { headline: "Sanctions & regulatory", value: "Screen against authoritative sources." },
-      { headline: "Litigation & corporate actions", value: "See material events as they emerge." },
-      { headline: "Geopolitical & supply chain", value: "See disruption before it reaches you." },
-      { headline: "Economic intelligence", value: "Understand the environment around your portfolio." },
-      { headline: "Signal. Not noise.", value: "Know what changed. Know what matters. Know where to act." },
+      { product: "SIGNAL", headline: "The signal is already there", value: "Know before risk alerts become your news headline." },
+      { product: "SIGNAL", headline: "Signal. Not noise.", value: "You don’t have an information problem. You have a signal problem." },
+      { product: "SIGNAL", headline: "The company is the story", value: "SIGNAL sees the whole picture." },
     ],
   },
   {
-    id: "C - Capabilities",
+    id: "3 - NEXUS",
     enabled: true,
     tiles: [
-      { headline: "Entity intelligence", value: "Know exactly who you’re dealing with." },
-      { headline: "Intelligent intake", value: "Ask once. Route the right risk." },
-      { headline: "Assessment reuse", value: "Don’t assess the same risk twice." },
-      { headline: "Contract intelligence", value: "The right agreement. The right obligations." },
-      { headline: "Continuous surveillance", value: "Know when risk changes." },
-      { headline: "Event intelligence", value: "One material event — not hundreds of alerts." },
-      { headline: "4th-party intelligence", value: "See beyond the vendor." },
-      { headline: "Operational resilience", value: "Know where disruption can reach you." },
-      { headline: "Economic intelligence", value: "Understand the environment around your portfolio." },
-      { headline: "AI with control", value: "Automate the work. Keep people in command." },
-      { headline: "Full provenance", value: "Every signal. Every source. Every decision." },
-      { headline: "Hatfield.ai", value: "From intake to intelligence.", anchor: true, href: "#capabilities" },
+      { product: "NEXUS", headline: "Eliminate redundant processing", value: "Onboard once. Assess once." },
+      { product: "NEXUS", headline: "Reduce assessment overhead", value: "Valid prior assessments and evidence are reused, not repeated." },
+      { product: "NEXUS", headline: "Contract right", value: "Reviewed by two AI models and mapped to the regulators that govern you." },
+      { product: "NEXUS", headline: "Watch always", value: "SIGNAL built in. One register entry per issue, not hundreds of alerts." },
     ],
   },
   {
-    id: "D - Why Hatfield",
+    id: "4 - SIGNAL",
     enabled: true,
     tiles: [
-      { headline: "Built by practitioners", value: "Designed around how the work actually gets done." },
-      { headline: "Connected. Not stitched.", value: "One architecture instead of another integration layer." },
-      { headline: "AI with control", value: "AI proposes. Logic verifies. People decide." },
-      { headline: "Source to decision", value: "Evidence and provenance stay attached." },
-      { headline: "Priced for the institution", value: "Access should follow the work — not the seat." },
-      { headline: "Built to replace", value: "Not another tool to add to the stack." },
+      { product: "SIGNAL", headline: "Know what changed", value: "Financials, cyber, sanctions, litigation, regulation and supply chain." },
+      { product: "SIGNAL", headline: "Know what matters", value: "Tested for materiality and consolidated into one event." },
+      { product: "SIGNAL", headline: "Know where to act", value: "Severity-ranked and summed up in one daily brief." },
+      { product: "SIGNAL", headline: "Three financial-health models", value: "Piotroski F-Score, Altman Z-Score, Merton." },
     ],
   },
   {
-    // Optional SIGNAL scale/proof rotation (requirement 7). OFF until the
-    // figures are validated against production - see the note above.
-    id: "E - SIGNAL scale (optional, off)",
-    enabled: false,
+    id: "5 - NEXUS",
+    enabled: true,
     tiles: [
-      { headline: "847", value: "Curated global sources." },
-      { headline: "12", value: "Sanctions & export-control lists." },
-      { headline: "234", value: "Countries & territories." },
+      { product: "NEXUS", headline: "AI automates. Your people decide.", value: "AI proposes. Logic verifies. Your people decide." },
+      { product: "NEXUS", headline: "Audit ready", value: "Every decision on the record." },
+      { product: "NEXUS", headline: "SLA tracking", value: "Days outstanding and performance, by domain and team." },
+      { product: "NEXUS", headline: "The examiner arrives", value: "Eight regulatory reports on demand." },
+    ],
+  },
+  {
+    id: "6 - SIGNAL",
+    enabled: true,
+    tiles: [
+      { product: "SIGNAL", headline: "Are we watching the right company?", value: "Every name resolved to its registered legal entity." },
+      { product: "SIGNAL", headline: "Not separate feeds", value: "One intelligence picture." },
+      { product: "SIGNAL", headline: "A thirteenth question? Ask SIGNAL.", value: "Answers from your own portfolio evidence." },
+      { product: "SIGNAL", headline: "10 users or 1,000. One price.", value: "Priced for the portfolio, not the person." },
+    ],
+  },
+  {
+    id: "7 - NEXUS",
+    enabled: true,
+    tiles: [
+      { product: "NEXUS", headline: "The relationship changes", value: "NEXUS keeps the thread." },
+      { product: "NEXUS", headline: "Built to replace, not to add", value: "One platform. No suite to buy. No per-vendor data fees." },
+      { product: "NEXUS", headline: "Your risk appetite, not ours", value: "Settings your administrators change on screen. No code." },
+    ],
+  },
+  {
+    id: "8 - Hatfield.ai",
+    enabled: true,
+    tiles: [
+      { headline: "Hatfield.ai", value: "Intelligence. Orchestrated.", anchor: true, href: "#capabilities" },
     ],
   },
 ];
 
 // ---------------------------------------------------------------------------
 // HOMEPAGE TICKER MECHANICS (no wording below this line)
-// One "pass" is every enabled tile of every enabled rotation, in order,
-// with a thin separator ahead of each rotation. Built from TICKER_ROTATIONS
-// so the two can never disagree.
+// One "pass" is every enabled tile of every enabled block, in order, with a
+// thin separator ahead of each block. Built from TICKER_ROTATIONS so the two
+// can never disagree. Because the blocks now alternate NEXUS / SIGNAL, the
+// separator marks every switch from one product to the other.
 // ---------------------------------------------------------------------------
 type TickerItem = { kind: "separator" } | { kind: "tile"; tile: TickerTile };
 const TICKER_PASS: TickerItem[] = [];
@@ -166,8 +186,8 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
 // so the loop has no jump (requirement 5). Each half must be wider than the
 // browser window or a blank gap would show, so if tiles are switched off
 // until fewer than TICKER_MIN_TILES_PER_HALF remain, the pass is repeated
-// inside each half to make up the width. With all four rotations on there
-// are 33 tiles and no repeat is needed.
+// inside each half to make up the width. With all eight blocks on there
+// are 28 tiles and no repeat is needed.
 const TICKER_MIN_TILES_PER_HALF = 24;
 const TICKER_REPEATS = Math.max(
   1,
@@ -506,20 +526,23 @@ const Index = () => {
             left, the full width of the page (rev 2); no heading above it
             and minimal padding (rev 4).
             2026-10-01 (rev 7, Frank): rebuilt to the Homepage Ticker
-            Requirements document. What a visitor sees:
-            - Four rotations in order: NEXUS, SIGNAL, Capabilities, Why
-              Hatfield. Every tile is an uppercase headline with a one-line
-              value statement beneath it (wording: TICKER_ROTATIONS at the
-              top of the file).
+            Requirements document.
+            2026-10-02 (rev 8, Frank): alternating sequence. What a visitor
+            sees:
+            - Blocks of three or four tiles that alternate NEXUS, SIGNAL,
+              NEXUS, SIGNAL... and end on one Hatfield.ai tile. Every tile
+              is an uppercase headline with a one-line value statement
+              beneath it (wording: TICKER_ROTATIONS at the top of the file).
             - Product anchor tiles (NEXUS, SIGNAL, HATFIELD.AI) keep the
-              dark navy treatment and are links; capability tiles keep the
-              existing lighter treatment and are not clickable.
-            - Tiles are now as wide as their text instead of a fixed 240px,
-              so no headline or value line wraps on tablet or desktop. On a
-              phone a tile is capped at 80% of the screen width and its text
-              may wrap, which shows fewer tiles at full-size type rather
-              than shrinking the type.
-            - A thin vertical line separates one rotation from the next.
+              dark navy treatment and are links; the other tiles keep the
+              lighter treatment, are not clickable, and now show a small
+              NEXUS or SIGNAL label above the headline.
+            - Tiles are as wide as their text, so no headline or value line
+              wraps on tablet or desktop. On a phone a tile is capped at 80%
+              of the screen width and its text may wrap, which shows fewer
+              tiles at full-size type rather than shrinking the type.
+            - A thin vertical line separates one block from the next, so it
+              marks every switch between NEXUS and SIGNAL.
             - Band height is unchanged (h-24 tiles, py-3), same palette.
             - The ticker pauses on hover and on keyboard focus and honours
               the reduced-motion setting (rules: TICKER_CSS).
@@ -560,6 +583,12 @@ const Index = () => {
                           : "bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)] border border-gray-300");
                       const tileBody = (
                         <>
+                          {/* rev 8: small product label on non-anchor tiles */}
+                          {tile.product && !tile.anchor && (
+                            <span className="block mb-1 text-[10px] font-semibold uppercase leading-none tracking-[0.18em] opacity-70">
+                              {tile.product}
+                            </span>
+                          )}
                           <span
                             className={
                               "block font-bold uppercase leading-tight sm:whitespace-nowrap " +
