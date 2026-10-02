@@ -35,32 +35,35 @@ const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 const NEXUS_PDF_SRC = "/docs/Hatfield_NEXUS.pdf";
 const SIGNAL_PDF_SRC = "/docs/Hatfield_SIGNAL.pdf";
 
-// 2026-10-02 (rev 13, Frank): "can we use trademark pdf icons (red and
-// white)" / "still blue pdf icons versus what i requested". The blue outline
-// icon and its small "PDF" caption are replaced by this red-and-white badge:
-// a red document with a folded corner and "PDF" in white across it. It is
-// drawn here as an inline SVG, so there is no image file to add. It is a
-// generic PDF badge in the familiar red and white; it is deliberately NOT
-// Adobe's own logo artwork, which is Adobe's trademark.
-const PdfBadge = () => (
+// 2026-10-02 (rev 16, Frank): "a it is". The PDF icon on the NEXUS and
+// SIGNAL boxes is now option A: a WHITE page with a folded corner and a
+// small RED label reading "PDF" across it, the familiar red-and-white file
+// icon. It replaces the plain white outline of rev 15 (and the all-red badge
+// of rev 13 before it). It is drawn here as an inline SVG, so there is no
+// image file to add. It is a generic file icon: it deliberately does NOT
+// include Adobe's Acrobat swirl, which is Adobe's trademark.
+const PdfIcon = () => (
   <svg
-    viewBox="0 0 32 40"
-    width="34"
-    height="42"
+    viewBox="0 0 34 42"
+    width="36"
+    height="44"
     aria-hidden="true"
     focusable="false"
   >
     <path
-      d="M4 0h17l11 11v25a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z"
-      fill="#D92D20"
+      d="M5 1h16l10 10v27a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V4a3 3 0 0 1 3-3z"
+      fill="#FFFFFF"
+      stroke="#CBD5E1"
+      strokeWidth="1"
     />
-    <path d="M21 0l11 11h-8a3 3 0 0 1-3-3V0z" fill="#F9B4AE" />
+    <path d="M21 1l10 10h-7a3 3 0 0 1-3-3V1z" fill="#E2E8F0" />
+    <rect x="0" y="21" width="26" height="13" rx="2" fill="#D92D20" />
     <text
-      x="16"
-      y="29"
+      x="13"
+      y="31"
       textAnchor="middle"
       fontFamily="Arial, Helvetica, sans-serif"
-      fontSize="10"
+      fontSize="9"
       fontWeight="700"
       fill="#FFFFFF"
     >
@@ -264,9 +267,7 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
 //
 // 2026-10-02 (rev 14, Frank): second remediation pass, to the follow-up
 // requirements. Rev 12 moved the belt from JavaScript, writing a new
-// position on every frame. At 40 pixels a second that is about two thirds
-// of a pixel per frame, and text and one-pixel edges shifted by fractions
-// of a pixel from the main thread can still shimmer. So:
+// position on every frame. So:
 //   1. The belt is moved by ONE CSS animation on the track, which the
 //      browser runs on the graphics hardware. The per-frame JavaScript loop
 //      (requestAnimationFrame, distance, timestamps, style writes) is
@@ -281,19 +282,26 @@ const TICKER_TILE_COUNT = TICKER_PASS.filter(
 //   4. Pause on hover and keyboard focus is done by the browser
 //      (animation-play-state: paused), which freezes the belt where it is
 //      and resumes from the same place. Reduced motion is unchanged.
-//   5. Speed stays at 40 pixels a second. Slowing it further would make
-//      each frame's step smaller and the shimmer worse.
-//   6. DIAGNOSTIC (TICKER_EDGE_TEST below): thin one-pixel vertical edges
-//      make sub-pixel movement easy to see. With the test ON, the light
+//   5. DIAGNOSTIC (TICKER_EDGE_TEST below): with the test ON, the light
 //      tiles lose their one-pixel outline and the block separators go from
-//      1 pixel to 2 pixels wide. If a recording with the test ON is clearly
-//      smoother, the remaining judder was edge shimmer and the fix is to
-//      soften those edges. Set it to false to restore the normal look.
+//      1 pixel to 2 pixels wide.
+//
+// 2026-10-02 (rev 15, Frank): third test. The recording with the edge test
+// ON still showed judder, so the thin borders were not the underlying
+// cause. What remains is how text and hard vertical edges look while the
+// whole strip moves by a FRACTION of a pixel each frame: at 40 pixels a
+// second a 60 Hz screen advances about two thirds of a pixel per refresh.
+// This revision changes ONE thing: the speed goes from 40 to 60 pixels a
+// second, which on a 60 Hz screen is nominally one whole pixel per refresh.
+// TICKER_EDGE_TEST is deliberately LEFT ON so that speed is the only
+// variable. Nothing else in the mechanics or styling is touched. If 60 is
+// clearly smoother but feels fast, the compromise to try next is 50 to 60.
 // ---------------------------------------------------------------------------
-const TICKER_PIXELS_PER_SECOND = 40;
+const TICKER_PIXELS_PER_SECOND = 60;
 
 // rev 14 diagnostic switch. true = borders off, separators 2px (the test).
 // false = the normal design (1px tile outline, 1px separators).
+// rev 15: left at true on purpose for the speed test.
 const TICKER_EDGE_TEST = true;
 
 // One animated element: the track. Until it has been measured the distance
@@ -605,9 +613,10 @@ const Index = () => {
                     hover and shows a focus outline for keyboard users. The
                     files come from public/docs/ (NEXUS_PDF_SRC and
                     SIGNAL_PDF_SRC at the top of this file).
-                    2026-10-02 (rev 13, Frank): the icon at the right of each
-                    panel is now the red-and-white PDF badge (PdfBadge, top of
-                    this file) in place of the blue outline icon and caption. */}
+                    2026-10-02 (rev 16, Frank): the icon at the right of each
+                    panel is the white page with a red "PDF" label (PdfIcon,
+                    top of this file). Panel size, copy, spacing and click
+                    behaviour are unchanged. */}
                 <a
                   href={NEXUS_PDF_SRC}
                   target="_blank"
@@ -624,7 +633,7 @@ const Index = () => {
                   </span>
 
                   <span className="flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5">
-                    <PdfBadge />
+                    <PdfIcon />
                   </span>
                 </a>
 
@@ -645,7 +654,7 @@ const Index = () => {
                   </span>
 
                   <span className="flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5">
-                    <PdfBadge />
+                    <PdfIcon />
                   </span>
                 </a>
               </div>
@@ -808,9 +817,11 @@ const Index = () => {
             2026-10-02 (rev 9, Frank): a dark product box opens every block.
             2026-10-02 (rev 12, Frank): the ticker is its own component,
             HomepageTicker (defined above Index), because it measures itself.
-            2026-10-02 (rev 14, Frank): moved by one CSS animation; see the
-            rev 14 note above TICKER_PIXELS_PER_SECOND. What a visitor sees
-            is unchanged, apart from the temporary edge test described there:
+            2026-10-02 (rev 14, Frank): moved by one CSS animation.
+            2026-10-02 (rev 15, Frank): speed test at 60 pixels a second;
+            see the rev 15 note above TICKER_PIXELS_PER_SECOND. What a
+            visitor sees is unchanged, apart from the faster pace and the
+            temporary edge test described there:
             - Blocks that alternate NEXUS, SIGNAL, NEXUS, SIGNAL... and end
               on one Hatfield.ai tile. Each block opens with its dark navy
               NEXUS or SIGNAL box, followed by three or four capability
