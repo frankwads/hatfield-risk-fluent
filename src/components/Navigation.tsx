@@ -1,14 +1,69 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import logoWhite from "@/assets/h-logo-white.png";
 import logoBlack from "@/assets/h-logo-black.png";
+
+// 2026-10-05 (Frank): "when i click on capabilities top header and then
+// arrow back in browser, instead of taking back to homepage, i go back to
+// search engine".
+// Cause: on the homepage, handleNavClick cancelled the Capabilities link
+// and scrolled with scrollIntoView, so no history entry was recorded and
+// the address never became /#capabilities. Browser Back therefore left the
+// site. Off the homepage it forced a full page reload instead.
+// Fix (rev 2, Frank: "index should be before the fix - give me navi"):
+// the whole fix lives in THIS file; src/pages/Index.tsx is unchanged.
+//   - The Capabilities link is a plain router Link to /#capabilities, like
+//     every other item, so it records a history entry and needs no reload.
+//   - The hash rule below (useEffect on location) does the scrolling:
+//       on "/" with #capabilities -> scroll smoothly to Capabilities
+//         (header click, Forward button, a shared link, or arriving from
+//         another page such as /signal);
+//       on "/" with no hash after a navigation -> jump to the top
+//         (browser Back from Capabilities, or clicking Home).
+//     The first render with no hash is left alone, so a normal page load
+//     or refresh keeps the browser's own scroll position. The scroll waits
+//     one animation frame so the page has laid out first.
+//   Example: Google -> hatfield.ai -> click Capabilities (address becomes
+//   /#capabilities, page scrolls) -> Back (address "/", page at top) ->
+//   Back (Google).
+//   Known limit: the homepage "Explore Capabilities" button (Index.tsx)
+//   still scrolls by itself without a history entry; changing it needs an
+//   Index.tsx edit.
+// Also: Home and Capabilities are no longer highlighted together. Home is
+// active on "/" only when the address is not /#capabilities (see isActive).
+// The mobile menu now closes on any item tap; before, only Capabilities
+// closed it, which mattered because it is the one item that stays on the
+// same page.
 
 const Navigation = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDarkText, setIsDarkText] = useState(false);
+  const firstRunRef = useRef(true);
+
+  // 2026-10-05: the Capabilities hash rule (see the header comment).
+  useEffect(() => {
+    const isFirstRun = firstRunRef.current;
+    firstRunRef.current = false;
+    if (location.pathname !== "/") return;
+
+    let frame = 0;
+    if (location.hash === "#capabilities") {
+      frame = window.requestAnimationFrame(() => {
+        document
+          .getElementById("capabilities")
+          ?.scrollIntoView({ behavior: "smooth" });
+      });
+    } else if (location.hash === "" && !isFirstRun) {
+      frame = window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      });
+    }
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [location]);
 
   useEffect(() => {
     // Check if we're on an article page
@@ -71,23 +126,15 @@ const Navigation = () => {
     { name: "Consulting", path: "/consulting" },
   ];
 
-  const handleNavClick = (e: React.MouseEvent, path: string) => {
-    if (path === "/#capabilities") {
-      e.preventDefault();
-
-      if (location.pathname === "/") {
-        document
-          .getElementById("capabilities")
-          ?.scrollIntoView({ behavior: "smooth" });
-      } else {
-        window.location.href = "/#capabilities";
-      }
-
-      setMobileMenuOpen(false);
-    }
+  // 2026-10-05: Capabilities is active only at /#capabilities; Home is
+  // active on "/" only when the address is not /#capabilities.
+  const isActive = (path: string) => {
+    const onCapabilities =
+      location.pathname === "/" && location.hash === "#capabilities";
+    if (path === "/#capabilities") return onCapabilities;
+    if (path === "/") return location.pathname === "/" && !onCapabilities;
+    return location.pathname === path;
   };
-
-  const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/15 backdrop-blur-md border-b border-white/20">
@@ -131,12 +178,8 @@ const Navigation = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                onClick={(e) => handleNavClick(e, item.path)}
                 className={`text-sm font-medium transition-colors duration-300 ${
-                  isActive(item.path) ||
-                  (item.path === "/#capabilities" &&
-                    location.pathname === "/" &&
-                    location.hash === "#capabilities")
+                  isActive(item.path)
                     ? isDarkText
                       ? "text-[hsl(215,65%,48%)]"
                       : "text-accent"
@@ -192,7 +235,7 @@ const Navigation = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                onClick={(e) => handleNavClick(e, item.path)}
+                onClick={() => setMobileMenuOpen(false)}
                 className={`block py-2 text-sm font-medium ${
                   isActive(item.path)
                     ? "text-accent"
