@@ -73,6 +73,92 @@ const PdfIcon = () => (
 );
 
 // ---------------------------------------------------------------------------
+// COMMERCIAL VIDEO PLAYER
+// 2026-10-05 (Frank): the commercial's background music stopped playing in
+// Chrome and Edge on Frank's PC, while the same file played WITH music on
+// his phone and in the Windows video player. Git shows the video file has
+// not changed since 19 September, so the fault is in how the browser plays
+// it, not in the file. Frank: "we have to fix this on the browser".
+//
+// Likely cause (not yet confirmed): the soundtrack is surround (several
+// channels: voice in the centre, music in the sides and rears). Chromium
+// browsers can send the side and rear channels to speakers that do not
+// exist, so the music is lost and the voice remains.
+//
+// The fix: the video's sound is routed through the browser's own audio
+// processor (the Web Audio API) and forced into a two-speaker mix, which
+// folds every channel, music included, into left and right. A stereo
+// soundtrack passes through unchanged.
+//
+// Safety: the sound is only re-routed once the audio processor is
+// confirmed running. If the browser will not start it (an iPhone can
+// refuse), the video is left exactly as before, with its normal sound.
+// The video is same-origin (/videos/), so the processor is allowed to read
+// its sound.
+// ---------------------------------------------------------------------------
+const CommercialVideo = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+    if (!AudioCtx) return;
+
+    let cancelled = false;
+    let ctx: AudioContext | null = null;
+
+    const routeToStereo = async () => {
+      try {
+        ctx = new AudioCtx();
+        if (ctx.state === "suspended") await ctx.resume();
+        // Only take over the sound once the processor is running; otherwise
+        // leave the video's own sound alone.
+        if (cancelled || ctx.state !== "running") {
+          await ctx.close();
+          ctx = null;
+          return;
+        }
+        const destination = ctx.destination;
+        destination.channelCount = 2;
+        destination.channelCountMode = "explicit";
+        destination.channelInterpretation = "speakers";
+        ctx.createMediaElementSource(video).connect(destination);
+      } catch {
+        // Anything unexpected: the video keeps its normal sound.
+      }
+    };
+
+    routeToStereo();
+
+    return () => {
+      cancelled = true;
+      if (ctx) ctx.close().catch(() => undefined);
+    };
+  }, []);
+
+  return (
+    <video
+      ref={videoRef}
+      src={NEXUS_COMMERCIAL_SRC}
+      title="Hatfield.ai Commercial"
+      controls
+      autoPlay
+      playsInline
+      preload="metadata"
+      className="w-full h-full rounded-lg bg-black"
+    >
+      Your browser can't play this video.{" "}
+      <a href={NEXUS_COMMERCIAL_SRC}>Download the Hatfield.ai Commercial</a>.
+    </video>
+  );
+};
+
+// ---------------------------------------------------------------------------
 // HOMEPAGE TICKER CONTENT
 // 2026-10-02 (rev 20, Frank): "can we have signal/nexus deep blue heading
 // box plus 3 equally sized content boxes slide in and then morph in and then
@@ -695,7 +781,13 @@ const Index = () => {
                       title attribute and the no-video fallback link text were
                       renamed with it so no "Nexus Commercial" wording is left
                       anywhere a visitor or screen reader can see it. Video
-                      file unchanged. */}
+                      file unchanged.
+                      2026-10-05 (Frank): the bare <video> is replaced by
+                      CommercialVideo (defined near the top of this file),
+                      which forces a two-speaker mix so the background music
+                      is not lost in Chrome and Edge. Same file, same
+                      controls, same autoplay; it still only mounts while the
+                      dialog is open. */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -710,18 +802,7 @@ const Index = () => {
 
                     <DialogContent className="max-w-4xl w-full p-0 bg-card">
                       <div className="aspect-video w-full">
-                        <video
-                          src={NEXUS_COMMERCIAL_SRC}
-                          title="Hatfield.ai Commercial"
-                          controls
-                          autoPlay
-                          playsInline
-                          preload="metadata"
-                          className="w-full h-full rounded-lg bg-black"
-                        >
-                          Your browser can't play this video.{" "}
-                          <a href={NEXUS_COMMERCIAL_SRC}>Download the Hatfield.ai Commercial</a>.
-                        </video>
+                        <CommercialVideo />
                       </div>
                     </DialogContent>
                   </Dialog>
