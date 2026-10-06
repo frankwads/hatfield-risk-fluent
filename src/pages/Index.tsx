@@ -1,7 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+// 2026-10-06 (Frank): DialogTitle and DialogDescription added to this import
+// for the hidden pop-up titles (see the two video dialogs below). Both are
+// exported by src/components/ui/dialog.tsx (checked 2026-10-06).
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import JacarandaIcon from "@/components/JacarandaIcon";
@@ -400,6 +409,10 @@ const HomepageTicker = () => {
 };
 
 const Index = () => {
+  // 2026-10-06 (Frank): "Process Automation" description no longer claims
+  // "70% reduction in assessment overhead". The ticker dropped that figure
+  // on 2026-10-02 because no published evidence backs it, and this section
+  // now matches. Wording is Frank's own (2026-10-06).
   const features = [
     {
       title: "AI-Powered Intelligence",
@@ -429,7 +442,7 @@ const Index = () => {
     {
       title: "Process Automation",
       description:
-        "Eliminate redundant processing with 70% reduction in assessment overhead",
+        "Eliminate redundant processing resulting in a significant reduction in assessment overhead",
     },
   ];
 
@@ -654,7 +667,13 @@ const Index = () => {
                       embedded player may start on its own. The dialog removes
                       the iframe when it closes, so every click loads a fresh
                       player from the beginning; closing the dialog stops the
-                      video. */}
+                      video.
+                      2026-10-06 (Frank): the pop-up now carries a title and
+                      a one-line description for screen readers. Both use
+                      the sr-only class, so they are invisible on screen and
+                      the pop-up looks exactly as before. They clear the
+                      browser warnings "DialogContent requires a DialogTitle"
+                      and "Missing Description". */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -668,6 +687,12 @@ const Index = () => {
                     </DialogTrigger>
 
                     <DialogContent className="max-w-4xl w-full p-0 bg-card">
+                      <DialogTitle className="sr-only">
+                        Hatfield.ai Introduction
+                      </DialogTitle>
+                      <DialogDescription className="sr-only">
+                        Video introduction to the Hatfield.ai platform.
+                      </DialogDescription>
                       <div className="aspect-video w-full">
                         <iframe
                           width="100%"
@@ -695,7 +720,9 @@ const Index = () => {
                       title attribute and the no-video fallback link text were
                       renamed with it so no "Nexus Commercial" wording is left
                       anywhere a visitor or screen reader can see it. Video
-                      file unchanged. */}
+                      file unchanged.
+                      2026-10-06 (Frank): hidden title and description for
+                      screen readers, same as the Introduction pop-up above. */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -709,6 +736,12 @@ const Index = () => {
                     </DialogTrigger>
 
                     <DialogContent className="max-w-4xl w-full p-0 bg-card">
+                      <DialogTitle className="sr-only">
+                        Hatfield.ai Commercial
+                      </DialogTitle>
+                      <DialogDescription className="sr-only">
+                        The Hatfield.ai commercial video.
+                      </DialogDescription>
                       <div className="aspect-video w-full">
                         <video
                           src={NEXUS_COMMERCIAL_SRC}
