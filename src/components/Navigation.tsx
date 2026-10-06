@@ -12,14 +12,15 @@ import logoBlack from "@/assets/h-logo-black.png";
 // and scrolled with scrollIntoView, so no history entry was recorded and
 // the address never became /#capabilities. Browser Back therefore left the
 // site. Off the homepage it forced a full page reload instead.
-// Fix (rev 2, Frank: "index should be before the fix - give me navi"):
-// the whole fix lives in THIS file; src/pages/Index.tsx is unchanged.
+// Fix (rev 2): the scrolling for /#capabilities lives in THIS file, in one
+// place, for every link that goes there.
 //   - The Capabilities link is a plain router Link to /#capabilities, like
 //     every other item, so it records a history entry and needs no reload.
 //   - The hash rule below (useEffect on location) does the scrolling:
 //       on "/" with #capabilities -> scroll smoothly to Capabilities
-//         (header click, Forward button, a shared link, or arriving from
-//         another page such as /signal);
+//         (header click, the homepage "Explore Capabilities" button,
+//         Forward button, a shared link, or arriving from another page
+//         that shows this menu);
 //       on "/" with no hash after a navigation -> jump to the top
 //         (browser Back from Capabilities, or clicking Home).
 //     The first render with no hash is left alone, so a normal page load
@@ -28,9 +29,13 @@ import logoBlack from "@/assets/h-logo-black.png";
 //   Example: Google -> hatfield.ai -> click Capabilities (address becomes
 //   /#capabilities, page scrolls) -> Back (address "/", page at top) ->
 //   Back (Google).
-//   Known limit: the homepage "Explore Capabilities" button (Index.tsx)
-//   still scrolls by itself without a history entry; changing it needs an
-//   Index.tsx edit.
+// 2026-10-06 (Frank): the homepage "Explore Capabilities" button
+// (src/pages/Index.tsx) is now also a link to /#capabilities and relies on
+// this same rule, so Back behaves the same from both (confirmed by Frank
+// 2026-10-06). The earlier "Known limit" note about that button is
+// resolved and removed. The SIGNAL page (/signal) has its own header and
+// does not show this menu (seen 2026-10-06), so this rule only runs on
+// pages that render <Navigation />.
 // Also: Home and Capabilities are no longer highlighted together. Home is
 // active on "/" only when the address is not /#capabilities (see isActive).
 // The mobile menu now closes on any item tap; before, only Capabilities
