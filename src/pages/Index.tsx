@@ -627,8 +627,7 @@ const Index = () => {
                       hash rule in src/components/Navigation.tsx, the same
                       rule the header Capabilities link uses. So Back now
                       returns to the top of the homepage instead of leaving
-                      the site. This closes the "Known limit" noted in
-                      Navigation.tsx. Look, label and position unchanged. */}
+                      the site. Look, label and position unchanged. */}
                   <Button
                     asChild
                     size="lg"
@@ -840,8 +839,10 @@ const Index = () => {
               Processing Intelligence
             </h2>
 
+            {/* 2026-10-06 (Frank, "fix"): "agenticAI" corrected to
+                "agentic AI" (missing space). No other wording changed. */}
             <p className="text-xl text-[hsl(215,45%,25%)] max-w-5xl mx-auto leading-relaxed">
-              Harnessing AI-driven automation and adaptive agenticAI frameworks
+              Harnessing AI-driven automation and adaptive agentic AI frameworks
               to orchestrate intelligent workflows, enabling continuous risk
               sensing, dynamic assessment, and autonomous decision-making
               across the TPRM lifecycle
