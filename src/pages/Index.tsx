@@ -617,16 +617,26 @@ const Index = () => {
                     Order, labels, sizes and behaviour are unchanged. On a
                     phone the four still stack one per line. */}
                 <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4">
+                  {/* 2026-10-06 (Frank): "the explore capabilities after
+                      landing on capabilities exits when clicking back".
+                      Explore Capabilities is now a link to /#capabilities
+                      (Button asChild + Link, the same pattern as "Schedule a
+                      Demo" at the bottom of this page) instead of an
+                      onClick scrollIntoView. The link records a history
+                      entry, and the scrolling is done by the Capabilities
+                      hash rule in src/components/Navigation.tsx, the same
+                      rule the header Capabilities link uses. So Back now
+                      returns to the top of the homepage instead of leaving
+                      the site. This closes the "Known limit" noted in
+                      Navigation.tsx. Look, label and position unchanged. */}
                   <Button
+                    asChild
                     size="lg"
                     className="text-base px-6 whitespace-nowrap"
-                    onClick={() => {
-                      document
-                        .getElementById("capabilities")
-                        ?.scrollIntoView({ behavior: "smooth" });
-                    }}
                   >
-                    Explore Capabilities <ArrowRight className="ml-2" size={18} />
+                    <Link to="/#capabilities">
+                      Explore Capabilities <ArrowRight className="ml-2" size={18} />
+                    </Link>
                   </Button>
 
                   {/* SIGNAL Product Introduction */}
