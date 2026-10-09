@@ -60,15 +60,12 @@
 //    a fallback that cannot be resolved is worse than no fallback,
 //    because it fails invisibly.
 //
-// 8. PRICES. Every published figure rose ~8% (Frank, 2026-09-17) so the
-//    cost of taking payment - card processing, Stripe Billing, Stripe
-//    Tax - sits inside the list price instead of being surcharged at
-//    checkout. Watch 1,575 / 15,750, Monitor 4,875 / 48,750, Portfolio
-//    10,250 / 102,500; out-of-portfolio FVA 65 and sanctions screen 32.
-//    These figures appear THREE times in this file (desktop matrix,
-//    mobile list, fine print) and are also held in the product's
-//    dal.TIERS. Changing one without the others is the defect that put
-//    $10 in a signed agreement while the product charged $59.
+// 8. PRICES (2026-09-17, SUPERSEDED BY ITEM 14). The ~8% gross-up
+//    figures (Watch 1,575, Monitor 4,875, Portfolio 10,250) were
+//    replaced on 2026-10-09. The rule this item recorded still stands:
+//    every published figure is also held in the product's dal.TIERS and
+//    in Stripe, and changing one without the others is the defect that
+//    put $10 in a signed agreement while the product charged $59.
 //
 // 2026-09-19. ONE MORE.
 //
@@ -82,64 +79,84 @@
 //    price lists for the same product one click apart. They now go to
 //    SIGNAL_LOGIN_URL, which is "/login" on the same API_BASE the form
 //    posts to, so staging builds sign in to staging and there is no
-//    second hostname in this file to drift. Every other sign-in link in
-//    the product (billing emails, Stripe success_url, the app's own
-//    masthead) already targets /login; these two were the only ones
-//    that did not.
+//    second hostname in this file to drift.
 //
 // 2026-09-21. FOUR, RECONCILING THIS PAGE WITH THE PDF ONE-PAGER.
 //
-// 10. THE POSITIONING LINE IS ON THE PAGE. "Your GPS for business
-//     decisions" sits in the masthead of EVERY artboard in the PDF and
-//     appeared nowhere here. A prospect handed the one-pager and then
-//     sent to hatfield.ai/signal lost the line they were sold on, which
-//     reads as a different product's page rather than the same one. It
-//     now sits in the header opposite the wordmark, where the artwork
-//     puts it, styled as the artwork styles it - small, tracked,
-//     uppercased in CSS so the DOM keeps sentence case for screen
-//     readers. Hidden below md: on a phone the header has room for the
-//     logo and the sign-in button and nothing else.
+// 10. "Your GPS for business decisions" sits in the header opposite the
+//     wordmark, as on every artboard of the PDF.
+// 11. The trial button reads "Start your free 10-business-day trial".
+// 12. The footer names the legal entity: Hatfield Advisory LLC d/b/a
+//     Hatfield.ai.
+// 13. (Superseded by item 17 below.)
 //
-// 11. THE TRIAL BUTTON CARRIES THE TERM. "Start a free trial" is now
-//     "Start your free 10-business-day trial" - the artwork's own
-//     wording. The length is the point: the trial's one real
-//     restriction is how long it lasts, and a prospect who discovers it
-//     after registering feels sold to. Terminal period dropped; it is a
-//     button, not a sentence. It sits in a flex-wrap row, so on a
-//     narrow screen it takes its own line rather than crushing the
-//     sample-report button beside it.
+// 2026-10-09. THE PAGE NOW CARRIES THE CONTENT OF THE CURRENT THREE-PAGE
+// TEAR SHEET (Hatfield.ai_SIGNAL.pdf, Frank, 2026-10-09).
 //
-// 12. THE FOOTER NAMES THE LEGAL ENTITY. "Hatfield Advisory LLC d/b/a
-//     Hatfield.ai, St. Petersburg, Florida". The PDF carries the d/b/a
-//     and this page did not - and a buyer at a bank reconciles the
-//     trading name against the counterparty record they are opening.
+// 14. NEW PRICES (Frank: "these are the new prices - we need to update on
+//     both the website and in stripe"). Watch $950 / $9,500, Monitor
+//     $3,500 / $35,000, Portfolio $6,000 / $60,000. Every figure lives
+//     ONCE, in TIER_ROWS, and both the desktop matrix and the mobile list
+//     render from it - there used to be two hand-typed copies. DO NOT
+//     PUBLISH THIS PAGE until dal.TIERS and the Stripe prices carry the
+//     same figures, or a prospect reads $950 here and is charged $1,575
+//     at checkout.
 //
-// 13. "Piotroski F-score", not "F-Score", in all three places it occurs
-//     here - the desktop matrix, the mobile domain list and the
-//     sample-report bullets. Matches the PDF, and the man's name.
+// 15. NEW PRICING MODEL (Frank: "change it to reflect the pricing model
+//     on the updated tear sheet"). Portfolio covers up to 200 companies
+//     (was 250). Enterprise is 201+ and now carries a published price:
+//     $6,000 a month or $60,000 a year, plus $25 a month / $250 a year
+//     for each company above 200. Enterprise still asks no billing
+//     preference on this form - PRICED_TIERS mirrors the server's
+//     priced_tier(), which does not treat Enterprise as checkout-priced.
+//     Whether Enterprise moves onto Stripe is a server-side decision,
+//     not something this page can decide on its own.
 //
-// TWO PDF-SIDE FIXES WITH NO CODE IN THIS FILE, recorded here so they
-// are not lost:
-//   - The first artboard still says rival platforms charge
-//     $24,000-$34,000 per user, while two later blocks say
-//     $10,000-$35,000 per user p.a. This file has said $10,000-$35,000
-//     per user p.a. since 2026-09-17 and remains the master figure; the
-//     stale artboard is what moves.
-//   - The artwork's closing line "See what changed. See what matters.
-//     Know where to act." becomes "Know what changed. Know what
-//     matters. Know where to act." - three parallel verbs, matching the
-//     H1 below and the three "How it works" headings both documents
-//     already share.
+// 16. THE COPY IS THE TEAR SHEET'S. Hero headline, the four stats
+//     (~900 sources, 3 financial-health models, 15+ sanctions and
+//     export-control lists, 230+ countries), the problem paragraph, how
+//     it works, "Built by someone who has sat in the chair", the fuller
+//     capability lists (FDIC bank analysis, U.S. economic intelligence,
+//     export controls, people & ownership, ESG, enforcement, corporate
+//     actions, due-diligence level, daily briefing, Ask SIGNAL) and the
+//     page-3 "twelve questions" section. The competitor-price line
+//     ($10,000-$35,000 per user p.a.) is gone because the tear sheet no
+//     longer makes that claim. Trial says "Pre-selected", never a count
+//     (standing ruling: the number will change). The "10 users or 1,000"
+//     line appears once, in the narrative block, not again above the
+//     table (2026-09-18 ruling against saying it twice).
+//
+// 17. "Piotroski F-Score" and "Altman Z-Score", capitalised as the tear
+//     sheet now prints them, everywhere on the page.
+//
+// 18. KEPT, AGAINST THE TEAR SHEET: the tax sentence in the fine print
+//     (Frank, 2026-10-09: "correct and agreed"). Checkout adds tax; the
+//     page that shows the price discloses it.
+//
+// 19. CAPABILITY LISTS ARE WRITTEN ONCE. DOMAINS feeds both the desktop
+//     matrix and the mobile list; they used to be two hand-kept copies
+//     that had already started to differ in punctuation.
+//
+// 2026-10-09 (later). COPY RULINGS APPLIED TO BOTH TEAR SHEETS AND HERE.
+//
+// 20. One headline everywhere: "Know before risk becomes your news
+//     headline." (Frank, 2026-10-09) - the hero and the closing band
+//     now say the same thing; the closing band said "risk alerts become".
+// 21. The three-part line reads "Know what changed. Know what matters.
+//     Know where to act." in the hero body, matching the How it works
+//     headings - the tear sheet's "See ... Understand ..." variant is
+//     retired on the sheet too.
+// 22. "Over thirty years of experience" (Frank, 2026-10-09), the same
+//     wording the NEXUS sheet uses.
+// 23. Two months free is said once, in the fine print. The plan note
+//     under the table no longer repeats it.
 //
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
 //                             the widget is not rendered and the server
 //                             falls back to the honeypot and its rolling
-//                             throttle. Matches the server's behaviour
-//                             when SVC_TURNSTILE_SECRET is unset, so the
-//                             page works before the Cloudflare account
-//                             exists.
+//                             throttle.
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 
@@ -148,12 +165,7 @@ const API_BASE =
 
 /**
  * Where "Client sign in" goes - the app's /login route, NOT its root.
- *
- * 2026-09-19 (Frank): the root of the SIGNAL app is its own landing
- * page (surveillance_svc_app.route() falls through to landing_layout()
- * for "/"), so linking the bare host sent clients to a second pricing
- * page instead of the sign-in screen. Built from API_BASE so a staging
- * build signs in to staging - one hostname in this file, not two.
+ * See item 9 above.
  */
 const SIGNAL_LOGIN_URL = `${API_BASE.replace(/\/+$/, "")}/login`;
 
@@ -161,45 +173,17 @@ const TURNSTILE_SITE_KEY =
   (import.meta as any).env?.VITE_TURNSTILE_SITE_KEY ?? "";
 
 /**
- * The published sample report, served BY THE APP, not by this site.
- *
- * 2026-09-18 (Frank): moved off Vercel public/ once it turned out the
- * product already had a purpose-built route for exactly this -
- * surveillance_svc_app.py answers GET /sample-risk-report from the PDF
- * sitting beside the module, 404s honestly when it is absent, and its
- * own landing CTA self-omits in that case. Hosting it there means the
- * document is replaced by dropping a new file on the droplet: no site
- * rebuild, no Vercel deploy, and one copy of the asset rather than two
- * that drift.
- *
- * Absolute and cross-origin on purpose. The anchor below is
- * target="_blank" with rel="noopener noreferrer" and carries NO
- * download attribute - browsers IGNORE `download` cross-origin, so
- * asking for one would quietly get an inline tab regardless. Inline is
- * what we want here anyway: the prospect reads it without a file
- * landing in their Downloads folder.
- *
- * 2026-09-18 (earlier the same day): both "Sample risk report" links
- * used to point at #sample and NOTHING ON THE PAGE HAD THAT ID - so the
- * hero button and the footer link had always scrolled nowhere and
- * swallowed the click. A dead link on the pricing page is the worst
- * thing a prospect can click while they are evaluating: it reads as a
- * broken site, and they do not report it.
- *
- * Set to "" and the section, the hero button and the footer link all
- * disappear together - the page cannot offer a sample it does not have.
- * Set it to the URL and all three appear. There is no state in which a
- * visitor is offered something that is not there.
+ * The published sample report, served BY THE APP (GET
+ * /sample-risk-report), not by this site. Set to "" and the section, the
+ * hero button and the footer link all disappear together - the page
+ * cannot offer a sample it does not have.
  */
 const SAMPLE_REPORT_URL = "https://signal.hatfield.ai/sample-risk-report";
 
 /**
  * Tier KEYS as the server knows them, with the label this page shows.
- * The key is what gets posted. "Trial" is the published name for the
- * tier keyed 'demo' - the key is load-bearing on the server (the demo
- * activation path refuses a token whose tier is not exactly 'demo', and
- * the Stripe price env names are built from it), so the label is what
- * changes here, never the key.
+ * The key is what gets posted and is load-bearing on the server; only
+ * labels change here.
  */
 const TIERS = [
   { key: "demo", label: "Trial" },
@@ -210,30 +194,201 @@ const TIERS = [
 ] as const;
 
 /**
- * Tiers that carry a price, and therefore a billing interval worth
- * asking about. Mirrors the server's priced_tier() - Trial is free and
- * Enterprise is "Custom", so neither is asked. Keep this in step with
- * the pricing table below.
+ * Tiers that go through checkout, and therefore get a billing interval.
+ * Mirrors the server's priced_tier(). Enterprise has a published price
+ * since 2026-10-09 (item 15) but is still arranged with our team, so it
+ * is not in this list until the server says otherwise.
  */
 const PRICED_TIERS = ["watch", "monitor", "portfolio"];
 
 /**
- * Watch monthly, written ONCE.
- *
- * 2026-09-18: this figure appeared twice already - the desktop matrix
- * cell and the mobile row array - and the narrative block above the
- * matrix would have made three. The artwork that block came from said
- * $1,450, the PRE-gross-up price, which would have sat a few hundred
- * pixels above a matrix reading $1,575 on the one page where a buyer
- * decides whether to trust our numbers. One constant, three readers.
+ * Every published price, written ONCE (item 14). Both pricing layouts
+ * render from this array. Keep it in step with dal.TIERS and Stripe.
  */
-const WATCH_MONTHLY = "$1,575";
+type TierRow = {
+  key: string;
+  label: string;
+  note?: string;
+  companies: string;
+  monthly: string;
+  monthlyNote?: string;
+  annual: string;
+  annualNote?: string;
+  popular?: boolean;
+};
+
+const TIER_ROWS: TierRow[] = [
+  {
+    key: "demo",
+    label: "Trial",
+    note: "read-only",
+    companies: "Pre-selected",
+    monthly: "Free",
+    annual: "10 business days",
+  },
+  {
+    key: "watch",
+    label: "Watch",
+    companies: "Up to 25",
+    monthly: "$950",
+    annual: "$9,500",
+  },
+  {
+    key: "monitor",
+    label: "Monitor",
+    companies: "Up to 100",
+    monthly: "$3,500",
+    annual: "$35,000",
+    popular: true,
+  },
+  {
+    key: "portfolio",
+    label: "Portfolio",
+    companies: "Up to 200",
+    monthly: "$6,000",
+    annual: "$60,000",
+  },
+  {
+    key: "enterprise",
+    label: "Enterprise",
+    companies: "201+",
+    monthly: "$6,000",
+    monthlyNote: "+$25/addt\u2019l company",
+    annual: "$60,000",
+    annualNote: "+$250/addt\u2019l company",
+  },
+];
+
+/** "Plans from ..." reads the cheapest paid tier, never a typed copy. */
+const FROM_MONTHLY =
+  TIER_ROWS.find((r) => r.key === "watch")?.monthly ?? "";
+
+/**
+ * Capabilities, as the tear sheet lists them (item 16). `detail` renders
+ * after an em dash in a quieter colour. One copy feeds both layouts.
+ */
+type Capability = { main: string; detail?: string };
+
+const DOMAINS: { title: string; items: Capability[] }[] = [
+  {
+    title: "Financial & economic health",
+    items: [
+      { main: "Two years of financial reporting and trend analysis" },
+      { main: "Piotroski F-Score", detail: "financial strength and trend analysis" },
+      { main: "Altman Z-Score", detail: "financial resilience and distress risk" },
+      { main: "Merton analysis", detail: "market-implied default risk" },
+      { main: "Bank-specific financial analysis using FDIC filings" },
+      { main: "Private-company manual FVA" },
+      { main: "U.S. economic intelligence" },
+      { main: "Macro indicators", detail: "multi-year trends and IMF projections" },
+      { main: "Daily markets", detail: "indices, bonds, futures and currencies" },
+    ],
+  },
+  {
+    title: "Security, news & reputation",
+    items: [
+      { main: "Cybersecurity events and vulnerabilities" },
+      { main: "Adverse media and reputational risk" },
+      { main: "Social-media risk signals" },
+      { main: "Sanctions screening", detail: "OFAC SDN/non-SDN, UN, UK OFSI and EU" },
+      { main: "Export controls", detail: "BIS, ITAR and nonproliferation lists" },
+      {
+        main: "People & ownership",
+        detail:
+          "officers, principals and recorded owners screened; OFAC 50% Rule and PEP identification",
+      },
+      { main: "World news and geopolitical developments" },
+      { main: "ESG and conduct incidents" },
+    ],
+  },
+  {
+    title: "Legal, regulatory & compliance",
+    items: [
+      {
+        main: "Litigation intelligence",
+        detail: "civil, bankruptcy, discrimination, contract, IP and shareholder actions",
+      },
+      { main: "Regulatory enforcement actions" },
+      { main: "Applicable regulatory requirements by sector and jurisdiction" },
+      { main: "Regulatory intelligence and rule changes" },
+      { main: "Advisory alerts" },
+      { main: "Corporate actions and leadership changes" },
+      { main: "Due-diligence level per company" },
+    ],
+  },
+  {
+    title: "Supply chain & location risk",
+    items: [
+      { main: "Geographic, geopolitical and climate events" },
+      {
+        main: "Delivery-location exposure",
+        detail: "disasters, State Department advisories and CDC alerts",
+      },
+      { main: "Country profiles across 230+ countries" },
+      { main: "Fourth-party dependencies" },
+      { main: "Port watch", detail: "shipping routes and critical chokepoints" },
+      { main: "Risk simulation" },
+      { main: "Daily executive briefing" },
+      { main: "Ask SIGNAL", detail: "answers from your portfolio" },
+    ],
+  },
+];
+
+/** The tear sheet's page 3: twelve questions, one company. */
+const QUESTIONS: { q: string; a: string }[] = [
+  {
+    q: "Are we watching the right company?",
+    a: "Every name resolved to its registered legal entity. Namesakes rejected. A parent event shown on the subsidiary you use.",
+  },
+  {
+    q: "Is legal risk changing the story?",
+    a: "Litigation ranked by what the event is, not how loudly it is reported, with your portfolio company marked plaintiff or defendant.",
+  },
+  {
+    q: "Has their cyber risk changed?",
+    a: "Actively exploited vulnerabilities, breach records and outside-in security posture.",
+  },
+  {
+    q: "Is a regulator already on to them?",
+    a: "Enforcement actions from the regulators themselves, plus rule changes and requirements by sector and jurisdiction.",
+  },
+  {
+    q: "What changed inside the company?",
+    a: "Mergers, restructurings, leadership exits, board changes and credit ratings from primary filings.",
+  },
+  {
+    q: "What is the market hearing?",
+    a: "Adverse news and social signals, held to independent sources and tested for materiality.",
+  },
+  {
+    q: "What does conduct tell us?",
+    a: "Conduct risk built from recorded incidents and source evidence \u2014 not a bought-in rating.",
+  },
+  {
+    q: "Who do they depend on?",
+    a: "Fourth-party and supply-chain dependencies identified across 18 source types, with relationship direction mapped.",
+  },
+  {
+    q: "Where could disruption reach them?",
+    a: "Delivery locations matched to travel advisories, health notices and disaster alerts. Ports and shipping lanes. Country profiles.",
+  },
+  {
+    q: "What is changing around them?",
+    a: "World news, official advisories, U.S. economic intelligence, macro trends and daily market indicators.",
+  },
+  {
+    q: "What happens if they fail?",
+    a: "Risk simulation: pick a company, run the failure, see what it touches.",
+  },
+  {
+    q: "What matters first?",
+    a: "A daily executive briefing with consolidated events, prioritized by company and severity.",
+  },
+];
 
 /**
  * The product's sector vocabulary, hardcoded ONLY as a fallback for when
- * GET /api/sectors cannot be reached. These are the server's own labels
- * (dal.REG_SECTOR_LABELS), so a selection made offline still resolves to
- * a real sector when the registration screen reads it back.
+ * GET /api/sectors cannot be reached (item 7).
  */
 const FALLBACK_SECTORS = [
   "Financial Services (Banking)",
@@ -281,9 +436,7 @@ const Signal = () => {
     s.id = id;
     // Implicit rendering: Cloudflare finds every .cf-turnstile element
     // and injects a hidden `cf-turnstile-response` input into the
-    // enclosing form, which is what handleSubmit reads. Explicit
-    // rendering would need a global onload callback and buys nothing
-    // here - there is one widget on the page.
+    // enclosing form, which is what handleSubmit reads.
     s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
     s.async = true;
     s.defer = true;
@@ -291,11 +444,7 @@ const Signal = () => {
   }, []);
 
   // The industry list, from the product rather than from this file.
-  // Failure is silent ON PURPOSE: the fallback is already rendered, and
-  // a prospect filling in a form does not need to be told that a
-  // background fetch missed. Anything unexpected in the payload is
-  // ignored rather than rendered, so a malformed response cannot empty
-  // the dropdown.
+  // Failure is silent ON PURPOSE: the fallback is already rendered.
   useEffect(() => {
     let cancelled = false;
     fetch(`${API_BASE}/api/sectors`)
@@ -348,8 +497,6 @@ const Signal = () => {
 
     // Mirrors the server's mandatory set exactly (2026-08-08, Frank:
     // "all input fields are mandatory"). Phone stays optional by design.
-    // Validating here is a courtesy - the server decides, because a
-    // disabled or hidden input can still be posted.
     const required: [string, string][] = [
       ["company", "Company name"],
       ["first", "First name"],
@@ -362,7 +509,7 @@ const Signal = () => {
 
     const missing = required.filter(([id]) => !val(id)).map(([, lbl]) => lbl);
 
-    // A billing preference is required only for a tier that has a price.
+    // A billing preference is required only for a checkout-priced tier.
     const needsBilling = PRICED_TIERS.includes(selectedTier);
     if (needsBilling && !selectedBilling) {
       missing.push("Billing preference");
@@ -447,10 +594,35 @@ const Signal = () => {
     selectedTier === "demo"
       ? "Not applicable"
       : selectedTier === "enterprise"
-      ? "Custom pricing"
+      ? "Arranged with our team"
       : selectedTier === ""
       ? "Select tier first"
       : "Select";
+
+  const renderCapability = (c: Capability) => (
+    <>
+      {c.main}
+      {c.detail && (
+        <span className="text-[#667085]"> &mdash; {c.detail}</span>
+      )}
+    </>
+  );
+
+  const renderPrice = (value: string, note?: string) => (
+    <>
+      <span className={value === "Free" ? "font-semibold text-[#16803C]" : ""}>
+        {value}
+      </span>
+      {note && (
+        <span className="block text-[11px] font-normal text-[#667085] mt-[3px] leading-[1.35]">
+          {note}
+        </span>
+      )}
+    </>
+  );
+
+  const kicker =
+    "m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase leading-[1.5]";
 
   return (
     <div
@@ -473,16 +645,12 @@ const Signal = () => {
           </a>
 
           <div className="flex items-center gap-5 md:gap-7">
-            {/*
-              2026-09-21: the artwork's masthead line - see item 10
-              above. Sentence case in the DOM, uppercased in CSS, so a
-              screen reader says it rather than spelling it out.
-            */}
+            {/* Item 10: sentence case in the DOM, uppercased in CSS. */}
             <p className="hidden md:block m-0 text-[11px] font-semibold tracking-[0.13em] text-white/70 uppercase">
               Your GPS for business decisions
             </p>
 
-            {/* 2026-09-19: /login, not the app root - see item 9 above. */}
+            {/* Item 9: /login, not the app root. */}
             <a
               href={SIGNAL_LOGIN_URL}
               className="px-[16px] py-[10px] border border-white/35 rounded-[7px] text-white no-underline text-[13px] font-medium hover:border-white/60 transition-colors"
@@ -493,7 +661,7 @@ const Signal = () => {
         </div>
       </header>
 
-      {/* HERO */}
+      {/* HERO - tear sheet page 1 (item 16) */}
       <section className="bg-[#071326] text-white py-[72px] md:pb-[76px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col lg:flex-row lg:items-end justify-between gap-12">
           <div>
@@ -501,23 +669,24 @@ const Signal = () => {
               SIGNAL
             </p>
 
-            <h1 className="m-0 text-[34px] sm:text-[40px] lg:text-[48px] font-medium leading-[1.08] tracking-[-0.035em] max-w-[20ch]">
-              Know what changed.
-              <br />
-              Know what matters.
-              <br />
-              Know where to act.
+            <p className="m-0 mb-4 text-[11px] font-semibold tracking-[0.15em] text-[#7CA4FF] uppercase">
+              The signal is already there.
+            </p>
+
+            <h1 className="m-0 font-serif text-[34px] sm:text-[42px] lg:text-[50px] font-semibold leading-[1.08] tracking-[-0.03em] max-w-[18ch]">
+              Know before risk becomes your news headline.
             </h1>
 
-            <p className="mt-7 mb-0 text-[#B8C4D6] text-base max-w-[60ch] leading-6">
-              Continuous intelligence at the speed of business.
-              <br />
-              Know what matters, when it matters.
+            <p className="mt-7 mb-0 text-[#B8C4D6] text-base max-w-[62ch] leading-7">
+              SIGNAL watches the companies that matter to you &mdash; and
+              connects what is changing across financials, cyber, sanctions,
+              litigation, regulation, corporate events, geopolitics and supply
+              chain. Know what changed. Know what matters. Know where to act.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-[10px] lg:pb-1">
-            {/* 2026-09-21: the term is in the button - see item 11. */}
+            {/* Item 11: the term is in the button. */}
             <button
               type="button"
               onClick={() => selectTier("demo")}
@@ -542,37 +711,14 @@ const Signal = () => {
       <main className="pt-16 pb-[10px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px]">
 
-          {/* ---------------------------------------------------------
-              NARRATIVE BLOCK (2026-09-18, Frank)
-
-              Replaces the former "One subscription. Unlimited users."
-              section, which made the same tenant-pricing point this
-              block now makes in Frank's own words. Two sections saying
-              it four seconds apart, in different numbers (100 users vs
-              1,000), read as drafting rather than design - so there is
-              one statement of the pricing model on this page, and it is
-              this one.
-
-              PRICE: the "from" figure reads WATCH_MONTHLY, the same
-              constant both pricing tables now render. The artwork this
-              block came from said $1,450 - the PRE-gross-up number -
-              which would have sat a few hundred pixels above a matrix
-              reading $1,575, on the one page where a buyer decides
-              whether to trust our figures. TIERS carries no price, so
-              there was nothing to derive it from; the constant was
-              introduced instead and the two existing hardcoded copies
-              now read it too.
-          ------------------------------------------------------------- */}
+          {/* NARRATIVE BLOCK - one statement of the pricing model on the
+              page (2026-09-18 ruling), copy from tear sheet page 1. */}
           <section className="max-w-[1120px] mx-auto mb-[64px]">
 
-            {/* Lede */}
+            {/* Lede + stats */}
             <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-10 lg:gap-16">
               <div className="lg:max-w-[46%]">
-                <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase leading-[1.5]">
-                  Every headline was once a signal someone missed.
-                </p>
-
-                <h2 className="mt-5 mb-0 font-serif text-[40px] md:text-[52px] leading-[1.02] tracking-[-0.03em] text-[#0A1A33]">
+                <h2 className="m-0 font-serif text-[40px] md:text-[52px] leading-[1.02] tracking-[-0.03em] text-[#0A1A33]">
                   Signal.
                   <br />
                   <span className="italic font-normal text-[#98A2B3]">
@@ -581,26 +727,27 @@ const Signal = () => {
                 </h2>
               </div>
 
-              <div className="grid grid-cols-2 gap-x-10 gap-y-7 lg:pt-3 lg:min-w-[340px]">
+              <div className="grid grid-cols-2 gap-x-10 gap-y-7 lg:pt-3 lg:min-w-[380px]">
                 <div>
                   <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
-                    847
+                    ~900
                   </p>
                   <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
-                    curated global sources
+                    curated data sources
                   </p>
                 </div>
                 <div>
                   <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
-                    21
+                    3
                   </p>
                   <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
-                    live intelligence surfaces
+                    financial-health models &mdash; Piotroski F-Score, Altman
+                    Z-Score, Merton
                   </p>
                 </div>
                 <div>
                   <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
-                    12
+                    15+
                   </p>
                   <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
                     sanctions &amp; export-control lists
@@ -608,7 +755,7 @@ const Signal = () => {
                 </div>
                 <div>
                   <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
-                    234
+                    230+
                   </p>
                   <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
                     countries &amp; territories
@@ -617,20 +764,12 @@ const Signal = () => {
               </div>
             </div>
 
-            <p className="mt-9 mb-0 max-w-[76ch] text-[15px] md:text-[16px] leading-[1.7] text-[#475467]">
-              SIGNAL watches the companies that matter to you &mdash; suppliers,
-              counterparties, clients and targets &mdash; and tells you what changed,
-              why it matters and where to act. Before it becomes the headline.
-            </p>
-
-            {/* Noise resolving into one signal. Decorative: the figure
-                restates the sentence above it and carries no data, so it
-                is hidden from assistive tech rather than described. */}
+            {/* Noise resolving into one signal. Decorative only. */}
             <svg
               viewBox="0 0 800 60"
               aria-hidden="true"
               focusable="false"
-              className="mt-8 w-full h-[54px]"
+              className="mt-10 w-full h-[54px]"
               preserveAspectRatio="none"
             >
               <path d="M 0 37 L 8 22 L 15 40 L 23 23 L 30 37 L 38 22 L 46 35 L 53 23 L 61 38 L 68 21 L 76 34 L 84 24 L 91 34 L 99 20 L 106 39 L 114 26 L 122 41 L 129 19 L 137 38 L 144 22 L 152 35 L 160 26 L 167 37 L 175 26 L 182 35 L 190 25 L 198 34 L 205 23 L 213 37 L 220 20 L 228 37 L 236 22 L 243 37 L 251 22 L 258 37 L 266 24 L 274 41 L 281 19 L 289 40 L 296 21 L 304 36 L 312 25 L 319 36 L 327 26 L 334 39 L 342 23 L 350 40 L 357 24 L 365 41 L 372 20 L 380 34 L 388 25 L 395 40 L 403 23 L 410 41 L 418 24 L 426 34 L 433 22 L 441 39 L 448 24 L 456 34 L 464 24 L 471 41 L 479 21 L 486 34 L 494 25 L 496 30" fill="none" stroke="#C3CCDA" strokeWidth="1.5" />
@@ -641,55 +780,57 @@ const Signal = () => {
             <hr className="mt-10 mb-10 border-0 border-t border-[#E2E7EF]" />
 
             {/* The problem */}
-            <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase">
-              The problem
-            </p>
+            <p className={kicker}>The problem</p>
 
             <div className="mt-5 flex flex-col lg:flex-row justify-between gap-8 lg:gap-16">
-              <h3 className="m-0 lg:max-w-[46%] font-serif text-[26px] md:text-[30px] leading-[1.18] tracking-[-0.025em] text-[#0A1A33]">
-                You don&rsquo;t have an information problem. You have a signal problem.
+              <h3 className="m-0 lg:max-w-[46%] font-serif font-normal text-[26px] md:text-[30px] leading-[1.18] tracking-[-0.025em] text-[#0A1A33]">
+                You don&rsquo;t have an information problem.{" "}
+                <span className="text-[#2F6BFF]">
+                  You have a signal problem.
+                </span>
               </h3>
 
               <p className="m-0 lg:max-w-[46%] text-[13px] leading-[1.75] text-[#475467]">
-                Today the picture is scattered across a dozen feeds &mdash; financial
-                health, litigation, cyber, sanctions, and news and social media
-                alerts. None of them talk to each other. None tell you what it
-                means for you or your portfolio. And the platforms that do
-                consolidate data are expensive, charging $10,000&ndash;$35,000 per
-                user p.a.
+                The warning signs rarely arrive as one obvious alert. They
+                appear fragmented &mdash; across financials, litigation, cyber,
+                sanctions, news, regulation and the world around the company.
+                SIGNAL connects those signals before they become the headline.
               </p>
             </div>
 
             <hr className="mt-10 mb-10 border-0 border-t border-[#E2E7EF]" />
 
             {/* How it works */}
-            <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase">
-              How it works
-            </p>
+            <p className={kicker}>How it works</p>
 
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
               <div>
-                <h3 className="m-0 text-[19px] md:text-[21px] font-medium tracking-[-0.02em] text-[#0A1A33] font-serif">
+                <h3 className="m-0 text-[19px] md:text-[21px] font-normal tracking-[-0.02em] text-[#0A1A33] font-serif">
                   Know what changed.
                 </h3>
                 <p className="mt-3 mb-0 text-[13px] leading-[1.7] text-[#475467]">
-                  847 curated sources watched around the clock &mdash; regulators, courts, filings, exchanges, shipping lanes and national cyber agencies.
+                  Intelligence signals curated from ~900 global data sources
+                  &mdash; regulators, courts, filings, exchanges, cyber
+                  authorities, news, markets, shipping and geopolitical sources.
                 </p>
               </div>
               <div>
-                <h3 className="m-0 text-[19px] md:text-[21px] font-medium tracking-[-0.02em] text-[#0A1A33] font-serif">
+                <h3 className="m-0 text-[19px] md:text-[21px] font-normal tracking-[-0.02em] text-[#0A1A33] font-serif">
                   Know what matters.
                 </h3>
                 <p className="mt-3 mb-0 text-[13px] leading-[1.7] text-[#475467]">
-                  Every item tied to the right legal entity, tested for materiality and folded into one event. The noise never reaches your desk.
+                  Every item is tied to the right legal entity, tested for
+                  materiality and consolidated into one event. Duplicate and
+                  low-value noise is filtered before it reaches you.
                 </p>
               </div>
               <div>
-                <h3 className="m-0 text-[19px] md:text-[21px] font-medium tracking-[-0.02em] text-[#0A1A33] font-serif">
+                <h3 className="m-0 text-[19px] md:text-[21px] font-normal tracking-[-0.02em] text-[#0A1A33] font-serif">
                   Know where to act.
                 </h3>
                 <p className="mt-3 mb-0 text-[13px] leading-[1.7] text-[#475467]">
-                  Severity-ranked, read against your portfolio and summed up in one daily brief &mdash; one click from the original source.
+                  Severity-ranked, read against your portfolio and summed up in
+                  one daily brief &mdash; one click from the original source.
                 </p>
               </div>
             </div>
@@ -699,41 +840,52 @@ const Signal = () => {
             {/* Pricing model + provenance */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
               <div>
-                <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase leading-[1.5]">
-                  Priced for the portfolio, not the person
-                </p>
+                <p className={kicker}>Priced for the portfolio, not the person</p>
 
-                <h3 className="mt-5 mb-0 font-serif text-[24px] md:text-[27px] leading-[1.2] tracking-[-0.025em] text-[#0A1A33]">
+                <h3 className="mt-5 mb-0 font-serif font-normal text-[24px] md:text-[27px] leading-[1.2] tracking-[-0.025em] text-[#0A1A33]">
                   10 users or 1,000. One price.
                 </h3>
 
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
                   You pay for the companies you monitor, never for the seat. One
                   subscription replaces a stack of feeds. Plans from{" "}
-                  {WATCH_MONTHLY} a month.
+                  {FROM_MONTHLY} a month.
                 </p>
               </div>
 
               <div>
-                <p className="m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase leading-[1.5]">
-                  Built by a practitioner
-                </p>
+                <p className={kicker}>Built by a practitioner</p>
 
-                <h3 className="mt-5 mb-0 font-serif text-[24px] md:text-[27px] leading-[1.2] tracking-[-0.025em] text-[#0A1A33]">
-                  The right information, at the right time, is the decision.
+                <h3 className="mt-5 mb-0 font-serif font-normal text-[24px] md:text-[27px] leading-[1.2] tracking-[-0.025em] text-[#0A1A33]">
+                  Built by someone who has sat in the chair.
                 </h3>
 
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
-                  Thirty years inside Morgan Stanley, J.P. Morgan, Merrill Lynch,
-                  Barclays, SMBC and Bloomberg &mdash; not a vendor sprinkling AI on a
-                  feed.
+                  Over thirty years of experience at Morgan Stanley, J.P. Morgan,
+                  Merrill Lynch, Barclays, SMBC and Bloomberg, shaped around one
+                  question: what do I need to know before I am blindsided?
                 </p>
               </div>
             </div>
           </section>
 
-          {/* DESKTOP MATRIX */}
-          <div className="hidden xl:grid grid-cols-[118px_124px_104px_132px_repeat(4,minmax(0,1fr))] bg-white border-y border-[#E2E7EF]">
+          {/* PRICING INTRO - tear sheet page 2. The "10 users or 1,000"
+              line is NOT repeated here (item 16). */}
+          <div className="mb-8">
+            <p className={kicker}>One subscription. Unlimited users.</p>
+
+            <h2 className="mt-4 mb-0 font-serif text-[28px] md:text-[34px] font-semibold leading-[1.15] tracking-[-0.025em] text-[#0A1A33]">
+              Enterprise intelligence. Priced for the portfolio.
+            </h2>
+
+            <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[70ch]">
+              Monitor the companies that matter. Give the intelligence to
+              everyone who needs it.
+            </p>
+          </div>
+
+          {/* DESKTOP MATRIX - rendered from TIER_ROWS and DOMAINS */}
+          <div className="hidden xl:grid grid-cols-[118px_124px_120px_136px_repeat(4,minmax(0,1fr))] bg-white border-y border-[#E2E7EF]">
 
             {/* GROUP HEADERS */}
             <div className="col-span-4 px-4 py-[15px] border-b border-[#E2E7EF] text-[11px] font-semibold tracking-[0.13em] text-[#667085] uppercase">
@@ -746,14 +898,11 @@ const Signal = () => {
 
             {/* COLUMN HEADERS */}
             {[
-              "Tier",
+              "Plan",
               "Companies",
               "Monthly",
               "Annual",
-              "Financial & economic health",
-              "Security, news & reputation",
-              "Legal, regulatory & compliance",
-              "Supply chain & location risk",
+              ...DOMAINS.map((d) => d.title),
             ].map((heading) => (
               <div
                 key={heading}
@@ -763,288 +912,94 @@ const Signal = () => {
               </div>
             ))}
 
-            {/* TRIAL */}
-            <div className="col-start-1 row-start-3 px-4 py-[15px] border-b border-[#E2E7EF]">
-              <button
-                type="button"
-                onClick={() => selectTier("demo")}
-                className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
+            {/* TIER ROWS */}
+            {TIER_ROWS.map((row, i) => {
+              const gridRow = 3 + i;
+              const cell =
+                "px-4 py-[15px] border-b border-[#E2E7EF]" +
+                (row.popular ? " bg-[#EEF4FC]" : "");
+              return (
+                <div key={row.key} className="contents">
+                  <div className={cell} style={{ gridColumn: 1, gridRow }}>
+                    {row.popular && (
+                      <span className="block text-[10px] font-bold tracking-[0.08em] text-[#2F6BFF] mb-1">
+                        MOST POPULAR
+                      </span>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => selectTier(row.key)}
+                      className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
+                    >
+                      {row.label}
+                    </button>
+
+                    {row.note && (
+                      <span className="block font-normal text-[11px] text-[#667085] mt-[3px]">
+                        {row.note}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className={cell} style={{ gridColumn: 2, gridRow }}>
+                    {row.companies}
+                  </div>
+
+                  <div
+                    className={`${cell} font-semibold`}
+                    style={{ gridColumn: 3, gridRow }}
+                  >
+                    {renderPrice(row.monthly, row.monthlyNote)}
+                  </div>
+
+                  <div
+                    className={`${cell}${row.key === "demo" ? " text-[#667085]" : ""}`}
+                    style={{ gridColumn: 4, gridRow }}
+                  >
+                    {renderPrice(row.annual, row.annualNote)}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* DOMAIN COLUMNS - each spans every tier row */}
+            {DOMAINS.map((domain, i) => (
+              <div
+                key={domain.title}
+                className="px-4 pt-[17px] pb-[15px] border-b border-[#E2E7EF]"
+                style={{
+                  gridColumn: 5 + i,
+                  gridRow: `3 / span ${TIER_ROWS.length}`,
+                }}
               >
-                Trial
-              </button>
-
-              <span className="block font-normal text-[11px] text-[#667085] mt-[3px]">
-                read-only
-              </span>
-            </div>
-
-            <div className="col-start-2 row-start-3 px-4 py-[15px] border-b border-[#E2E7EF]">
-              15 pre-selected
-            </div>
-
-            <div className="col-start-3 row-start-3 px-4 py-[15px] border-b border-[#E2E7EF] font-semibold text-[#16803C]">
-              Free
-            </div>
-
-            <div className="col-start-4 row-start-3 px-4 py-[15px] border-b border-[#E2E7EF] text-[#667085]">
-              10 business days
-            </div>
-
-            {/* WATCH */}
-            <div className="col-start-1 row-start-4 px-4 py-[15px] border-b border-[#E2E7EF]">
-              <button
-                type="button"
-                onClick={() => selectTier("watch")}
-                className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
-              >
-                Watch
-              </button>
-            </div>
-
-            <div className="col-start-2 row-start-4 px-4 py-[15px] border-b border-[#E2E7EF]">
-              Up to 25
-            </div>
-
-            <div className="col-start-3 row-start-4 px-4 py-[15px] border-b border-[#E2E7EF] font-semibold">
-              {WATCH_MONTHLY}
-            </div>
-
-            <div className="col-start-4 row-start-4 px-4 py-[15px] border-b border-[#E2E7EF]">
-              $15,750
-            </div>
-
-            {/* MONITOR */}
-            <div className="col-start-1 row-start-5 px-4 py-[15px] border-b border-[#E2E7EF] bg-[#EEF4FC]">
-              <span className="block text-[10px] font-bold tracking-[0.08em] text-[#2F6BFF] mb-1">
-                MOST POPULAR
-              </span>
-
-              <button
-                type="button"
-                onClick={() => selectTier("monitor")}
-                className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
-              >
-                Monitor
-              </button>
-            </div>
-
-            <div className="col-start-2 row-start-5 px-4 py-[15px] border-b border-[#E2E7EF] bg-[#EEF4FC]">
-              Up to 100
-            </div>
-
-            <div className="col-start-3 row-start-5 px-4 py-[15px] border-b border-[#E2E7EF] bg-[#EEF4FC] font-semibold">
-              $4,875
-            </div>
-
-            <div className="col-start-4 row-start-5 px-4 py-[15px] border-b border-[#E2E7EF] bg-[#EEF4FC]">
-              $48,750
-            </div>
-
-            {/* PORTFOLIO */}
-            <div className="col-start-1 row-start-6 px-4 py-[15px] border-b border-[#E2E7EF]">
-              <button
-                type="button"
-                onClick={() => selectTier("portfolio")}
-                className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
-              >
-                Portfolio
-              </button>
-            </div>
-
-            <div className="col-start-2 row-start-6 px-4 py-[15px] border-b border-[#E2E7EF]">
-              Up to 250
-            </div>
-
-            <div className="col-start-3 row-start-6 px-4 py-[15px] border-b border-[#E2E7EF] font-semibold">
-              $10,250
-            </div>
-
-            <div className="col-start-4 row-start-6 px-4 py-[15px] border-b border-[#E2E7EF]">
-              $102,500
-            </div>
-
-            {/* ENTERPRISE */}
-            <div className="col-start-1 row-start-7 px-4 py-[15px] border-b border-[#E2E7EF]">
-              <button
-                type="button"
-                onClick={() => selectTier("enterprise")}
-                className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
-              >
-                Enterprise
-              </button>
-            </div>
-
-            <div className="col-start-2 row-start-7 px-4 py-[15px] border-b border-[#E2E7EF]">
-              250+
-            </div>
-
-            <div className="col-start-3 row-start-7 px-4 py-[15px] border-b border-[#E2E7EF] font-semibold">
-              Custom
-            </div>
-
-            <div className="col-start-4 row-start-7 px-4 py-[15px] border-b border-[#E2E7EF]">
-              Custom
-            </div>
-
-            {/* FINANCIAL DOMAIN */}
-            <div className="col-start-5 row-start-3 row-span-5 px-4 pt-[17px] pb-[15px] border-b border-[#E2E7EF]">
-              <ul className="list-none m-0 p-0">
-                <li className={domainStyle}>
-                  Financial reporting, two years, with trend analysis
-                </li>
-
-                <li className={domainStyle}>
-                  Altman Z-score{" "}
-                  <span className="text-[#667085]">
-                    &mdash; financial resilience
-                  </span>
-                </li>
-
-                <li className={domainStyle}>
-                  Merton default analysis
-                </li>
-
-                <li className={domainStyle}>
-                  Piotroski F-score{" "}
-                  <span className="text-[#667085]">
-                    &mdash; trend analysis
-                  </span>
-                </li>
-
-                <li className={domainStyle}>
-                  Private-company manual FVA
-                </li>
-
-                <li className={domainStyle}>
-                  Macro indicators{" "}
-                  <span className="text-[#667085]">
-                    &mdash; eight-year trends, IMF projections
-                  </span>
-                </li>
-
-                <li className={domainStyle}>
-                  Daily indicators{" "}
-                  <span className="text-[#667085]">
-                    &mdash; indices, bonds, futures, currencies
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            {/* SECURITY DOMAIN */}
-            <div className="col-start-6 row-start-3 row-span-5 px-4 pt-[17px] pb-[15px] border-b border-[#E2E7EF]">
-              <ul className="list-none m-0 p-0">
-                <li className={domainStyle}>
-                  Cybersecurity events and vulnerabilities
-                </li>
-
-                <li className={domainStyle}>
-                  Adverse media and reputational risk
-                </li>
-
-                <li className={domainStyle}>
-                  Social-media risk signals
-                </li>
-
-                <li className={domainStyle}>
-                  Sanctions and watchlist screening{" "}
-                  <span className="text-[#667085]">
-                    &mdash; OFAC, UN, UK OFSI, EU, with PEP coverage
-                  </span>
-                </li>
-
-                <li className={domainStyle}>
-                  World news and geopolitical developments
-                </li>
-              </ul>
-            </div>
-
-            {/* LEGAL DOMAIN */}
-            <div className="col-start-7 row-start-3 row-span-5 px-4 pt-[17px] pb-[15px] border-b border-[#E2E7EF]">
-              <ul className="list-none m-0 p-0">
-                <li className={domainStyle}>
-                  Litigation alerts{" "}
-                  <span className="text-[#667085]">
-                    &mdash; civil, bankruptcy, discrimination, contract, IP,
-                    shareholder
-                  </span>
-                </li>
-
-                <li className={domainStyle}>
-                  Applicable regulatory requirements{" "}
-                  <span className="text-[#667085]">
-                    &mdash; by sector and jurisdiction
-                  </span>
-                </li>
-
-                <li className={domainStyle}>
-                  Regulatory intelligence and rule changes
-                </li>
-
-                <li className={domainStyle}>
-                  Advisory alerts
-                </li>
-              </ul>
-            </div>
-
-            {/* SUPPLY CHAIN DOMAIN */}
-            <div className="col-start-8 row-start-3 row-span-5 px-4 pt-[17px] pb-[15px] border-b border-[#E2E7EF]">
-              <ul className="list-none m-0 p-0">
-                <li className={domainStyle}>
-                  Geographic, geopolitical and climate events
-                </li>
-
-                <li className={domainStyle}>
-                  Delivery-location exposure{" "}
-                  <span className="text-[#667085]">
-                    &mdash; disasters, State Department, CDC alerts
-                  </span>
-                </li>
-
-                <li className={domainStyle}>
-                  Country profiles across 230+ countries
-                </li>
-
-                <li className={domainStyle}>
-                  Fourth-party dependency
-                </li>
-
-                <li className={domainStyle}>
-                  Port watch{" "}
-                  <span className="text-[#667085]">
-                    &mdash; shipping routes and choke points
-                  </span>
-                </li>
-
-                <li className={domainStyle}>
-                  Risk simulation
-                </li>
-              </ul>
-            </div>
+                <ul className="list-none m-0 p-0">
+                  {domain.items.map((item) => (
+                    <li key={item.main} className={domainStyle}>
+                      {renderCapability(item)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
-          {/* TABLET / MOBILE */}
+          {/* TABLET / MOBILE - same TIER_ROWS and DOMAINS */}
           <div className="xl:hidden">
             <div className="text-[11px] font-semibold tracking-[0.13em] text-[#667085] uppercase border-b border-[#E2E7EF] pb-4">
               Subscription
             </div>
 
             <div className="divide-y divide-[#E2E7EF]">
-              {[
-                ["demo", "Trial", "15 pre-selected", "Free", "10 business days"],
-                ["watch", "Watch", "Up to 25", WATCH_MONTHLY, "$15,750"],
-                ["monitor", "Monitor", "Up to 100", "$4,875", "$48,750"],
-                ["portfolio", "Portfolio", "Up to 250", "$10,250", "$102,500"],
-                ["enterprise", "Enterprise", "250+", "Custom", "Custom"],
-              ].map(([key, tier, companies, monthly, annual]) => (
+              {TIER_ROWS.map((row) => (
                 <div
-                  key={key}
+                  key={row.key}
                   className={`grid grid-cols-2 sm:grid-cols-4 gap-4 py-5 ${
-                    key === "monitor" ? "bg-[#EEF4FC] px-4" : ""
+                    row.popular ? "bg-[#EEF4FC] px-4" : ""
                   }`}
                 >
                   <div>
-                    {key === "monitor" && (
+                    {row.popular && (
                       <span className="block text-[9px] font-bold tracking-[0.08em] text-[#2F6BFF] mb-1">
                         MOST POPULAR
                       </span>
@@ -1052,41 +1007,38 @@ const Signal = () => {
 
                     <button
                       type="button"
-                      onClick={() => selectTier(key)}
+                      onClick={() => selectTier(row.key)}
                       className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
                     >
-                      {tier}
+                      {row.label}
                     </button>
+
+                    {row.note && (
+                      <span className="block text-[11px] text-[#667085] mt-[3px]">
+                        {row.note}
+                      </span>
+                    )}
                   </div>
 
                   <div className="text-sm">
                     <span className="block text-[10px] text-[#667085] uppercase mb-1">
                       Companies
                     </span>
-                    {companies}
+                    {row.companies}
                   </div>
 
                   <div className="text-sm">
                     <span className="block text-[10px] text-[#667085] uppercase mb-1">
                       Monthly
                     </span>
-
-                    <span
-                      className={
-                        monthly === "Free"
-                          ? "font-semibold text-[#16803C]"
-                          : ""
-                      }
-                    >
-                      {monthly}
-                    </span>
+                    {renderPrice(row.monthly, row.monthlyNote)}
                   </div>
 
                   <div className="text-sm">
                     <span className="block text-[10px] text-[#667085] uppercase mb-1">
                       Annual
                     </span>
-                    {annual}
+                    {renderPrice(row.annual, row.annualNote)}
                   </div>
                 </div>
               ))}
@@ -1097,50 +1049,7 @@ const Signal = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-0 border-b border-[#E2E7EF]">
-              {[
-                {
-                  title: "Financial & economic health",
-                  items: [
-                    "Financial reporting, two years, with trend analysis",
-                    "Altman Z-score \u2014 financial resilience",
-                    "Merton default analysis",
-                    "Piotroski F-score \u2014 trend analysis",
-                    "Private-company manual FVA",
-                    "Macro indicators \u2014 eight-year trends, IMF projections",
-                    "Daily indicators \u2014 indices, bonds, futures, currencies",
-                  ],
-                },
-                {
-                  title: "Security, news & reputation",
-                  items: [
-                    "Cybersecurity events and vulnerabilities",
-                    "Adverse media and reputational risk",
-                    "Social-media risk signals",
-                    "Sanctions and watchlist screening \u2014 OFAC, UN, UK OFSI, EU, with PEP coverage",
-                    "World news and geopolitical developments",
-                  ],
-                },
-                {
-                  title: "Legal, regulatory & compliance",
-                  items: [
-                    "Litigation alerts \u2014 civil, bankruptcy, discrimination, contract, IP, shareholder",
-                    "Applicable regulatory requirements \u2014 by sector and jurisdiction",
-                    "Regulatory intelligence and rule changes",
-                    "Advisory alerts",
-                  ],
-                },
-                {
-                  title: "Supply chain & location risk",
-                  items: [
-                    "Geographic, geopolitical and climate events",
-                    "Delivery-location exposure \u2014 disasters, State Department, CDC alerts",
-                    "Country profiles across 230+ countries",
-                    "Fourth-party dependency",
-                    "Port watch \u2014 shipping routes and choke points",
-                    "Risk simulation",
-                  ],
-                },
-              ].map((domain) => (
+              {DOMAINS.map((domain) => (
                 <div
                   key={domain.title}
                   className="py-6 md:px-5 border-b md:border-b-0 border-[#E2E7EF]"
@@ -1151,8 +1060,8 @@ const Signal = () => {
 
                   <ul className="list-none m-0 p-0">
                     {domain.items.map((item) => (
-                      <li key={item} className={domainStyle}>
-                        {item}
+                      <li key={item.main} className={domainStyle}>
+                        {renderCapability(item)}
                       </li>
                     ))}
                   </ul>
@@ -1161,25 +1070,104 @@ const Signal = () => {
             </div>
           </div>
 
-          {/* FINE PRINT */}
-          <div className="mt-5">
-            <p className="m-0 text-[12px] text-[#667085] max-w-[92ch] leading-[1.6]">
+          {/* PLAN NOTES + FINE PRINT - tear sheet page 2, plus the tax
+              sentence kept on the web page (item 18). */}
+          <div className="mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-6 lg:gap-12">
+            <div className="text-[12px] text-[#667085] leading-[1.6]">
+              <p className="m-0">
+                Enterprise additional-company charges apply only to companies
+                above 200.
+              </p>
+              <p className="mt-3 mb-0">
+                Every paid SIGNAL plan includes unlimited users and all
+                standalone SIGNAL capabilities.
+              </p>
+            </div>
+
+            <p className="m-0 text-[12px] text-[#667085] leading-[1.6]">
               <strong className="text-[#101828] font-semibold">
                 Annual billing includes two months free.
               </strong>{" "}
-              Trial covers 15 companies we pre-select, read-only, with no
+              Trial covers companies we pre-select, read-only, with no
               on-demand financial or sanctions assessments. Out-of-portfolio
-              financial viability assessments are $65 each and OFAC sanctions
+              financial viability assessments are $65 each and sanctions
               screenings are $32 each, introductory pricing. Private-company
               reviews use financials you furnish and are visible only to your
               organization. Financial-health methodologies vary by company type
               and data availability. Every alert carries source evidence,
-              severity and an audit trail; AI supports the analysis and your
+              severity and an audit trail. AI supports the analysis and your
               organization retains decision authority. Prices are exclusive of
               taxes; any applicable sales or value-added tax is calculated at
               checkout from your billing address.
             </p>
           </div>
+
+          {/* ONE COMPANY, EVERY ANGLE - tear sheet page 3 */}
+          <section className="border-t border-[#E2E7EF] pt-[46px] mt-[54px]">
+            <p className={kicker}>One company. Every angle that matters.</p>
+
+            <h2 className="mt-4 mb-0 font-serif text-[28px] md:text-[34px] font-semibold leading-[1.15] tracking-[-0.025em] text-[#0A1A33] max-w-[30ch]">
+              The company is the story. SIGNAL sees the whole picture.
+            </h2>
+
+            <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[80ch]">
+              Financial health and sanctions are only two lenses. SIGNAL
+              connects the financial, cyber, legal, regulatory, corporate,
+              geopolitical, supply-chain and economic picture around the same
+              company.
+            </p>
+
+            <div className="mt-9 grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-7 border-t border-[#E2E7EF] pt-8">
+              {QUESTIONS.map(({ q, a }) => (
+                <div key={q}>
+                  <h3 className="m-0 font-serif font-normal text-[18px] md:text-[19px] leading-[1.3] tracking-[-0.01em] text-[#0A1A33]">
+                    {q}
+                  </h3>
+                  <p className="mt-2 mb-0 text-[13px] leading-[1.65] text-[#667085]">
+                    {a}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-9 grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-7 border-t border-[#E2E7EF] pt-8">
+              <div>
+                <p className={kicker}>Ask SIGNAL</p>
+                <p className="mt-2 mb-0 text-[14px] leading-[1.65] text-[#101828]">
+                  A thirteenth question? Ask in plain English. SIGNAL answers
+                  from your own portfolio evidence and shows where the answer
+                  came from.
+                </p>
+              </div>
+              <div>
+                <p className={kicker}>Due diligence</p>
+                <p className="mt-2 mb-0 text-[14px] leading-[1.65] text-[#101828]">
+                  Every company gets a standard or enhanced due-diligence
+                  level, and SIGNAL says plainly which factors it could not
+                  assess.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-10 bg-[#071326] rounded-2xl px-6 md:px-[38px] py-[30px] flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div>
+                <p className="m-0 font-serif text-[22px] md:text-[26px] font-semibold text-white leading-[1.2]">
+                  Not separate feeds. One intelligence picture.
+                </p>
+                <p className="mt-2 mb-0 text-[13px] text-[#B8C4D6]">
+                  Know before risk becomes your news headline.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => selectTier("demo")}
+                className="shrink-0 px-[18px] py-[11px] rounded-[7px] border-0 cursor-pointer text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors"
+              >
+                Start your free trial
+              </button>
+            </div>
+          </section>
 
           {/* SAMPLE RISK REPORT */}
           {SAMPLE_REPORT_URL && (
@@ -1206,13 +1194,14 @@ const Signal = () => {
 
                   <ul className="list-none m-0 mt-6 p-0 grid sm:grid-cols-2 gap-x-8">
                     <li className={domainStyle}>
-                      Financial health &mdash; reported figures, Altman Z-score,
-                      Merton default analysis and Piotroski F-score, with the
+                      Financial health &mdash; reported figures, Piotroski
+                      F-Score, Altman Z-Score and Merton analysis, with the
                       trend behind each
                     </li>
 
                     <li className={domainStyle}>
-                      Sanctions and watchlist position, including PEP coverage
+                      Sanctions and watchlist position, including PEP
+                      identification
                     </li>
 
                     <li className={domainStyle}>
@@ -1425,7 +1414,7 @@ const Signal = () => {
                     />
                   </div>
 
-                  {/* INDUSTRY */}
+                  {/* INDUSTRY - options from GET /api/sectors (item 7) */}
                   <div className="flex flex-col gap-[6px]">
                     <label
                       htmlFor="industry"
@@ -1434,15 +1423,6 @@ const Signal = () => {
                       Industry *
                     </label>
 
-                    {/*
-                      Options come from GET /api/sectors - the product's
-                      own vocabulary - so the selection resolves when the
-                      registration screen reads it back. FALLBACK_SECTORS
-                      renders until the fetch lands, and stays if it never
-                      does. "Other" is last and deliberately outside the
-                      vocabulary: it means no sector, which is honest, and
-                      sector is optional on the server.
-                    */}
                     <select
                       id="industry"
                       name="industry"
@@ -1552,15 +1532,8 @@ const Signal = () => {
                   </div>
                 </div>
 
-                {/*
-                  HONEYPOT. Hidden from people and from assistive
-                  technology, skipped by the tab order, and excluded from
-                  autofill - so a value here was not typed by a human.
-                  The server treats a filled one as accepted and writes
-                  nothing, rather than refusing, because a bot that is
-                  told which field betrayed it simply stops filling that
-                  field next time.
-                */}
+                {/* HONEYPOT - hidden from people, assistive tech, tab order
+                    and autofill (item 6). */}
                 <div
                   aria-hidden="true"
                   style={{
@@ -1638,7 +1611,7 @@ const Signal = () => {
       {/* FOOTER */}
       <footer className="bg-[#071326] text-[#8FA2BC] text-[12px] py-[27px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col sm:flex-row gap-4 justify-between">
-          {/* 2026-09-21: the d/b/a, as the PDF carries it - see item 12. */}
+          {/* Item 12: the d/b/a. */}
           <p className="m-0">
             Hatfield Advisory LLC d/b/a Hatfield.ai, St. Petersburg, Florida
           </p>
@@ -1666,7 +1639,16 @@ const Signal = () => {
 
             {"  \u00b7  "}
 
-            {/* 2026-09-19: /login, not the app root - see item 9 above. */}
+            <a
+              href="/contact"
+              className="text-[#C8D3E3] no-underline hover:text-white"
+            >
+              Contact us
+            </a>
+
+            {"  \u00b7  "}
+
+            {/* Item 9: /login, not the app root. */}
             <a
               href={SIGNAL_LOGIN_URL}
               className="text-[#C8D3E3] no-underline hover:text-white"
