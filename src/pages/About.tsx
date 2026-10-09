@@ -6,6 +6,20 @@ import Footer from "@/components/Footer";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
 import AdvisoryBoard from "../components/AdvisoryBoard";
 const frankPhoto = "/advisors/Frank_elite.jpg";
+
+// 2026-10-09 (Frank): the Hatfield.ai Platform card's "Learn More" button
+// linked to /capabilities, which is not a page on this site - visitors got
+// the 404. It is replaced by two buttons, one per product, each opening
+// that product's tear sheet PDF in a new tab. They are plain <a> links,
+// not router <Link>s: a PDF is a static file in public/docs, and the
+// router would treat the address as a page and show the 404 again.
+// The paths are the same files the homepage hero boxes open, so one copy
+// of each PDF serves the whole site.
+const TEAR_SHEETS = [
+  { label: "NEXUS", href: "/docs/Hatfield_NEXUS.pdf" },
+  { label: "SIGNAL", href: "/docs/Hatfield_SIGNAL.pdf" },
+];
+
 const About = () => {
   const values = [
     {
@@ -219,9 +233,21 @@ const About = () => {
                   regulatory expertise to transform how organizations manage
                   third-party risk.
                 </p>
-                <Button asChild variant="outline">
-                  <Link to="/capabilities">Learn More</Link>
-                </Button>
+                {/* 2026-10-09: one button per product tear sheet - see the
+                    TEAR_SHEETS note at the top of this file. */}
+                <div className="flex flex-wrap gap-3">
+                  {TEAR_SHEETS.map((sheet) => (
+                    <Button key={sheet.label} asChild variant="outline">
+                      <a
+                        href={sheet.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {sheet.label}
+                      </a>
+                    </Button>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 
