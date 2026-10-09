@@ -244,10 +244,14 @@ const About = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section
+          2026-10-09 (Frank): "Schedule a Demo or Become a Beta Client"
+          -> "Schedule a Demo and Become a Client". The products are sold,
+          not in beta, and the demo leads to the sign-up rather than being
+          an alternative to it. Matches the Contact page hero. */}
       <section className="py-20 bg-gray-300">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold mb-6 text-gray-900">Schedule a Demo or Become a Beta Client</h2>
+          <h2 className="text-4xl font-bold mb-6 text-gray-900">Schedule a Demo and Become a Client</h2>
           <p className="text-xl text-gray-800 mb-12">
             Partner with us to transform your risk management and achieve
             sustainable growth
