@@ -50,7 +50,11 @@ const Contact = () => {
     <div className="min-h-screen">
       <Navigation />
 
-      {/* Hero Section */}
+      {/* Hero Section
+          2026-10-09 (Frank): "Request a demo or join our beta program."
+          -> "Schedule a demo and become a client." SIGNAL and NEXUS are
+          sold as products now, not a beta, and the "or" offered a demo
+          and a sign-up as alternatives when one leads to the other. */}
       <section className="pt-32 pb-16 bg-gradient-to-b from-muted/50 to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
@@ -58,7 +62,7 @@ const Contact = () => {
               Get in Touch
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Request a demo or join our beta program.
+              Schedule a demo and become a client.
             </p>
           </div>
         </div>
