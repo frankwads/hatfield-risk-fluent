@@ -5,6 +5,15 @@ import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { usePageMeta } from "@/lib/usePageMeta";
 
+// 2026-10-13 (Frank, "weird question marks"): this file is kept to plain
+// ASCII. Saved in the Windows codepage, typographic characters (em dash,
+// curly quotes, bullets) arrived in the browser as a "?" in a black diamond.
+// They are now written as escapes that survive any file encoding:
+//   in JavaScript strings  \u2014 (em dash)  \u2019 (apostrophe)
+//                          \u201C and \u201D (curly double quotes)
+//   in page text           &mdash; &rsquo; &ldquo; &rdquo; &bull; &#9656; (the arrow)
+// Keep new copy in this file to the same rule.
+
 // ---------------------------------------------------------------------------
 // INSIGHTS ARTICLE: "AI at the Crossroads: Why Greater Intelligence Demands
 // Greater Control" (published October 13, 2026)
@@ -58,7 +67,7 @@ const ARTICLE_PATH = "/insights/ai-intelligence-without-surrendering-control";
 const ARTICLE_TITLE =
   "AI at the Crossroads: Why Greater Intelligence Demands Greater Control";
 const ARTICLE_DESCRIPTION =
-  "Recent AI incidents and growing regulatory scrutiny are raising fundamental questions about autonomy, security and accountability. Discover why AI-powered risk management requires stronger governance—not less innovation.";
+  "Recent AI incidents and growing regulatory scrutiny are raising fundamental questions about autonomy, security and accountability. Discover why AI-powered risk management requires stronger governance\u2014not less innovation.";
 const PUBLISHED_ISO = "2026-10-13";
 const PUBLISHED_LABEL = "October 13, 2026";
 const READ_TIME = "5 min read";
@@ -66,31 +75,31 @@ const READ_TIME = "5 min read";
 const SOURCES = {
   reutersRegulators: {
     label:
-      "Reuters (Nupur Anand, Phoebe Seers and Tommy Reggiori Wilkes), “Exclusive: Banking watchdogs ramp up AI scrutiny as stability fears mount, sources say,” October 13, 2026",
+      "Reuters (Nupur Anand, Phoebe Seers and Tommy Reggiori Wilkes), \u201CExclusive: Banking watchdogs ramp up AI scrutiny as stability fears mount, sources say,\u201D October 13, 2026",
     short: "Reuters, October 13, 2026",
     href: "https://www.investing.com/news/stock-market-news/exclusivebanking-watchdogs-ramp-up-ai-scrutiny-as-stability-fears-mount-sources-say-4945440",
   },
   reutersOpenAI: {
     label:
-      "Reuters (Raphael Satter, Deepa Seetharaman and Kenrick Cai), “Exclusive: Its AI agent spent days hacking a company, but sources say OpenAI did not notice for a week,” July 24, 2026",
+      "Reuters (Raphael Satter, Deepa Seetharaman and Kenrick Cai), \u201CExclusive: Its AI agent spent days hacking a company, but sources say OpenAI did not notice for a week,\u201D July 24, 2026",
     short: "Reuters, July 24, 2026",
     href: "https://www.aol.com/articles/exclusive-ai-agent-spent-days-221439000.html",
   },
   reutersCrowdStrike: {
     label:
-      "Reuters (Kyu-seok Shim and Brenda Goh), “South Korean banks were likely hacked by a China-based actor with an AI agent, CrowdStrike says,” October 8, 2026",
+      "Reuters (Kyu-seok Shim and Brenda Goh), \u201CSouth Korean banks were likely hacked by a China-based actor with an AI agent, CrowdStrike says,\u201D October 8, 2026",
     short: "Reuters, October 8, 2026",
     href: "https://www.investing.com/news/stock-market-news/crowdstrike-says-chinabased-suspect-used-ai-tools-in-south-korean-bank-hacks-4937965",
   },
   wapoAnthropic: {
     label:
-      "The Washington Post, “Anthropic discloses incidents of its AI models misusing government sites,” October 9, 2026",
+      "The Washington Post, \u201CAnthropic discloses incidents of its AI models misusing government sites,\u201D October 9, 2026",
     short: "The Washington Post, October 9, 2026",
     href: "https://www.washingtonpost.com/technology/2026/10/09/anthropic-discloses-incidents-its-ai-models-misusing-government-sites/",
   },
   techcrunchAnthropic: {
     label:
-      "TechCrunch, “Anthropic can’t reliably control its AI agents — it’s cutting off its internal evals from the live internet instead,” October 9, 2026",
+      "TechCrunch, \u201CAnthropic can\u2019t reliably control its AI agents \u2014 it\u2019s cutting off its internal evals from the live internet instead,\u201D October 9, 2026",
     short: "TechCrunch, October 9, 2026",
     href: "https://techcrunch.com/2026/10/09/anthropic-cant-reliably-control-its-ai-agents-its-cutting-off-its-internal-evals-from-the-live-internet-instead/",
   },
@@ -193,7 +202,7 @@ const AIGovernanceArticle = () => {
             <p className={`text-sm ${C.body} opacity-80 mb-12`}>
               <time dateTime={PUBLISHED_ISO}>{PUBLISHED_LABEL}</time>
               <span aria-hidden="true" className="mx-3">
-                •
+                &bull;
               </span>
               {READ_TIME}
             </p>
@@ -202,7 +211,7 @@ const AIGovernanceArticle = () => {
           <p className={`text-xl ${C.heading} leading-relaxed mb-6`}>
             As autonomous AI reshapes financial services, recent incidents and
             growing regulatory scrutiny underscore a fundamental principle:
-            innovation must strengthen—not compromise—accountability, security
+            innovation must strengthen&mdash;not compromise&mdash;accountability, security
             and operational resilience.
           </p>
 
@@ -252,7 +261,7 @@ const AIGovernanceArticle = () => {
             The second risk is people using AI to attack. On October 8, 2026,
             Reuters reported that CrowdStrike had assessed, with moderate
             confidence, that a China-based individual used a Chinese-developed
-            AI agent and Anthropic’s Claude Code in attacks on South Korean
+            AI agent and Anthropic&rsquo;s Claude Code in attacks on South Korean
             banks
             <Cite source="reutersCrowdStrike" />.
           </P>
@@ -261,7 +270,7 @@ const AIGovernanceArticle = () => {
             these reports shows a model provider deliberately attacking a bank.
             What they show is that AI systems can act beyond their intended
             scope, and that AI can accelerate offensive activity by others. Both
-            belong in a financial institution’s risk assessment.
+            belong in a financial institution&rsquo;s risk assessment.
           </P>
 
           <H2>Regulators Are Asking More Difficult Questions</H2>
@@ -284,11 +293,11 @@ const AIGovernanceArticle = () => {
           <Callout label="Regulatory warning">
             <blockquote>
               <p className="italic">
-                “The adoption of AI is often outpacing the ability to put the
-                controls in place.”
+                &ldquo;The adoption of AI is often outpacing the ability to put the
+                controls in place.&rdquo;
               </p>
               <footer className="mt-3 text-base not-italic text-white/85">
-                — Michael Woodbridge, London-based cybersecurity partner, Grant
+                &mdash; Michael Woodbridge, London-based cybersecurity partner, Grant
                 Thornton.{" "}
                 <a
                   href={SOURCES.reutersRegulators.href}
@@ -323,13 +332,13 @@ const AIGovernanceArticle = () => {
             framework behind it.
           </P>
 
-          <Callout label="Hatfield.ai — AI governance principle">
+          <Callout label={"Hatfield.ai \u2014 AI governance principle"}>
             <p className="font-semibold text-xl mb-3">
               Intelligence without surrendering control.
             </p>
             <p className="mb-3">
               Hatfield.ai uses artificial intelligence to strengthen risk
-              identification, analysis and decision support—not to replace
+              identification, analysis and decision support&mdash;not to replace
               institutional judgment, regulatory accountability or human
               oversight.
             </p>
@@ -380,7 +389,7 @@ const AIGovernanceArticle = () => {
             detached technology checklist.
           </P>
 
-          <Callout label="NEXUS — Embedded AI risk assessment">
+          <Callout label={"NEXUS \u2014 Embedded AI risk assessment"}>
             <p className="font-semibold text-xl">
               You cannot govern AI risk you cannot see.
             </p>
@@ -440,7 +449,7 @@ const AIGovernanceArticle = () => {
                   className={`flex items-start gap-3 text-base ${C.body}`}
                 >
                   <span className={`${C.accent} mt-1`} aria-hidden="true">
-                    ▸
+                    &#9656;
                   </span>
                   <a
                     href={SOURCES[key].href}

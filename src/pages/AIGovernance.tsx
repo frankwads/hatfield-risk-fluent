@@ -6,6 +6,15 @@ import Footer from "@/components/Footer";
 import { ArrowRight } from "lucide-react";
 import { usePageMeta } from "@/lib/usePageMeta";
 
+// 2026-10-13 (Frank, "weird question marks"): this file is kept to plain
+// ASCII. Saved in the Windows codepage, typographic characters (em dash,
+// curly quotes, bullets) arrived in the browser as a "?" in a black diamond.
+// They are now written as escapes that survive any file encoding:
+//   in JavaScript strings  \u2014 (em dash)  \u2019 (apostrophe)
+//                          \u201C and \u201D (curly double quotes)
+//   in page text           &mdash; &rsquo; &ldquo; &rdquo; &bull; &#9656; (the arrow)
+// Keep new copy in this file to the same rule.
+
 // ---------------------------------------------------------------------------
 // AI GOVERNANCE & ASSURANCE page
 // Route: /about/ai-governance
@@ -120,7 +129,7 @@ const NEXUS_ASSESSMENT: {
   {
     title: "Agent autonomy and permissions",
     description:
-      "What a third party’s AI agents are permitted to do, and the approval gates and shutdown controls around them.",
+      "What a third party\u2019s AI agents are permitted to do, and the approval gates and shutdown controls around them.",
     status: "roadmap",
   },
   {
@@ -154,7 +163,7 @@ const AIGovernance = () => {
   usePageMeta({
     title: "AI Governance & Assurance | Hatfield.ai",
     description:
-      "Hatfield.ai’s AI governance principles: intelligence without surrendering control. Human accountability, transparency, controlled AI authority, security, resilience and continuous improvement.",
+      "Hatfield.ai\u2019s AI governance principles: intelligence without surrendering control. Human accountability, transparency, controlled AI authority, security, resilience and continuous improvement.",
     path: PAGE_PATH,
   });
 
@@ -167,14 +176,14 @@ const AIGovernance = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent mb-4">
-              Hatfield.ai — AI Governance &amp; Assurance
+              Hatfield.ai &mdash; AI Governance &amp; Assurance
             </p>
             <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
               Intelligence without surrendering control.
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
               Artificial intelligence should strengthen risk identification,
-              analysis and decision support—not replace institutional judgment,
+              analysis and decision support&mdash;not replace institutional judgment,
               regulatory accountability or human oversight.
             </p>
           </div>
@@ -237,7 +246,7 @@ const AIGovernance = () => {
           <Card className="border-border shadow-lg mb-8">
             <CardContent className="pt-8 pb-8">
               <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent mb-2">
-                NEXUS — Govern the AI risks your third parties introduce
+                NEXUS &mdash; Govern the AI risks your third parties introduce
               </p>
               <h3 className="text-3xl font-bold text-foreground mb-4">
                 AI Third-Party Risk Assessment
@@ -274,7 +283,7 @@ const AIGovernance = () => {
           <Card className="border-border shadow-lg">
             <CardContent className="pt-8 pb-8">
               <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent mb-2">
-                SIGNAL — Monitor what changes
+                SIGNAL &mdash; Monitor what changes
               </p>
               <h3 className="text-3xl font-bold text-foreground mb-4">
                 Continuous Surveillance

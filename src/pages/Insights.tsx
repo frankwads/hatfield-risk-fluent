@@ -5,6 +5,15 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 
+// 2026-10-13 (Frank, "weird question marks"): this file is kept to plain
+// ASCII. Saved in the Windows codepage, typographic characters (em dash,
+// curly quotes, bullets) arrived in the browser as a "?" in a black diamond.
+// They are now written as escapes that survive any file encoding:
+//   in JavaScript strings  \u2014 (em dash)  \u2019 (apostrophe)
+//                          \u201C and \u201D (curly double quotes)
+//   in page text           &mdash; &rsquo; &ldquo; &rdquo; &bull; &#9656; (the arrow)
+// Keep new copy in this file to the same rule.
+
 const Insights = () => {
   // 2026-10-13 (Frank, AI governance tranche): third article added, newest
   // first, so the three cards fill the existing three-column row on desktop
@@ -18,7 +27,7 @@ const Insights = () => {
       title:
         "AI at the Crossroads: Why Greater Intelligence Demands Greater Control",
       excerpt:
-        "Recent AI incidents and growing regulatory scrutiny are raising fundamental questions about autonomy, security and accountability. Discover why AI-powered risk management requires stronger governance—not less innovation.",
+        "Recent AI incidents and growing regulatory scrutiny are raising fundamental questions about autonomy, security and accountability. Discover why AI-powered risk management requires stronger governance\u2014not less innovation.",
       date: "2026-10-13",
       readTime: "5 min read",
       path: "/insights/ai-intelligence-without-surrendering-control",
