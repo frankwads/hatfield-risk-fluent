@@ -50,13 +50,16 @@ import { usePageMeta } from "@/lib/usePageMeta";
 // reuters.com refuses automated access, so the Reuters links point to the
 // verified syndicated copies of the same Reuters reports.
 //
-// NEXUS CLAIMS: only what the NEXUS code supports was written (checked in
-// golden source prod_tprm, 2026-10-13): the inherent risk questionnaire asks
-// whether a third party will use automation, AI or ML to make decisions on
-// the client's behalf or in customer interactions; a yes is an InfoSec
-// trigger, so an information-security assessment is required (or a valid
-// recent one is reused). AI-specific assessment of autonomy, oversight and
-// model risk is described as roadmap.
+// NEXUS CLAIMS: checked in golden source prod_tprm, 2026-10-13. The
+// inherent risk questionnaire is built from the irq table, an "AI" category
+// is weighted by RC_ai (Frank set 15%) and saved per engagement as
+// Eng_ai_risk; AI questions on autonomy, oversight and model risk are loaded
+// as IRQ data, with InfoSec / Compliance triggers launching the existing
+// due-diligence assessments. Frank ruled 2026-10-13 that this makes the
+// three capabilities available with no code change; the article describes
+// them as configured by each client (Frank, 2026-10-13: "all are
+// dynamically configurable (no code)"). See the NEXUS CLAIMS note in
+// src/pages/AIGovernance.tsx for the data rules.
 //
 // READING TIME: "5 min read" = about 1,090 words at 225 words a minute,
 // counted from the final text on 2026-10-13. Kept in step with the card in
@@ -369,16 +372,16 @@ const AIGovernanceArticle = () => {
           <H2>NEXUS: Assessing AI Risk Across Third Parties</H2>
           <P>
             Hatfield.ai NEXUS brings AI into the third-party risk assessment
-            itself. Its inherent risk questionnaire asks whether a third party
-            will use automation, AI or machine learning to make decisions on
-            your behalf or in customer interactions. A yes requires an
-            information-security assessment of that third party, or reuses a
-            valid recent one. Those third parties are then assessed within the
-            same framework as every other, including operational resilience and
-            fourth-party and concentration dependencies. Deeper AI-specific
-            assessment, covering agent autonomy and permissions, governance and
-            human oversight, and model risk and reliability, is on the NEXUS
-            roadmap.
+            itself. Its inherent risk questionnaire, configured by each client
+            without code, screens engagements for AI use, agent autonomy and
+            permissions, governance and human oversight, and model risk and
+            reliability, and scores AI as its own weighted risk category
+            alongside information security, continuity and the other risk
+            categories. High-risk answers can be set to trigger
+            information-security or compliance due diligence, and those third
+            parties are assessed within the same framework as every other,
+            including operational resilience and fourth-party and
+            concentration dependencies.
           </P>
           <P>
             The practical objective is to help institutions identify which
