@@ -56,8 +56,8 @@ const App = () => (
           {/* Corporate */}
           <Route path="/about" element={<About />} />
           {/* 2026-10-13: AI Governance & Assurance page, opened from the
-              About page's third "What We Offer" card, the homepage
-              governance band and the article. */}
+              About page's third "What We Offer" card, the AI GOVERNANCE
+              heading box in the homepage ticker and the article. */}
           <Route path="/about/ai-governance" element={<AIGovernance />} />
           <Route path="/consulting" element={<Consulting />} />
           <Route path="/contact" element={<Contact />} />

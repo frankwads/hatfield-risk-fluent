@@ -119,8 +119,8 @@ const PdfIcon = () => (
 //   - Reorder:      move a box's line within its visit, or move a visit.
 //   - Keep SIX boxes in every visit. With a different number the last frame
 //     of that visit would show fewer than three boxes.
-//   - The heading box wording and link are in NEXUS_HEADING and
-//     SIGNAL_HEADING, defined once and reused.
+//   - The heading box wording and link are in NEXUS_HEADING,
+//     SIGNAL_HEADING and GOVERNANCE_HEADING, defined once and reused.
 //
 // Content governance: no percentage, ranking, source count or list count
 // appears in the ticker. The only figure is the three named
@@ -131,8 +131,20 @@ const PdfIcon = () => (
 // NEXUS goes to /contact (the "Book a briefing" destination used on the
 // NEXUS PDF) because there is no dedicated NEXUS page.
 // Punctuation: apostrophes are typographic, matching the rest of this page.
+//
+// 2026-10-13 (Frank, AI governance tranche, option A): AI governance is now
+// a FIFTH visit, after the second SIGNAL visit: a deep blue "AI GOVERNANCE"
+// heading box ("Intelligence without surrendering control.") linking to the
+// new /about/ai-governance page, with SIX boxes, one per principle on that
+// page (src/pages/AIGovernance.tsx). It replaces the slim governance band
+// that briefly sat below the ticker; that band is removed. Product change
+// GOVERNANCE -> NEXUS slides like any other. The loop is now ten frames on
+// a desktop window, about 57 seconds (was eight, about 45).
+// The governance boxes state principles in the same words as the
+// governance page; they make no feature or percentage claim, in line with
+// the content-governance rule above.
 // ---------------------------------------------------------------------------
-type TickerProduct = "NEXUS" | "SIGNAL";
+type TickerProduct = "NEXUS" | "SIGNAL" | "AI GOVERNANCE";
 type TickerHeading = { headline: TickerProduct; value: string; href: string };
 type TickerBox = { headline: string; value: string };
 type TickerVisit = { heading: TickerHeading; boxes: TickerBox[] };
@@ -146,6 +158,14 @@ const SIGNAL_HEADING: TickerHeading = {
   headline: "SIGNAL",
   value: "Your GPS for business decisions.",
   href: "/signal",
+};
+// 2026-10-13: governance heading box. On a 768-1279px window the heading box
+// is narrower, so "AI GOVERNANCE" may wrap onto two lines; the 112px box has
+// room for that plus the two-line value below it.
+const GOVERNANCE_HEADING: TickerHeading = {
+  headline: "AI GOVERNANCE",
+  value: "Intelligence without surrendering control.",
+  href: "/about/ai-governance",
 };
 
 const TICKER_VISITS: TickerVisit[] = [
@@ -191,6 +211,19 @@ const TICKER_VISITS: TickerVisit[] = [
       { headline: "A thirteenth question? Ask SIGNAL.", value: "Answers from your own portfolio evidence." },
       { headline: "10 users or 1,000. One price.", value: "Priced for the portfolio, not the person." },
       { headline: "Built by a practitioner", value: "Designed around how the work actually gets done." },
+    ],
+  },
+  {
+    // 2026-10-13: one box per governance principle, in the order of the
+    // six principles on /about/ai-governance.
+    heading: GOVERNANCE_HEADING,
+    boxes: [
+      { headline: "Human accountability", value: "Material risk decisions remain with your people." },
+      { headline: "Transparent and traceable", value: "AI insight kept distinct from verified source evidence." },
+      { headline: "Controlled AI authority", value: "Defined permissions. Autonomy is not accountability." },
+      { headline: "Security built in", value: "Data protection across the whole AI lifecycle." },
+      { headline: "Resilient by design", value: "Prepared for failure, compromise and the unexpected." },
+      { headline: "Always improving", value: "Tested and reviewed as models and threats change." },
     ],
   },
 ];
@@ -376,7 +409,7 @@ const HomepageTicker = () => {
   return (
     <section
       data-stat-section
-      aria-label="NEXUS and SIGNAL highlights"
+      aria-label="NEXUS, SIGNAL and AI governance highlights"
       className="bg-white py-3"
     >
       <style>{TICKER_CSS}</style>
@@ -785,64 +818,6 @@ const Index = () => {
             box; on a phone the heading box sits above one content box. */}
         <HomepageTicker />
       </div>
-
-      {/* AI Governance Principle band
-          2026-10-13 (Frank, "let's go option B"): the AI governance
-          statement from the master spec of 13 October 2026 sits in this
-          slim band directly UNDER the ticker - the first thing a visitor
-          meets on scrolling. The spec asked for it below the video buttons
-          inside the hero; Frank ruled against that because it would make
-          the hero taller and break his 2026-10-01 rule that the hero and
-          the ticker exactly fill the first screen. The hero and ticker
-          above are unchanged.
-          Wording is the spec's (eyebrow, heading, one sentence, link to the
-          new page src/pages/AIGovernance.tsx). The left edge lines up with
-          the hero (same max-w-7xl container).
-          Background: the site's dark bg-background, deliberately NOT a
-          light colour. The header switches to dark text only over sections
-          marked data-stat-section / data-light-section, and it looks up
-          only the FIRST of each on the page (Navigation.tsx). A light band
-          here would need one of those marks and would take it from the
-          ticker or from Processing Intelligence, breaking the header there.
-          On a dark band the header simply keeps its light text. */}
-      <section
-        aria-labelledby="ai-governance-principle"
-        className="bg-background border-b border-border"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-12">
-            <div className="lg:w-[22rem] flex-shrink-0">
-              <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent">
-                Hatfield.ai — AI Governance Principle
-              </p>
-              <h2
-                id="ai-governance-principle"
-                className="mt-2 text-2xl font-bold text-foreground leading-tight"
-              >
-                Intelligence without surrendering control.
-              </h2>
-            </div>
-
-            <p className="flex-1 text-lg text-muted-foreground leading-relaxed">
-              AI-powered intelligence that strengthens risk identification and
-              decision support—while keeping institutional judgment,
-              accountability and control where they belong.
-            </p>
-
-            <Link
-              to="/about/ai-governance"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-foreground whitespace-nowrap transition-opacity duration-300 hover:opacity-80"
-            >
-              Our AI Governance Approach
-              <ArrowRight
-                className="transition-transform duration-300 group-hover:translate-x-1"
-                size={16}
-                aria-hidden="true"
-              />
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* Features Section */}
       <section
