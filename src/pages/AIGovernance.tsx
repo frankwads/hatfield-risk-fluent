@@ -36,26 +36,26 @@ import { usePageMeta } from "@/lib/usePageMeta";
 //     a link to the Insights article (the article links back here).
 //
 // NEXUS CLAIMS (spec: describe unbuilt features as roadmap, not live).
-// Checked in golden source prod_tprm on 2026-10-13:
-//   LIVE  - The inherent risk questionnaire (irq table, question 4) asks
-//           whether the third party will use automation, AI or ML to make
-//           decisions on the client's behalf or in customer interactions.
-//           It is an InfoSec trigger question: a yes requires an
-//           information-security assessment, or reuses a valid recent one
-//           (initiate_risk_assessment.py, trigger handling).
-//   LIVE  - Information-security, operational-resilience (BCM, RTO/RPO
-//           criticality tiers) and fourth-party / concentration assessment
-//           apply to every third party, AI users included.
-//   ROADMAP - The database has columns for an AI assessment outcome,
-//           residual risk, acceptance expiry and model provider
-//           (Eng_ai_* in create_tprm_db.py), and the scoring engine accepts
-//           an "AI" questionnaire category, but no screen or process yet
-//           writes the AI assessment, and the golden questionnaire has no
-//           AI-category questions. So agent autonomy, governance and
-//           oversight, model risk, AI-specific scoring and model-provider
-//           records are listed as roadmap.
-// If AI-category questions are added to the live questionnaire, move the
-// matching rows in NEXUS_ASSESSMENT from "roadmap" to "live".
+// Checked in golden source prod_tprm on 2026-10-13; all rows are LIVE.
+//   - 2026-10-13 (Frank): "as long as we have risk weighting for ai, that's
+//     all that counts - the questions can be dynamically built and
+//     assessed - there should be NO coding changes required". Confirmed in
+//     code: the IRQ screen builds one section per IRQ_risk_category from the
+//     irq table (create_irq_questionnaire_ui), the scoring engine weights an
+//     "AI" category by RC_ai (irq_processor.py, v7.0) and saves it per
+//     engagement as Eng_ai_risk, shown as "AI Risk". Frank set the AI weight
+//     to 15% on the Risk Tolerance screen (total 100%).
+//   - Agent autonomy, oversight and model risk are assessed through AI
+//     questions in that questionnaire. Data rules for loading them: category
+//     named exactly "AI"; trigger category InfoSec / BCM / Compliance (an AI
+//     trigger flag is raised but nothing acts on it), which launches the
+//     existing due-diligence assessment; the IRQ upload replaces the whole
+//     question set, so the file carries every current question too.
+//   - Information-security, operational-resilience (BCM, RTO/RPO
+//     criticality tiers) and fourth-party / concentration assessment apply
+//     to every third party, AI users included.
+// If a capability is ever withdrawn, set its row in NEXUS_ASSESSMENT to
+// "roadmap" and the label changes to "On the roadmap".
 // ---------------------------------------------------------------------------
 
 const PAGE_PATH = "/about/ai-governance";
@@ -94,7 +94,7 @@ const principles = [
   },
 ];
 
-// Each row is either "live" (in NEXUS today, checked in code) or "roadmap".
+// Each row is "live" (in NEXUS today, checked in code) or "roadmap".
 // See the NEXUS CLAIMS note at the top of this file before changing a status.
 type AssessmentStatus = "live" | "roadmap";
 const NEXUS_ASSESSMENT: {
@@ -103,9 +103,33 @@ const NEXUS_ASSESSMENT: {
   status: AssessmentStatus;
 }[] = [
   {
+    title: "AI risk scoring",
+    description:
+      "AI is scored as its own inherent-risk category in every engagement, weighted by your administrators alongside information security, continuity, legal, financial and the other categories.",
+    status: "live",
+  },
+  {
     title: "AI use by the third party",
     description:
-      "The inherent risk questionnaire asks whether a third party will use automation, AI or machine learning to make decisions on your behalf or in customer interactions. A yes requires an information-security assessment, or reuses a valid recent one.",
+      "The inherent risk questionnaire identifies third parties that use automation, AI or machine learning to make decisions on your behalf or in customer interactions. A yes requires an information-security assessment, or reuses a valid recent one.",
+    status: "live",
+  },
+  {
+    title: "Agent autonomy and permissions",
+    description:
+      "How far a third party\u2019s AI can act on its own in your systems, accounts and data, and whether your organization can pause or override it. High-risk answers trigger due diligence.",
+    status: "live",
+  },
+  {
+    title: "Governance and human oversight",
+    description:
+      "Where people remain in control of material decisions, and whether AI output drives decisions on customers, credit, payments or regulatory reporting. High-risk answers trigger due diligence.",
+    status: "live",
+  },
+  {
+    title: "Model risk and reliability",
+    description:
+      "Dependence on other companies\u2019 AI models, use of your data to train them, disclosure of models and testing, and the impact of wrong or harmful output.",
     status: "live",
   },
   {
@@ -125,24 +149,6 @@ const NEXUS_ASSESSMENT: {
     description:
       "Fourth-party disclosure and concentration analysis across the third-party portfolio.",
     status: "live",
-  },
-  {
-    title: "Agent autonomy and permissions",
-    description:
-      "What a third party\u2019s AI agents are permitted to do, and the approval gates and shutdown controls around them.",
-    status: "roadmap",
-  },
-  {
-    title: "Governance and human oversight",
-    description:
-      "How the third party governs its own AI, and where people remain in control of material decisions.",
-    status: "roadmap",
-  },
-  {
-    title: "Model risk and reliability",
-    description:
-      "Model provenance, testing, reliability and the models and providers the third party depends on.",
-    status: "roadmap",
   },
 ];
 
@@ -252,10 +258,11 @@ const AIGovernance = () => {
                 AI Third-Party Risk Assessment
               </h3>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                NEXUS brings AI into the third-party risk assessment itself. It
-                identifies third parties that use AI to make decisions on your
-                behalf and assesses them within the same framework as every
-                other third party. The status of each part is shown below.
+                NEXUS brings AI into the third-party risk assessment itself.
+                Every engagement is screened for AI use, autonomy, oversight
+                and model risk, scored as its own weighted risk category, and
+                high-risk answers trigger due diligence within the same
+                framework as every other third party.
               </p>
 
               <ul className="divide-y divide-border">
