@@ -989,6 +989,10 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
+      {/* 2026-10-13 (Frank, "restore"): "relative z-10" put back on the
+          inner container below. It had dropped out of the saved copy during
+          the AI governance tranche; restored so golden matches the original
+          layering (content above the section background). */}
       <section
         className="pt-12 pb-4 relative overflow-hidden"
         style={{
@@ -996,7 +1000,7 @@ const Index = () => {
             "linear-gradient(180deg, hsl(220 45% 25%) 0%, hsl(220 48% 18%) 50%, hsl(220 50% 8%) 100%)",
         }}
       >
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <Button asChild size="lg" variant="default" className="text-lg">
             <Link to="/contact">Schedule a Demo</Link>
           </Button>
