@@ -49,6 +49,12 @@ import { usePageMeta } from "@/lib/usePageMeta";
 //     confirmed through TechCrunch's report of the same disclosure.
 // reuters.com refuses automated access, so the Reuters links point to the
 // verified syndicated copies of the same Reuters reports.
+// 2026-10-13 (Frank): "rather list the sources we're linking to". Every
+// Reuters citation now names both the publisher and the site the link
+// opens - "Reuters via Investing.com" / "Reuters via AOL" inline, and
+// "republished by Investing.com / AOL" in the Sources list - so the label
+// always matches where the reader lands. Reuters stays named because the
+// reporting and the Woodbridge quote are Reuters'.
 //
 // NEXUS CLAIMS: checked in golden source prod_tprm, 2026-10-13. The
 // inherent risk questionnaire is built from the irq table, an "AI" category
@@ -78,20 +84,20 @@ const READ_TIME = "5 min read";
 const SOURCES = {
   reutersRegulators: {
     label:
-      "Reuters (Nupur Anand, Phoebe Seers and Tommy Reggiori Wilkes), \u201CExclusive: Banking watchdogs ramp up AI scrutiny as stability fears mount, sources say,\u201D October 13, 2026",
-    short: "Reuters, October 13, 2026",
+      "Reuters (Nupur Anand, Phoebe Seers and Tommy Reggiori Wilkes), \u201CExclusive: Banking watchdogs ramp up AI scrutiny as stability fears mount, sources say,\u201D October 13, 2026 \u2014 republished by Investing.com",
+    short: "Reuters via Investing.com, October 13, 2026",
     href: "https://www.investing.com/news/stock-market-news/exclusivebanking-watchdogs-ramp-up-ai-scrutiny-as-stability-fears-mount-sources-say-4945440",
   },
   reutersOpenAI: {
     label:
-      "Reuters (Raphael Satter, Deepa Seetharaman and Kenrick Cai), \u201CExclusive: Its AI agent spent days hacking a company, but sources say OpenAI did not notice for a week,\u201D July 24, 2026",
-    short: "Reuters, July 24, 2026",
+      "Reuters (Raphael Satter, Deepa Seetharaman and Kenrick Cai), \u201CExclusive: Its AI agent spent days hacking a company, but sources say OpenAI did not notice for a week,\u201D July 24, 2026 \u2014 republished by AOL",
+    short: "Reuters via AOL, July 24, 2026",
     href: "https://www.aol.com/articles/exclusive-ai-agent-spent-days-221439000.html",
   },
   reutersCrowdStrike: {
     label:
-      "Reuters (Kyu-seok Shim and Brenda Goh), \u201CSouth Korean banks were likely hacked by a China-based actor with an AI agent, CrowdStrike says,\u201D October 8, 2026",
-    short: "Reuters, October 8, 2026",
+      "Reuters (Kyu-seok Shim and Brenda Goh), \u201CSouth Korean banks were likely hacked by a China-based actor with an AI agent, CrowdStrike says,\u201D October 8, 2026 \u2014 republished by Investing.com",
+    short: "Reuters via Investing.com, October 8, 2026",
     href: "https://www.investing.com/news/stock-market-news/crowdstrike-says-chinabased-suspect-used-ai-tools-in-south-korean-bank-hacks-4937965",
   },
   wapoAnthropic: {
@@ -119,7 +125,7 @@ const C = {
   callout: "bg-[hsl(220,65%,25%)]",
 };
 
-// An inline, clickable citation, e.g. "(Reuters, October 13, 2026)".
+// An inline, clickable citation, e.g. "(Reuters via Investing.com, October 13, 2026)".
 const Cite = ({ source }: { source: SourceKey }) => (
   <>
     {" ("}
@@ -308,7 +314,7 @@ const AIGovernanceArticle = () => {
                   rel="noopener noreferrer"
                   className="underline underline-offset-2 hover:opacity-80"
                 >
-                  Reuters, October 13, 2026
+                  Reuters via Investing.com, October 13, 2026
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>
               </footer>
