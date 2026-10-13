@@ -36,7 +36,9 @@ import { usePageMeta } from "@/lib/usePageMeta";
 //     a link to the Insights article (the article links back here).
 //
 // NEXUS CLAIMS (spec: describe unbuilt features as roadmap, not live).
-// Checked in golden source prod_tprm on 2026-10-13; all rows are LIVE.
+// Checked in golden source prod_tprm on 2026-10-13. All rows are labelled
+// "Configurable" (Frank, 2026-10-13: "all are dynamically configurable (no
+// code)"): each client sets the questions, weights and triggers on screen.
 //   - 2026-10-13 (Frank): "as long as we have risk weighting for ai, that's
 //     all that counts - the questions can be dynamically built and
 //     assessed - there should be NO coding changes required". Confirmed in
@@ -56,6 +58,9 @@ import { usePageMeta } from "@/lib/usePageMeta";
 //     to every third party, AI users included.
 // If a capability is ever withdrawn, set its row in NEXUS_ASSESSMENT to
 // "roadmap" and the label changes to "On the roadmap".
+// 2026-10-13: the label was "Live today"; Frank ruled it should read
+// "Configurable" for every row, because every area is set up per client
+// without code (IRQ questions, risk weights, triggers, tolerances).
 // ---------------------------------------------------------------------------
 
 const PAGE_PATH = "/about/ai-governance";
@@ -94,9 +99,10 @@ const principles = [
   },
 ];
 
-// Each row is "live" (in NEXUS today, checked in code) or "roadmap".
+// Each row is "configurable" (in NEXUS today, set up per client without
+// code - checked in code) or "roadmap".
 // See the NEXUS CLAIMS note at the top of this file before changing a status.
-type AssessmentStatus = "live" | "roadmap";
+type AssessmentStatus = "configurable" | "roadmap";
 const NEXUS_ASSESSMENT: {
   title: string;
   description: string;
@@ -106,49 +112,49 @@ const NEXUS_ASSESSMENT: {
     title: "AI risk scoring",
     description:
       "AI is scored as its own inherent-risk category in every engagement, weighted by your administrators alongside information security, continuity, legal, financial and the other categories.",
-    status: "live",
+    status: "configurable",
   },
   {
     title: "AI use by the third party",
     description:
       "The inherent risk questionnaire identifies third parties that use automation, AI or machine learning to make decisions on your behalf or in customer interactions. A yes requires an information-security assessment, or reuses a valid recent one.",
-    status: "live",
+    status: "configurable",
   },
   {
     title: "Agent autonomy and permissions",
     description:
       "How far a third party\u2019s AI can act on its own in your systems, accounts and data, and whether your organization can pause or override it. High-risk answers trigger due diligence.",
-    status: "live",
+    status: "configurable",
   },
   {
     title: "Governance and human oversight",
     description:
       "Where people remain in control of material decisions, and whether AI output drives decisions on customers, credit, payments or regulatory reporting. High-risk answers trigger due diligence.",
-    status: "live",
+    status: "configurable",
   },
   {
     title: "Model risk and reliability",
     description:
       "Dependence on other companies\u2019 AI models, use of your data to train them, disclosure of models and testing, and the impact of wrong or harmful output.",
-    status: "live",
+    status: "configurable",
   },
   {
     title: "Data privacy and security",
     description:
       "Information-security assessment applies to every third party that triggers it, AI users included.",
-    status: "live",
+    status: "configurable",
   },
   {
     title: "Operational resilience",
     description:
       "Business-continuity assessment and criticality tiering from recovery time and recovery point objectives.",
-    status: "live",
+    status: "configurable",
   },
   {
     title: "Fourth-party and concentration dependencies",
     description:
       "Fourth-party disclosure and concentration analysis across the third-party portfolio.",
-    status: "live",
+    status: "configurable",
   },
 ];
 
@@ -156,12 +162,12 @@ const StatusLabel = ({ status }: { status: AssessmentStatus }) => (
   <span
     className={
       "inline-block flex-shrink-0 rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] " +
-      (status === "live"
+      (status === "configurable"
         ? "bg-[hsl(215,45%,15%)] text-white"
         : "border border-border text-muted-foreground")
     }
   >
-    {status === "live" ? "Live today" : "On the roadmap"}
+    {status === "configurable" ? "Configurable" : "On the roadmap"}
   </span>
 );
 
@@ -259,10 +265,11 @@ const AIGovernance = () => {
               </h3>
               <p className="text-muted-foreground leading-relaxed mb-6">
                 NEXUS brings AI into the third-party risk assessment itself.
-                Every engagement is screened for AI use, autonomy, oversight
-                and model risk, scored as its own weighted risk category, and
-                high-risk answers trigger due diligence within the same
-                framework as every other third party.
+                Each area below is configured by your administrators without
+                code: the questions engagements are screened with, how AI is
+                weighted as its own risk category, and which answers trigger
+                due diligence within the same framework as every other third
+                party.
               </p>
 
               <ul className="divide-y divide-border">
