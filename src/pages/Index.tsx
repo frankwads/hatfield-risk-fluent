@@ -786,6 +786,64 @@ const Index = () => {
         <HomepageTicker />
       </div>
 
+      {/* AI Governance Principle band
+          2026-10-13 (Frank, "let's go option B"): the AI governance
+          statement from the master spec of 13 October 2026 sits in this
+          slim band directly UNDER the ticker - the first thing a visitor
+          meets on scrolling. The spec asked for it below the video buttons
+          inside the hero; Frank ruled against that because it would make
+          the hero taller and break his 2026-10-01 rule that the hero and
+          the ticker exactly fill the first screen. The hero and ticker
+          above are unchanged.
+          Wording is the spec's (eyebrow, heading, one sentence, link to the
+          new page src/pages/AIGovernance.tsx). The left edge lines up with
+          the hero (same max-w-7xl container).
+          Background: the site's dark bg-background, deliberately NOT a
+          light colour. The header switches to dark text only over sections
+          marked data-stat-section / data-light-section, and it looks up
+          only the FIRST of each on the page (Navigation.tsx). A light band
+          here would need one of those marks and would take it from the
+          ticker or from Processing Intelligence, breaking the header there.
+          On a dark band the header simply keeps its light text. */}
+      <section
+        aria-labelledby="ai-governance-principle"
+        className="bg-background border-b border-border"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-12">
+            <div className="lg:w-[22rem] flex-shrink-0">
+              <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent">
+                Hatfield.ai — AI Governance Principle
+              </p>
+              <h2
+                id="ai-governance-principle"
+                className="mt-2 text-2xl font-bold text-foreground leading-tight"
+              >
+                Intelligence without surrendering control.
+              </h2>
+            </div>
+
+            <p className="flex-1 text-lg text-muted-foreground leading-relaxed">
+              AI-powered intelligence that strengthens risk identification and
+              decision support—while keeping institutional judgment,
+              accountability and control where they belong.
+            </p>
+
+            <Link
+              to="/about/ai-governance"
+              className="group inline-flex items-center gap-2 text-sm font-medium text-foreground whitespace-nowrap transition-opacity duration-300 hover:opacity-80"
+            >
+              Our AI Governance Approach
+              <ArrowRight
+                className="transition-transform duration-300 group-hover:translate-x-1"
+                size={16}
+                aria-hidden="true"
+              />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section
         id="capabilities"
@@ -963,7 +1021,7 @@ const Index = () => {
             "linear-gradient(180deg, hsl(220 45% 25%) 0%, hsl(220 48% 18%) 50%, hsl(220 50% 8%) 100%)",
         }}
       >
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Button asChild size="lg" variant="default" className="text-lg">
             <Link to="/contact">Schedule a Demo</Link>
           </Button>

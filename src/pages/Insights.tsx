@@ -6,7 +6,23 @@ import Footer from "@/components/Footer";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 
 const Insights = () => {
+  // 2026-10-13 (Frank, AI governance tranche): third article added, newest
+  // first, so the three cards fill the existing three-column row on desktop
+  // (two columns on a tablet, one on a phone - the grid is unchanged).
+  // Title, date and description are as approved in the master spec of
+  // 13 October 2026. "5 min read" is counted from the article's final text
+  // and must stay in step with READ_TIME in
+  // src/pages/AIGovernanceArticle.tsx. The two existing cards are unchanged.
   const articles = [
+    {
+      title:
+        "AI at the Crossroads: Why Greater Intelligence Demands Greater Control",
+      excerpt:
+        "Recent AI incidents and growing regulatory scrutiny are raising fundamental questions about autonomy, security and accountability. Discover why AI-powered risk management requires stronger governance—not less innovation.",
+      date: "2026-10-13",
+      readTime: "5 min read",
+      path: "/insights/ai-intelligence-without-surrendering-control",
+    },
     {
       title: "Managing Third-Party Risks: Ensuring Business Continuity & Compliance",
       excerpt:
@@ -66,11 +82,20 @@ const Insights = () => {
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
                           <Calendar size={14} />
+                          {/* 2026-10-13 fix: timeZone "UTC". A date written
+                              as "2025-10-15" is read as midnight UTC, which
+                              is the evening before in American time zones,
+                              so every card showed the day before its
+                              article (live site: "Oct 14, 2025" for the
+                              October 15 article, "Sep 27" for September
+                              28). Formatting in UTC shows the date exactly
+                              as written, for every card. */}
                           <span>
                             {new Date(article.date).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
                               year: "numeric",
+                              timeZone: "UTC",
                             })}
                           </span>
                         </div>

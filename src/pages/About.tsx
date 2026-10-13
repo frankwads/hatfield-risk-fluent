@@ -5,6 +5,9 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
 import AdvisoryBoard from "../components/AdvisoryBoard";
+// 2026-10-13: ArrowRight for the AI Governance card's "Explore Our
+// Framework" button (same lucide-react icon set Index.tsx uses).
+import { ArrowRight } from "lucide-react";
 const frankPhoto = "/advisors/Frank_elite.jpg";
 
 // 2026-10-09 (Frank): the Hatfield.ai Platform card's "Learn More" button
@@ -222,7 +225,14 @@ const About = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {/* 2026-10-13 (Frank, AI governance tranche): a third card,
+              "Hatfield.ai AI Governance", is added. Layout: three equal
+              columns on desktop (lg, 1024px+), so the container widens from
+              max-w-4xl to max-w-6xl to keep each card readable; on a tablet
+              the first two sit side by side and the governance card sits
+              centred beneath them at the same width; on a phone all three
+              stack. The two existing cards and their buttons are unchanged. */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <Card className="border-border hover:shadow-lg transition-all">
               <CardContent className="pt-6">
                 <h3 className="text-2xl font-semibold mb-4 text-foreground">
@@ -263,6 +273,30 @@ const About = () => {
                 </p>
                 <Button asChild variant="outline">
                   <Link to="/consulting">Explore Services</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* 2026-10-13: AI Governance card. Wording as approved in the
+                master spec of 13 October 2026; links to the new page
+                src/pages/AIGovernance.tsx. md:col-span-2 + the half width
+                centres it under the first two cards on a tablet; from lg
+                up it is simply the third column. */}
+            <Card className="border-border hover:shadow-lg transition-all md:col-span-2 md:w-[calc(50%-1rem)] md:justify-self-center lg:col-span-1 lg:w-auto lg:justify-self-stretch">
+              <CardContent className="pt-6">
+                <h3 className="text-2xl font-semibold mb-4 text-foreground">
+                  Hatfield.ai AI Governance
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Our commitment to responsible AI—combining human
+                  accountability, transparent intelligence, security and
+                  operational resilience to strengthen trust in AI-powered risk
+                  management.
+                </p>
+                <Button asChild variant="outline">
+                  <Link to="/about/ai-governance">
+                    Explore Our Framework <ArrowRight className="ml-2" size={16} />
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
