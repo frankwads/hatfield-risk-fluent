@@ -14,6 +14,10 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ManagingThirdPartyRisks from "./pages/insights/ManagingThirdPartyRisks";
 import RealTimeRiskMonitoring from "./pages/insights/RealTimeRiskMonitoring";
+// 2026-10-13 (Frank, AI governance tranche): the new Insights article and
+// the new AI Governance & Assurance page. Both files live in src/pages/.
+import AIGovernanceArticle from "./pages/AIGovernanceArticle";
+import AIGovernance from "./pages/AIGovernance";
 
 const queryClient = new QueryClient();
 
@@ -41,9 +45,20 @@ const App = () => (
             path="/insights/real-time-risk-monitoring"
             element={<RealTimeRiskMonitoring />}
           />
+          {/* 2026-10-13: "AI at the Crossroads" article. The address
+              matches the card in src/pages/Insights.tsx and the links on
+              the AI Governance page. */}
+          <Route
+            path="/insights/ai-intelligence-without-surrendering-control"
+            element={<AIGovernanceArticle />}
+          />
 
           {/* Corporate */}
           <Route path="/about" element={<About />} />
+          {/* 2026-10-13: AI Governance & Assurance page, opened from the
+              About page's third "What We Offer" card, the homepage
+              governance band and the article. */}
+          <Route path="/about/ai-governance" element={<AIGovernance />} />
           <Route path="/consulting" element={<Consulting />} />
           <Route path="/contact" element={<Contact />} />
 
