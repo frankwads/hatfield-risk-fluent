@@ -1,7 +1,10 @@
-﻿import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface BoardMember {
   name: string;
+  /** URL anchor for this member, e.g. "kevin-kobs" → /about#kevin-kobs scrolls to the card and opens the bio.
+   *  Used by the corporate email signature; keep stable once published. */
+  slug: string;
   title: string;
   headshot: string;
   shortBio: string;
@@ -12,6 +15,7 @@ interface BoardMember {
 const members: BoardMember[] = [
   {
     name: "Albert J. Mellina",
+    slug: "albert-j-mellina",
     title: "CEO, Mellina Associates LLC",
     headshot: "/advisors/Albert_elite.jpg",
     shortBio: "35+ years as entrepreneur, executive, and management consultant across technology and financial services. Former Senior Partner at KPMG Consulting.",
@@ -20,6 +24,7 @@ const members: BoardMember[] = [
   },
   {
     name: "Hsing-Hsing Li",
+    slug: "hsing-hsing-li",
     title: "COO, Aceler8.ai",
     headshot: "/advisors/HsingHsing_elite.jpg",
     shortBio: "Recognized leader in digital transformation, AI innovation, and enterprise strategy. Led initiatives for Goldman Sachs, Marsh McLennan, and AIG across 130+ countries.",
@@ -28,6 +33,7 @@ const members: BoardMember[] = [
   },
   {
     name: "Neil Shroff",
+    slug: "neil-shroff",
     title: "Founder & CEO, Spark Legacy",
     headshot: "/advisors/Neil_elite.jpg",
     shortBio: "Entrepreneur and investor with 25+ years in technology and capital advisory. Built and exited four technology companies.",
@@ -36,6 +42,7 @@ const members: BoardMember[] = [
   },
   {
     name: "Kevin Kobs",
+    slug: "kevin-kobs",
     title: "Technology & Operations Executive",
     headshot: "/advisors/Kevin_elite.jpg",
     shortBio: "25+ years in financial services and enterprise technology. Former COO for Infrastructure Technology at a global investment bank.",
@@ -44,6 +51,7 @@ const members: BoardMember[] = [
   },
   {
     name: "Rene Mandeville",
+    slug: "rene-mandeville",
     title: "Partner & CMO, iVoice Communications",
     headshot: "/advisors/Rene_elite.jpg",
     shortBio: "20+ years in enterprise operations and risk transformation across global financial institutions. Former Managing Director at Sumitomo Mitsui Banking Corporation.",
@@ -55,6 +63,21 @@ const members: BoardMember[] = [
 export default function AdvisoryBoard() {
   const [selected, setSelected] = useState<BoardMember | null>(null);
 
+  // Deep link: /about#<slug> (from the email signature or anywhere else) scrolls to that member's
+  // card and opens the full bio. Runs on first render and whenever the hash changes.
+  useEffect(() => {
+    const openFromHash = () => {
+      const slug = window.location.hash.replace(/^#/, "");
+      const member = members.find((m) => m.slug === slug);
+      if (!member) return;
+      setSelected(member);
+      window.setTimeout(() => document.getElementById(slug)?.scrollIntoView({ block: "center" }), 0);
+    };
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+    return () => window.removeEventListener("hashchange", openFromHash);
+  }, []);
+
   return (
     <section className="px-10 py-16 max-w-6xl mx-auto">
       <h2 className="text-center text-white text-3xl font-bold mb-10">
@@ -65,6 +88,7 @@ export default function AdvisoryBoard() {
         {members.map((m) => (
           <div
             key={m.name}
+            id={m.slug}
             onClick={() => setSelected(m)}
             className="bg-white/5 border border-white/10 rounded-xl p-6 text-center cursor-pointer hover:bg-white/10 transition-colors"
           >

@@ -122,8 +122,8 @@ const About = () => {
         </div>
       </section>
 
-      {/* Founder Section */}
-      <section className="py-12 bg-background">
+      {/* Founder Section — id="founder" is the deep-link target used by the email signature (/about#founder) */}
+      <section id="founder" className="py-12 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-foreground mb-8 text-center">
