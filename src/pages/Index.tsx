@@ -38,11 +38,11 @@ const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 // product overviews are served as static files from public/docs/, the same
 // way the commercial video is served from public/videos/. The files must be
 // placed there under exactly these names:
-//   public/docs/Hatfield_NEXUS.pdf
-//   public/docs/Hatfield_SIGNAL.pdf
+//   public/docs/Hatfield.ai_NEXUS.pdf
+//   public/docs/Hatfield.ai_SIGNAL.pdf
 // To publish a revised PDF, replace the file and keep the name.
-const NEXUS_PDF_SRC = "/docs/Hatfield_NEXUS.pdf";
-const SIGNAL_PDF_SRC = "/docs/Hatfield_SIGNAL.pdf";
+const NEXUS_PDF_SRC = "/docs/Hatfield.ai_NEXUS.pdf";
+const SIGNAL_PDF_SRC = "/docs/Hatfield.ai_SIGNAL.pdf";
 
 // 2026-10-02 (rev 16, Frank): "a it is". The PDF icon on the NEXUS and
 // SIGNAL boxes is now option A: a WHITE page with a folded corner and a

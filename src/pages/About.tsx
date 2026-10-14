@@ -20,8 +20,8 @@ const frankPhoto = "/advisors/Frank_elite.jpg";
 // The paths are the same files the homepage hero boxes open, so one copy
 // of each PDF serves the whole site.
 const TEAR_SHEETS = [
-  { label: "NEXUS", href: "/docs/Hatfield_NEXUS.pdf" },
-  { label: "SIGNAL", href: "/docs/Hatfield_SIGNAL.pdf" },
+  { label: "NEXUS", href: "/docs/Hatfield.ai_NEXUS.pdf" },
+  { label: "SIGNAL", href: "/docs/Hatfield.ai_SIGNAL.pdf" },
 ];
 
 const About = () => {
