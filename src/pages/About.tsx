@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,6 +25,20 @@ const TEAR_SHEETS = [
 ];
 
 const About = () => {
+  // Deep link: /about#founder (used by the email signature). On a fresh page load the browser
+  // tries to jump to the anchor before React has rendered the section, so it lands at the top;
+  // scroll programmatically once the page is mounted instead. Advisory-board anchors are handled
+  // the same way inside AdvisoryBoard.tsx.
+  useEffect(() => {
+    const scrollToHash = () => {
+      if (window.location.hash !== "#founder") return;
+      window.setTimeout(() => document.getElementById("founder")?.scrollIntoView({ block: "start" }), 0);
+    };
+    scrollToHash();
+    window.addEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", scrollToHash);
+  }, []);
+
   const values = [
     {
       title: "Intellectual Curiosity",
@@ -123,7 +138,7 @@ const About = () => {
       </section>
 
       {/* Founder Section — id="founder" is the deep-link target used by the email signature (/about#founder) */}
-      <section id="founder" className="py-12 bg-background">
+      <section id="founder" className="py-12 bg-background scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-foreground mb-8 text-center">
