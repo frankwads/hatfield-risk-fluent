@@ -126,9 +126,14 @@ const Navigation = () => {
   // The /insights path is unchanged, so the active-state rule below and the
   // /insights/ article check above are unaffected, and existing links keep
   // working. The page heading was renamed to match in src/pages/Insights.tsx.
+  // 2026-10-19 (Frank, later): "add NEXUS to navigation as we have with
+  // signal". NEXUS sits directly before SIGNAL and goes to /nexus, the new
+  // product page (src/pages/Nexus.tsx). Like /signal, that page carries its
+  // own header rather than this menu.
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Capabilities", path: "/#capabilities" },
+    { name: "NEXUS", path: "/nexus" },
     { name: "SIGNAL", path: "/signal" },
     { name: "News & Insights", path: "/insights" },
     { name: "About", path: "/about" },
