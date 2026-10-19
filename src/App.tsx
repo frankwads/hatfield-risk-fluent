@@ -7,6 +7,9 @@ import { Analytics } from "@vercel/analytics/react";
 import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import Signal from "./pages/Signal";
+// 2026-10-19 (Frank): NEXUS product page, the counterpart of the SIGNAL
+// page, built from the NEXUS tear sheet. Lives in src/pages/Nexus.tsx.
+import Nexus from "./pages/Nexus";
 import Insights from "./pages/Insights";
 import About from "./pages/About";
 import Consulting from "./pages/Consulting";
@@ -32,7 +35,10 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
 
-          {/* SIGNAL */}
+          {/* Products */}
+          {/* 2026-10-19: /nexus added next to /signal; the header menu
+              (src/components/Navigation.tsx) links to both. */}
+          <Route path="/nexus" element={<Nexus />} />
           <Route path="/signal" element={<Signal />} />
 
           {/* Insights */}
