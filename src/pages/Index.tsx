@@ -836,6 +836,34 @@ const Index = () => {
                 Comprehensive tools to manage, monitor, and mitigate third-party
                 risks at scale
               </p>
+
+              {/* 2026-10-19 (Frank): "use attached description ... left side
+                  of page 1/3 way down under platform capabilities". How
+                  SIGNAL and NEXUS work together, under the section intro in
+                  the left column. mt-16 / lg:mt-28 sets it about a third of
+                  the way down the section beside the capabilities list on
+                  desktop; on phone and tablet the column stacks and the
+                  smaller gap keeps it close to the intro. Same colours and
+                  sizes as the intro above it (text-foreground for the
+                  lead-in, text-muted-foreground for the body). */}
+              <div className="mt-16 lg:mt-28 max-w-xl space-y-5">
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  <strong className="font-semibold text-foreground">
+                    Discover how Hatfield.ai SIGNAL and NEXUS work together.
+                  </strong>{" "}
+                  SIGNAL delivers continuous company intelligence: it
+                  identifies emerging risks and explains what matters across
+                  financial, regulatory, cybersecurity and other developments.
+                  NEXUS connects that intelligence to your third-party
+                  relationships, so risk assessment, governance and action rest
+                  on it.
+                </p>
+
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Explore how each platform works on its own, and how together
+                  they turn intelligence into better-informed decisions.
+                </p>
+              </div>
             </div>
 
             <div className="flex flex-col gap-8">
@@ -1010,6 +1038,6 @@ const Index = () => {
       <Footer />
     </div>
   );
-};
+}
 
 export default Index;
