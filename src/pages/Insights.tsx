@@ -55,11 +55,16 @@ const Insights = () => {
       <Navigation />
 
       {/* Hero Section */}
+      {/* 2026-10-19 (Frank, "change Insights to News & Insights"): page
+          heading renamed from "Insights & Articles" to "News & Insights".
+          The /insights route, the article paths and this component's name
+          are deliberately unchanged so existing links keep working; the
+          header menu label lives in src/components/Navigation.tsx. */}
       <section className="pt-32 pb-16 bg-gradient-to-b from-muted/50 to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-              Insights & Articles
+              News &amp; Insights
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
               Expert perspectives on third-party risk management, compliance,
