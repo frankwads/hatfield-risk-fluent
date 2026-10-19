@@ -122,11 +122,15 @@ const Navigation = () => {
     }
   }, [location.pathname]);
 
+  // 2026-10-19 (Frank): menu label "Insights" renamed "News & Insights".
+  // The /insights path is unchanged, so the active-state rule below and the
+  // /insights/ article check above are unaffected, and existing links keep
+  // working. The page heading was renamed to match in src/pages/Insights.tsx.
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Capabilities", path: "/#capabilities" },
     { name: "SIGNAL", path: "/signal" },
-    { name: "Insights", path: "/insights" },
+    { name: "News & Insights", path: "/insights" },
     { name: "About", path: "/about" },
     { name: "Consulting", path: "/consulting" },
   ];
