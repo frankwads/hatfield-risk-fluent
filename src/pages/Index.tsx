@@ -108,8 +108,10 @@ const COMPARISON_PDF_SRC = "/docs/Hatfield_SIGNAL_vs_NEXUS_Comparison.pdf";
 //
 // Links: only the deep blue heading boxes are links. SIGNAL goes to
 // /signal, the same address the hero's "Introducing SIGNAL" link uses.
-// NEXUS goes to /contact (the "Book a briefing" destination used on the
-// NEXUS PDF) because there is no dedicated NEXUS page.
+// NEXUS went to /contact until 2026-10-19 because there was no dedicated
+// NEXUS page; 2026-10-19 (Frank): it now goes to /nexus, the NEXUS product
+// page (src/pages/Nexus.tsx), the same address the header NEXUS link and
+// the email signature use.
 // Punctuation: apostrophes are typographic, matching the rest of this page.
 //
 // 2026-10-13 (Frank, AI governance tranche, option A): AI governance is now
@@ -132,7 +134,7 @@ type TickerVisit = { heading: TickerHeading; boxes: TickerBox[] };
 const NEXUS_HEADING: TickerHeading = {
   headline: "NEXUS",
   value: "The operating system for third-party risk.",
-  href: "/contact",
+  href: "/nexus",
 };
 const SIGNAL_HEADING: TickerHeading = {
   headline: "SIGNAL",
