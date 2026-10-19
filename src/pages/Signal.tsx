@@ -151,6 +151,18 @@
 // 23. Two months free is said once, in the fine print. The plan note
 //     under the table no longer repeats it.
 //
+// 2026-10-19. ONE MORE, MATCHING THE NEW NEXUS PAGE.
+//
+// 24. "SIGNAL OVERVIEW (PDF)" (Frank: "we should add signal pdf link as
+//     we do with nexus"). The NEXUS page (src/pages/Nexus.tsx) offers the
+//     NEXUS tear sheet as a hero button and a footer link; this page now
+//     does the same for the SIGNAL tear sheet. SIGNAL_PDF_URL points at
+//     public/docs/Hatfield.ai_SIGNAL.pdf, the same file the homepage
+//     SIGNAL panel opens, so there is one copy of the sheet. A third
+//     ghost button sits after "Sample risk report" in the hero and a
+//     "SIGNAL overview (PDF)" link joins the footer row. Nothing else
+//     changed.
+//
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
@@ -179,6 +191,12 @@ const TURNSTILE_SITE_KEY =
  * cannot offer a sample it does not have.
  */
 const SAMPLE_REPORT_URL = "https://signal.hatfield.ai/sample-risk-report";
+
+/**
+ * The SIGNAL tear sheet, served from public/docs/ by this site (item 24).
+ * Same file the homepage SIGNAL panel opens.
+ */
+const SIGNAL_PDF_URL = "/docs/Hatfield.ai_SIGNAL.pdf";
 
 /**
  * Tier KEYS as the server knows them, with the label this page shows.
@@ -703,6 +721,16 @@ const Signal = () => {
                 Sample risk report
               </a>
             )}
+
+            {/* Item 24: the tear sheet, as on the NEXUS page. */}
+            <a
+              href={SIGNAL_PDF_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors"
+            >
+              SIGNAL overview (PDF)
+            </a>
           </div>
         </div>
       </section>
@@ -1636,6 +1664,18 @@ const Signal = () => {
                 </a>
               </>
             )}
+
+            {"  \u00b7  "}
+
+            {/* Item 24: the tear sheet. */}
+            <a
+              href={SIGNAL_PDF_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#C8D3E3] no-underline hover:text-white"
+            >
+              SIGNAL overview (PDF)
+            </a>
 
             {"  \u00b7  "}
 
