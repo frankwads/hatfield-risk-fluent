@@ -44,6 +44,13 @@ const NEXUS_COMMERCIAL_SRC = "/videos/nexus-commercial.mp4";
 const NEXUS_PDF_SRC = "/docs/Hatfield.ai_NEXUS.pdf";
 const SIGNAL_PDF_SRC = "/docs/Hatfield.ai_SIGNAL.pdf";
 
+// 2026-10-19 (Frank): the three-page SIGNAL vs NEXUS comparison PDF, served
+// from public/docs/ like the two product overviews, under the name already
+// in the tree:
+//   public/docs/Hatfield_SIGNAL_vs_NEXUS_Comparison.pdf
+// The panel that links to it is in the Platform Capabilities section below.
+const COMPARISON_PDF_SRC = "/docs/Hatfield_SIGNAL_vs_NEXUS_Comparison.pdf";
+
 // 2026-10-02 (rev 16, Frank): "a it is". The PDF icon on the NEXUS and
 // SIGNAL boxes is now option A: a WHITE page with a folded corner and a
 // small RED label reading "PDF" across it, the familiar red-and-white file
@@ -674,14 +681,23 @@ const Index = () => {
                   {/* SIGNAL Product Introduction */}
                   {/* 2026-09-19 (rev 2): moved from last place to second,
                       directly after Explore Capabilities. Dividers on both
-                      sides set it apart from the buttons around it. */}
+                      sides set it apart from the buttons around it.
+                      2026-10-19 (Frank): "put a blue frame around INTRODUCING
+                      SIGNAL box the same as Explore capabilities box". The
+                      link is now framed: a 1px border in the page's accent
+                      blue (hsl(215,65%,48%), the same blue as the ticker's
+                      focus outline and the Processing Intelligence bullets),
+                      rounded-md corners and h-11 to sit level with the
+                      Explore Capabilities button beside it. The two thin
+                      vertical dividers that used to flank the link are
+                      removed, since the frame now does that job. Wording,
+                      link target (/signal), arrow and hover behaviour are
+                      unchanged. */}
                   <a
                     href="/signal"
-                    className="group flex items-center gap-3 py-2 transition-opacity duration-300 hover:opacity-80"
+                    className="group flex items-center h-11 px-4 rounded-md border border-[hsl(215,65%,48%)] transition-opacity duration-300 hover:opacity-80"
                     aria-label="Introducing SIGNAL — Hatfield.ai Real-Time Surveillance"
                   >
-                    <span className="hidden sm:block h-9 w-px bg-white/30" />
-
                     <span className="flex flex-col text-left">
                       <span className="text-xs uppercase tracking-[0.18em] font-semibold text-accent">
                         Introducing SIGNAL
@@ -695,8 +711,6 @@ const Index = () => {
                         />
                       </span>
                     </span>
-
-                    <span className="hidden sm:block h-9 w-px bg-white/30" />
                   </a>
 
                   {/* 2026-09-19: label renamed from "Watch Introduction" to
@@ -845,25 +859,46 @@ const Index = () => {
                   desktop; on phone and tablet the column stacks and the
                   smaller gap keeps it close to the intro. Same colours and
                   sizes as the intro above it (text-foreground for the
-                  lead-in, text-muted-foreground for the body). */}
-              <div className="mt-16 lg:mt-28 max-w-xl space-y-5">
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  <strong className="font-semibold text-foreground">
-                    Discover how Hatfield.ai SIGNAL and NEXUS work together.
-                  </strong>{" "}
-                  SIGNAL delivers continuous company intelligence: it
-                  identifies emerging risks and explains what matters across
-                  financial, regulatory, cybersecurity and other developments.
-                  NEXUS connects that intelligence to your third-party
-                  relationships, so risk assessment, governance and action rest
-                  on it.
-                </p>
+                  lead-in, text-muted-foreground for the body).
+                  2026-10-19 (Frank, rev 2): "frame the text in a shaded box
+                  similar to what we have for nexus and signal ... and
+                  include the pdf link with pdf image". The two paragraphs
+                  now sit inside the same panel as the hero NEXUS and SIGNAL
+                  boxes (same border, background, padding, hover brightening
+                  and focus outline), with the PdfIcon on the right. The
+                  whole panel is a link that opens the SIGNAL vs NEXUS
+                  comparison PDF in a new tab (COMPARISON_PDF_SRC, top of
+                  this file). Wording and position unchanged. */}
+              <a
+                href={COMPARISON_PDF_SRC}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="How SIGNAL and NEXUS work together, PDF, opens in a new tab"
+                className="group mt-16 lg:mt-28 max-w-xl flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <span className="flex-1 space-y-5">
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    <strong className="font-semibold text-foreground">
+                      Discover how Hatfield.ai SIGNAL and NEXUS work together.
+                    </strong>{" "}
+                    SIGNAL delivers continuous company intelligence: it
+                    identifies emerging risks and explains what matters across
+                    financial, regulatory, cybersecurity and other developments.
+                    NEXUS connects that intelligence to your third-party
+                    relationships, so risk assessment, governance and action rest
+                    on it.
+                  </p>
 
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  Explore how each platform works on its own, and how together
-                  they turn intelligence into better-informed decisions.
-                </p>
-              </div>
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    Explore how each platform works on its own, and how together
+                    they turn intelligence into better-informed decisions.
+                  </p>
+                </span>
+
+                <span className="flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5">
+                  <PdfIcon />
+                </span>
+              </a>
             </div>
 
             <div className="flex flex-col gap-8">
