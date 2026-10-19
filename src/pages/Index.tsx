@@ -15,6 +15,11 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import JacarandaIcon from "@/components/JacarandaIcon";
 import HoverBinaryLogo from "@/components/HoverBinaryLogo";
+// 2026-10-19 (Frank): the PDF icon now lives in its own component so the
+// NEXUS and SIGNAL product pages can use the same drawing (see
+// src/components/PdfIcon.tsx). It was defined inline here from 2026-10-02
+// (rev 16) until today; the drawing and the default size are unchanged.
+import PdfIcon from "@/components/PdfIcon";
 import heroNetwork from "@/assets/hero-network.jpg";
 import logoColor from "@/assets/logo-color.png";
 import heroHLogo from "@/assets/hero-h-logo.png";
@@ -52,41 +57,9 @@ const SIGNAL_PDF_SRC = "/docs/Hatfield.ai_SIGNAL.pdf";
 const COMPARISON_PDF_SRC = "/docs/Hatfield_SIGNAL_vs_NEXUS_Comparison.pdf";
 
 // 2026-10-02 (rev 16, Frank): "a it is". The PDF icon on the NEXUS and
-// SIGNAL boxes is now option A: a WHITE page with a folded corner and a
-// small RED label reading "PDF" across it, the familiar red-and-white file
-// icon. It replaces the plain white outline of rev 15 (and the all-red badge
-// of rev 13 before it). It is drawn here as an inline SVG, so there is no
-// image file to add. It is a generic file icon: it deliberately does NOT
-// include Adobe's Acrobat swirl, which is Adobe's trademark.
-const PdfIcon = () => (
-  <svg
-    viewBox="0 0 34 42"
-    width="36"
-    height="44"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <path
-      d="M5 1h16l10 10v27a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V4a3 3 0 0 1 3-3z"
-      fill="#FFFFFF"
-      stroke="#CBD5E1"
-      strokeWidth="1"
-    />
-    <path d="M21 1l10 10h-7a3 3 0 0 1-3-3V1z" fill="#E2E8F0" />
-    <rect x="0" y="21" width="26" height="13" rx="2" fill="#D92D20" />
-    <text
-      x="13"
-      y="31"
-      textAnchor="middle"
-      fontFamily="Arial, Helvetica, sans-serif"
-      fontSize="9"
-      fontWeight="700"
-      fill="#FFFFFF"
-    >
-      PDF
-    </text>
-  </svg>
-);
+// SIGNAL boxes is option A: a WHITE page with a folded corner and a small
+// RED label reading "PDF" across it. 2026-10-19: the drawing moved to
+// src/components/PdfIcon.tsx (imported above) so the product pages share it.
 
 // ---------------------------------------------------------------------------
 // HOMEPAGE TICKER CONTENT
@@ -593,8 +566,8 @@ const Index = () => {
                     SIGNAL_PDF_SRC at the top of this file).
                     2026-10-02 (rev 16, Frank): the icon at the right of each
                     panel is the white page with a red "PDF" label (PdfIcon,
-                    top of this file). Panel size, copy, spacing and click
-                    behaviour are unchanged. */}
+                    src/components/PdfIcon.tsx). Panel size, copy, spacing
+                    and click behaviour are unchanged. */}
                 <a
                   href={NEXUS_PDF_SRC}
                   target="_blank"

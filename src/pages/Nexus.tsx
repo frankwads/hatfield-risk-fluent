@@ -44,9 +44,16 @@
 //   in page text           &mdash; &rsquo; &ldquo; &rdquo;
 // Keep new copy in this file to the same rule.
 //
-// ROUTING. This component needs a route in the app's router (the file that
-// maps /signal to Signal), e.g. <Route path="/nexus" element={<Nexus />} />.
-// The header menu item that points here is in src/components/Navigation.tsx.
+// 2026-10-19 (later, Frank): "use pdf icon instead of words pdf". The hero
+// button reads "NEXUS overview" followed by the red-and-white PDF icon
+// (PdfIcon, src/components/PdfIcon.tsx, shared with the homepage and the
+// SIGNAL page) in place of "(PDF)". The footer link keeps its wording
+// because it sits in a plain text row.
+//
+// ROUTING. This component is routed at /nexus in src/App.tsx. The header
+// menu item that points here is in src/components/Navigation.tsx.
+
+import PdfIcon from "@/components/PdfIcon";
 
 /** The NEXUS tear sheet, served from public/docs/ (same file the homepage
  *  NEXUS panel opens). */
@@ -193,9 +200,6 @@ const Nexus = () => {
   const primaryButton =
     "inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors";
 
-  const ghostButton =
-    "inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors";
-
   const renderCapability = (c: Capability) => (
     <>
       {c.main}
@@ -265,8 +269,8 @@ const Nexus = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-[10px] lg:pb-1">
-            <a href={BRIEFING_URL} className={primaryButton}>
+          <div className="flex flex-wrap lg:flex-nowrap lg:shrink-0 gap-[10px] lg:pb-1">
+            <a href={BRIEFING_URL} className={`${primaryButton} whitespace-nowrap`}>
               Book a briefing
             </a>
 
@@ -274,9 +278,11 @@ const Nexus = () => {
               href={NEXUS_PDF_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className={ghostButton}
+              aria-label="NEXUS overview, PDF, opens in a new tab"
+              className="inline-flex items-center gap-2 px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors whitespace-nowrap"
             >
-              NEXUS overview (PDF)
+              NEXUS overview
+              <PdfIcon height={18} />
             </a>
           </div>
         </div>

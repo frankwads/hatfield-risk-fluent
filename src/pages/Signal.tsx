@@ -151,17 +151,25 @@
 // 23. Two months free is said once, in the fine print. The plan note
 //     under the table no longer repeats it.
 //
-// 2026-10-19. ONE MORE, MATCHING THE NEW NEXUS PAGE.
+// 2026-10-19. TWO MORE, MATCHING THE NEW NEXUS PAGE.
 //
-// 24. "SIGNAL OVERVIEW (PDF)" (Frank: "we should add signal pdf link as
-//     we do with nexus"). The NEXUS page (src/pages/Nexus.tsx) offers the
-//     NEXUS tear sheet as a hero button and a footer link; this page now
-//     does the same for the SIGNAL tear sheet. SIGNAL_PDF_URL points at
+// 24. "SIGNAL OVERVIEW" (Frank: "we should add signal pdf link as we do
+//     with nexus"). The NEXUS page (src/pages/Nexus.tsx) offers the NEXUS
+//     tear sheet as a hero button and a footer link; this page now does
+//     the same for the SIGNAL tear sheet. SIGNAL_PDF_URL points at
 //     public/docs/Hatfield.ai_SIGNAL.pdf, the same file the homepage
-//     SIGNAL panel opens, so there is one copy of the sheet. A third
-//     ghost button sits after "Sample risk report" in the hero and a
-//     "SIGNAL overview (PDF)" link joins the footer row. Nothing else
-//     changed.
+//     SIGNAL panel opens, so there is one copy of the sheet.
+//
+// 25. BUTTON ROW AND ICON (Frank: "put the signal overview pdf next to or
+//     to the right of sample risk report ... use pdf icon instead of
+//     words pdf"). The hero button row no longer wraps on a desktop
+//     window (lg:flex-nowrap), so the three buttons sit in one line with
+//     the overview last, to the right of Sample risk report; on narrower
+//     windows the row still wraps. The button reads "SIGNAL overview"
+//     followed by the red-and-white PDF icon (PdfIcon,
+//     src/components/PdfIcon.tsx, shared with the homepage and the NEXUS
+//     page) in place of the word "(PDF)". The footer link keeps its
+//     wording because it sits in a plain text row.
 //
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
@@ -171,6 +179,7 @@
 //                             throttle.
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import PdfIcon from "@/components/PdfIcon";
 
 const API_BASE =
   (import.meta as any).env?.VITE_SIGNAL_API_BASE ?? "https://signal.hatfield.ai";
@@ -703,12 +712,13 @@ const Signal = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-[10px] lg:pb-1">
+          {/* Item 25: one line on desktop, overview last. */}
+          <div className="flex flex-wrap lg:flex-nowrap lg:shrink-0 gap-[10px] lg:pb-1">
             {/* Item 11: the term is in the button. */}
             <button
               type="button"
               onClick={() => selectTier("demo")}
-              className="inline-block px-[18px] py-[11px] rounded-[7px] border-0 cursor-pointer text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors"
+              className="inline-block px-[18px] py-[11px] rounded-[7px] border-0 cursor-pointer text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors whitespace-nowrap"
             >
               Start your free 10-business-day trial
             </button>
@@ -716,20 +726,22 @@ const Signal = () => {
             {SAMPLE_REPORT_URL && (
               <a
                 href="#sample"
-                className="inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors"
+                className="inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors whitespace-nowrap"
               >
                 Sample risk report
               </a>
             )}
 
-            {/* Item 24: the tear sheet, as on the NEXUS page. */}
+            {/* Items 24 and 25: the tear sheet, with the PDF icon. */}
             <a
               href={SIGNAL_PDF_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors"
+              aria-label="SIGNAL overview, PDF, opens in a new tab"
+              className="inline-flex items-center gap-2 px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors whitespace-nowrap"
             >
-              SIGNAL overview (PDF)
+              SIGNAL overview
+              <PdfIcon height={18} />
             </a>
           </div>
         </div>
