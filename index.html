@@ -3,27 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hatfield.ai</title>
-    <meta name="description" content="TEST">
+
+    <!-- 2026-10-28 (Frank): share-preview and search metadata replaced.
+         The Lovable template shipped with description "TEST", a Lovable
+         og:image (lovable.dev/opengraph-image-p98pqg.png) and
+         twitter:site @lovable_dev, so every pasted hatfield.ai link showed
+         a Lovable banner with "TEST" under it (seen in a LinkedIn message,
+         2026-10-28). All three are replaced with Hatfield.ai's own values.
+         The share image is served from public/og-image.png (1200x630, the
+         size LinkedIn, Slack, X and iMessage expect). og:url and the
+         canonical link pin the www address so every variant of the link
+         (hatfield.ai, www.hatfield.ai, trailing slash) shares one preview
+         cache. After a deploy, LinkedIn's Post Inspector
+         (linkedin.com/post-inspector) forces its cache to refresh. -->
+    <title>Hatfield.ai — AI-powered third-party risk management</title>
+    <meta name="description" content="AI-native third-party risk management and real-world risk intelligence on one platform. NEXUS: the operating system for third-party risk. SIGNAL: your GPS for business decisions." />
     <meta name="author" content="Hatfield.ai" />
+    <link rel="canonical" href="https://www.hatfield.ai/" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <meta name="theme-color" content="#1c2d4f" />
 
-    
-    
+    <!-- Open Graph (LinkedIn, Slack, iMessage, WhatsApp, Facebook) -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:site_name" content="Hatfield.ai" />
+    <meta property="og:url" content="https://www.hatfield.ai/" />
+    <meta property="og:title" content="Hatfield.ai — AI-powered third-party risk management" />
+    <meta property="og:description" content="AI-native third-party risk management and real-world risk intelligence on one platform. NEXUS: the operating system for third-party risk. SIGNAL: your GPS for business decisions." />
+    <meta property="og:image" content="https://www.hatfield.ai/og-image.png" />
+    <meta property="og:image:secure_url" content="https://www.hatfield.ai/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Hatfield.ai — The intelligent choice. NEXUS third-party risk management and SIGNAL real-time risk intelligence." />
 
+    <!-- X / Twitter card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-    
+    <meta name="twitter:title" content="Hatfield.ai — AI-powered third-party risk management" />
+    <meta name="twitter:description" content="AI-native third-party risk management and real-world risk intelligence on one platform. NEXUS: the operating system for third-party risk. SIGNAL: your GPS for business decisions." />
+    <meta name="twitter:image" content="https://www.hatfield.ai/og-image.png" />
+    <meta name="twitter:image:alt" content="Hatfield.ai — The intelligent choice. NEXUS third-party risk management and SIGNAL real-time risk intelligence." />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@200;300;400;500;600;700&family=Lora:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <meta property="og:title" content="Hatfield.ai">
-  <meta name="twitter:title" content="Hatfield.ai">
-  <meta property="og:description" content="TEST">
-  <meta name="twitter:description" content="TEST">
-</head>
+  </head>
 
   <body>
     <div id="root"></div>
