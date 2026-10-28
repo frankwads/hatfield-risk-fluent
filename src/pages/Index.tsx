@@ -361,4 +361,749 @@ const HomepageTicker = () => {
         <a
           href={frame.heading.href}
           tabIndex={isCurrent ? undefined : -1}
-          className="h-20 md:h-28 md:w-56 xl:w-72 flex-shrink-0 px-6 rounded-lg flex flex-col
+          className="h-20 md:h-28 md:w-56 xl:w-72 flex-shrink-0 px-6 rounded-lg flex flex-col justify-center bg-[hsl(215,45%,15%)] text-white transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(215,65%,48%)]"
+        >
+          <span className="block font-bold uppercase leading-tight text-xl tracking-[0.18em]">
+            {frame.heading.headline}
+          </span>
+          <span className="block mt-1.5 text-sm font-medium leading-snug text-white/80">
+            {frame.heading.value}
+          </span>
+        </a>
+
+        {frame.boxes.map((box, boxIndex) => (
+          <div
+            key={boxIndex}
+            className="h-28 flex-1 basis-0 min-w-0 overflow-hidden px-6 rounded-lg flex flex-col justify-center bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)] border border-gray-300"
+          >
+            <span className="block mb-1 text-[10px] font-semibold uppercase leading-none tracking-[0.18em] opacity-70">
+              {frame.heading.headline}
+            </span>
+            <span className="block font-bold uppercase leading-tight text-sm xl:text-base tracking-[0.08em]">
+              {box.headline}
+            </span>
+            <span className="block mt-1.5 text-xs xl:text-sm font-medium leading-snug">
+              {box.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const current = view.current % frames.length;
+  const previous =
+    view.previous === null ? null : view.previous % frames.length;
+
+  return (
+    <section
+      data-stat-section
+      aria-label="NEXUS, SIGNAL and AI governance highlights"
+      className="bg-white py-3"
+    >
+      <style>{TICKER_CSS}</style>
+
+      {/* Height: on a phone the heading box (80px) sits above the content
+          box (112px) with a 12px gap = 204px; from tablet up it is one row
+          of 112px. */}
+      <div
+        className="relative overflow-hidden h-[12.75rem] md:h-28"
+        onMouseEnter={() => {
+          heldRef.current.hover = true;
+        }}
+        onMouseLeave={() => {
+          heldRef.current.hover = false;
+        }}
+        onFocus={() => {
+          heldRef.current.focus = true;
+        }}
+        onBlur={() => {
+          heldRef.current.focus = false;
+        }}
+      >
+        {previous !== null &&
+          previous !== current &&
+          renderFrame(previous, "previous")}
+        {renderFrame(current, "current")}
+      </div>
+    </section>
+  );
+};
+
+const Index = () => {
+  // 2026-10-06 (Frank): "Process Automation" description no longer claims
+  // "70% reduction in assessment overhead". The ticker dropped that figure
+  // on 2026-10-02 because no published evidence backs it, and this section
+  // now matches. Wording is Frank's own (2026-10-06).
+  const features = [
+    {
+      title: "AI-Powered Intelligence",
+      description:
+        "Third-party normalization and corporate hierarchy mapping with intelligent entity resolution",
+    },
+    {
+      title: "Automated Screening",
+      description:
+        "Integrated OFAC screening and automated financial viability assessments using Piotroski F-Score",
+    },
+    {
+      title: "Dynamic Risk Assessment",
+      description:
+        "Configurable risk tolerance thresholds with intelligent reuse of prior due diligence",
+    },
+    {
+      title: "Smart Contracts",
+      description:
+        "Auto-populated contract templates with risk and engagement data",
+    },
+    {
+      title: "Flexible Integration",
+      description:
+        "Rapid systems integration using hub-and-spoke architecture with sophisticated reporting",
+    },
+    {
+      title: "Process Automation",
+      description:
+        "Eliminate redundant processing resulting in a significant reduction in assessment overhead",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen">
+      <Navigation />
+
+      {/* Hero Section */}
+      {/* 2026-09-22 (Frank): hero moved up one line. Top padding reduced
+          from pt-32 (128px) to pt-24 (96px) — 32px, which is one line of
+          the hero body text (text-xl, leading-relaxed = ~32.5px). The
+          heading and everything below it in the hero rise together; no
+          other spacing, text or layout changed.
+          2026-10-01 (Frank, option B): the hero is now a two-column split
+          on desktop (lg, 1024px+ windows) so that it and the scrolling
+          banner below fit in one screen. Left column: headline, opening
+          sentence, the "Together..." line and the four actions. Right
+          column: the 3D logo with the NEXUS and SIGNAL paragraphs as two
+          panels beneath it. Every word of the copy and every button is
+          unchanged; only their arrangement and sizes changed. Bottom
+          padding drops from pb-20 to pb-10; pt-24 is kept.
+          The grid has three blocks. On desktop blocks 1 and 3 stack in the
+          left column and block 2 spans the right column. On tablet and
+          phone they simply stack in reading order 1, 2, 3 — headline and
+          opening sentence, then logo + NEXUS + SIGNAL, then "Together..."
+          and the buttons — the same order the page read in before.
+          2026-10-01 (rev 2, Frank): "the home page should be sized so you
+          don't see beyond the scrolling banner". The hero and the banner
+          are now wrapped in one first-screen block that is exactly as tall
+          as the browser window (min-h-screen = 100% of the window height).
+          The banner keeps its natural height at the bottom of that block
+          and the hero stretches (flex-1) to fill everything above it, with
+          its content centred vertically in the space, so the bottom edge
+          of the banner sits on the bottom edge of the window and Platform
+          Capabilities only appears once the visitor scrolls. This works
+          because the Navigation bar floats over the top of the hero rather
+          than taking up its own row (that is what pt-24 has always made
+          room for). If the window is too short to hold the hero and the
+          banner, the block grows past the window instead of cutting
+          anything off, so nothing is ever clipped.
+          Also rev 2: "third-party" in the headline can no longer split
+          across two lines (it was breaking as "third-" / "party"). */}
+      <div className="min-h-screen flex flex-col">
+        <section
+          className="relative pt-24 pb-10 overflow-hidden flex-1 flex items-center"
+          style={{ background: "var(--gradient-hero)" }}
+        >
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-6">
+              {/* Block 1: headline + opening sentence (left column, top) */}
+              <div className="lg:col-start-1 lg:row-start-1 lg:self-end">
+                <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-tight mb-5">
+                  AI-powered{" "}
+                  <span className="whitespace-nowrap">third-party</span>{" "}
+                  risk&nbsp;management
+                </h1>
+
+                {/* 2026-09-19 (Frank): hero copy replaced. The old three
+                    paragraphs (secure TPRM platform / developed as a prototype /
+                    inviting beta clients) now describe the two products, NEXUS
+                    and SIGNAL. 2026-09-19 (rev 2, Frank): the product names
+                    that open the NEXUS and SIGNAL paragraphs are bold
+                    (<strong>) so each paragraph leads with its product, same
+                    colour and size as the sentence around them.
+                    2026-10-01 (option B): body copy is text-lg (was
+                    text-lg/md:text-xl) so the hero is short enough to share
+                    the screen with the banner. */}
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Hatfield.ai brings third-party risk management and real-world
+                  risk intelligence together on one AI-native platform.
+                </p>
+              </div>
+
+              {/* Block 2: logo + NEXUS and SIGNAL panels (right column) */}
+              <div className="lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center flex flex-col gap-4">
+                {/* 2026-10-01 (rev 3, Frank): logo made more prominent.
+                    Desktop width goes from w-36 (144px) to w-56 (224px),
+                    about one and a half times the size; phone and tablet
+                    go from w-32/w-40 to w-40/w-48. Position is unchanged
+                    (right-aligned above the NEXUS panel on desktop, centred
+                    on phone and tablet).
+                    2026-10-01 (rev 5, Frank): "center h logo over nexus and
+                    signal boxes and increase size". The logo is now centred
+                    above the two panels at every screen size (the desktop
+                    right-alignment, lg:justify-end, is removed) and grows
+                    again: desktop w-56 (224px) to w-72 (288px), twice the
+                    original 144px; phone and tablet w-40/w-48 to
+                    w-44/w-52.
+                    2026-10-01 (rev 6, Frank): "slightly bigger". One step
+                    up at every size: desktop w-72 (288px) to w-80 (320px),
+                    about 11% larger; phone and tablet w-44/w-52 to
+                    w-48/w-56. Still centred above the two panels. */}
+                <div className="flex justify-center">
+                  <img
+                    src={hero3dLogo}
+                    alt="Hatfield 3D Logo"
+                    className="w-48 sm:w-56 lg:w-80 h-auto object-contain"
+                  />
+                </div>
+
+                {/* 2026-10-02 (rev 11, Frank): the NEXUS and SIGNAL panels
+                    are now links. Clicking anywhere on a panel opens that
+                    product's three-page PDF in a new browser tab. The
+                    wording, border, background, padding and text size of the
+                    panels are unchanged; the panel brightens slightly on
+                    hover and shows a focus outline for keyboard users. The
+                    files come from public/docs/ (NEXUS_PDF_SRC and
+                    SIGNAL_PDF_SRC at the top of this file).
+                    2026-10-02 (rev 16, Frank): the icon at the right of each
+                    panel is the white page with a red "PDF" label (PdfIcon,
+                    src/components/PdfIcon.tsx). Panel size, copy, spacing
+                    and click behaviour are unchanged. */}
+                <a
+                  href={NEXUS_PDF_SRC}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="NEXUS overview, PDF, opens in a new tab"
+                  className="group flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <span className="flex-1 text-base text-muted-foreground leading-relaxed">
+                    <strong className="font-bold">NEXUS</strong> provides the
+                    operating system for third-party risk —
+                    managing the entire lifecycle from intake and legal-entity
+                    resolution through contracting, risk assessment, operational
+                    resilience, regulatory compliance and reporting.
+                  </span>
+
+                  <span className="flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5">
+                    <PdfIcon />
+                  </span>
+                </a>
+
+                <a
+                  href={SIGNAL_PDF_SRC}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="SIGNAL overview, PDF, opens in a new tab"
+                  className="group flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <span className="flex-1 text-base text-muted-foreground leading-relaxed">
+                    <strong className="font-bold">SIGNAL</strong> provides the
+                    intelligence layer — continuously monitoring
+                    the companies that matter across financial health,
+                    cybersecurity, sanctions, litigation, regulatory developments,
+                    corporate actions, adverse media, geographic risk and other
+                    emerging threats.
+                  </span>
+
+                  <span className="flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5">
+                    <PdfIcon />
+                  </span>
+                </a>
+              </div>
+
+              {/* Block 3: "Together..." line + actions (left column, bottom) */}
+              <div className="lg:col-start-1 lg:row-start-2 lg:self-start">
+                <p className="text-lg lg:text-xl text-foreground font-semibold mb-6 leading-relaxed">
+                  Together, NEXUS and SIGNAL give organizations a connected view
+                  of third-party risk — assess what you know, monitor what
+                  changes, and act on what matters.
+                </p>
+
+                {/* Primary Actions + SIGNAL Introduction */}
+                {/* 2026-09-19 (rev 2, Frank): order is Explore Capabilities,
+                    Introducing SIGNAL, Hatfield.ai Introduction, Hatfield.ai
+                    Commercial (renamed from Nexus Commercial, rev 3).
+                    2026-10-28 (Frank): the Commercial button is now
+                    "Hatfield.ai NEXUS Commercial" and a fifth button,
+                    "Hatfield.ai SIGNAL Commercial", follows it. The row
+                    already wraps, so the extra button simply flows onto the
+                    next line; nothing else in the row changed.
+                    2026-10-01 (option B): the row now lives in the left half
+                    of the hero, which is too narrow for four in a line, so
+                    the old xl:flex-nowrap is removed and the row wraps: on
+                    desktop Explore Capabilities + Introducing SIGNAL sit on
+                    the first line and the two video buttons on the second.
+                    Order, labels, sizes and behaviour are unchanged. On a
+                    phone the four still stack one per line. */}
+                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4">
+                  {/* 2026-10-06 (Frank): "the explore capabilities after
+                      landing on capabilities exits when clicking back".
+                      Explore Capabilities is now a link to /#capabilities
+                      (Button asChild + Link, the same pattern as "Schedule a
+                      Demo" at the bottom of this page) instead of an
+                      onClick scrollIntoView. The link records a history
+                      entry, and the scrolling is done by the Capabilities
+                      hash rule in src/components/Navigation.tsx, the same
+                      rule the header Capabilities link uses. So Back now
+                      returns to the top of the homepage instead of leaving
+                      the site. Look, label and position unchanged. */}
+                  <Button
+                    asChild
+                    size="lg"
+                    className="text-base px-6 whitespace-nowrap"
+                  >
+                    <Link to="/#capabilities">
+                      Explore Capabilities <ArrowRight className="ml-2" size={18} />
+                    </Link>
+                  </Button>
+
+                  {/* SIGNAL Product Introduction */}
+                  {/* 2026-09-19 (rev 2): moved from last place to second,
+                      directly after Explore Capabilities. Dividers on both
+                      sides set it apart from the buttons around it.
+                      2026-10-19 (Frank): "put a blue frame around INTRODUCING
+                      SIGNAL box the same as Explore capabilities box". The
+                      link is now framed: a 1px border in the page's accent
+                      blue (hsl(215,65%,48%), the same blue as the ticker's
+                      focus outline and the Processing Intelligence bullets),
+                      rounded-md corners and h-11 to sit level with the
+                      Explore Capabilities button beside it. The two thin
+                      vertical dividers that used to flank the link are
+                      removed, since the frame now does that job. Wording,
+                      link target (/signal), arrow and hover behaviour are
+                      unchanged. */}
+                  <a
+                    href="/signal"
+                    className="group flex items-center h-11 px-4 rounded-md border border-[hsl(215,65%,48%)] transition-opacity duration-300 hover:opacity-80"
+                    aria-label="Introducing SIGNAL — Hatfield.ai Real-Time Surveillance"
+                  >
+                    <span className="flex flex-col text-left">
+                      <span className="text-xs uppercase tracking-[0.18em] font-semibold text-accent">
+                        Introducing SIGNAL
+                      </span>
+
+                      <span className="text-sm text-foreground font-medium whitespace-nowrap">
+                        Hatfield.ai Real-Time Surveillance
+                        <ArrowRight
+                          className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                          size={16}
+                        />
+                      </span>
+                    </span>
+                  </a>
+
+                  {/* 2026-09-19: label renamed from "Watch Introduction" to
+                      "Hatfield.ai Introduction" (Frank). Video unchanged.
+                      2026-09-22 (Frank): the video now starts playing by itself
+                      as soon as the button is clicked, always from 0:00. The
+                      embed URL carries autoplay=1 (play on load) and start=0
+                      (begin at the start). The iframe's allow list already
+                      includes "autoplay", which the browser requires before an
+                      embedded player may start on its own. The dialog removes
+                      the iframe when it closes, so every click loads a fresh
+                      player from the beginning; closing the dialog stops the
+                      video.
+                      2026-10-06 (Frank): the pop-up now carries a title and
+                      a one-line description for screen readers. Both use
+                      the sr-only class, so they are invisible on screen and
+                      the pop-up looks exactly as before. They clear the
+                      browser warnings "DialogContent requires a DialogTitle"
+                      and "Missing Description". */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        className="text-base px-6 whitespace-nowrap"
+                      >
+                        <Play className="mr-2" size={18} />
+                        Hatfield.ai Introduction
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="max-w-4xl w-full p-0 bg-card">
+                      <DialogTitle className="sr-only">
+                        Hatfield.ai Introduction
+                      </DialogTitle>
+                      <DialogDescription className="sr-only">
+                        Video introduction to the Hatfield.ai platform.
+                      </DialogDescription>
+                      <div className="aspect-video w-full">
+                        <iframe
+                          width="100%"
+                          height="100%"
+                          src="https://www.youtube.com/embed/l_w4UKB8KWQ?autoplay=1&start=0"
+                          title="Hatfield.ai Platform Demo"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="w-full h-full rounded-lg"
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
+                  {/* 2026-09-19: Commercial button (Frank), after
+                      Hatfield.ai Introduction. Same secondary style and
+                      modal pattern as the introduction button. The <video>
+                      only mounts while the dialog is open, so closing the
+                      dialog stops playback and the page does not download the
+                      video until someone clicks.
+                      2026-09-19 (rev 3, Frank): label renamed from "Nexus
+                      Commercial" to "Hatfield.ai Commercial", matching the
+                      "Hatfield.ai Introduction" button beside it.
+                      2026-10-06 (Frank): hidden title and description for
+                      screen readers, same as the Introduction pop-up above.
+                      2026-10-28 (Frank): label is now "Hatfield.ai NEXUS
+                      Commercial" so it reads as the NEXUS product's video
+                      next to the new SIGNAL one below. The title attribute,
+                      hidden dialog title/description and the no-video
+                      fallback link text are renamed with it. Video file
+                      unchanged. */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        className="text-base px-6 whitespace-nowrap"
+                      >
+                        <Play className="mr-2" size={18} />
+                        Hatfield.ai NEXUS Commercial
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="max-w-4xl w-full p-0 bg-card">
+                      <DialogTitle className="sr-only">
+                        Hatfield.ai NEXUS Commercial
+                      </DialogTitle>
+                      <DialogDescription className="sr-only">
+                        The Hatfield.ai NEXUS commercial video.
+                      </DialogDescription>
+                      <div className="aspect-video w-full">
+                        <video
+                          src={NEXUS_COMMERCIAL_SRC}
+                          title="Hatfield.ai NEXUS Commercial"
+                          controls
+                          autoPlay
+                          playsInline
+                          preload="metadata"
+                          className="w-full h-full rounded-lg bg-black"
+                        >
+                          Your browser can't play this video.{" "}
+                          <a href={NEXUS_COMMERCIAL_SRC}>Download the Hatfield.ai NEXUS Commercial</a>.
+                        </video>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
+                  {/* 2026-10-28 (Frank): "add an additional box called
+                      Hatfield.ai SIGNAL commercial". Identical to the NEXUS
+                      Commercial button above — same secondary style, same
+                      modal, same mount-only-while-open <video> — pointing at
+                      SIGNAL_COMMERCIAL_SRC (public/videos/signal-commercial.mp4).
+                      Last in the row. */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="secondary"
+                        size="lg"
+                        className="text-base px-6 whitespace-nowrap"
+                      >
+                        <Play className="mr-2" size={18} />
+                        Hatfield.ai SIGNAL Commercial
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="max-w-4xl w-full p-0 bg-card">
+                      <DialogTitle className="sr-only">
+                        Hatfield.ai SIGNAL Commercial
+                      </DialogTitle>
+                      <DialogDescription className="sr-only">
+                        The Hatfield.ai SIGNAL commercial video.
+                      </DialogDescription>
+                      <div className="aspect-video w-full">
+                        <video
+                          src={SIGNAL_COMMERCIAL_SRC}
+                          title="Hatfield.ai SIGNAL Commercial"
+                          controls
+                          autoPlay
+                          playsInline
+                          preload="metadata"
+                          className="w-full h-full rounded-lg bg-black"
+                        >
+                          Your browser can't play this video.{" "}
+                          <a href={SIGNAL_COMMERCIAL_SRC}>Download the Hatfield.ai SIGNAL Commercial</a>.
+                        </video>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Homepage Ticker (was "Key Stats Section") */}
+        {/* 2026-10-01 (Frank, option B): a slim band directly under the hero
+            so both are visible on one screen, the full width of the page.
+            2026-10-02 (rev 20, Frank): frames. Each frame is the deep blue
+            NEXUS or SIGNAL heading box with three equal content boxes,
+            filling the width. A change of product slides; more of the same
+            product morphs. The component, its wording (TICKER_VISITS) and
+            its rules are defined above Index. The band is 16px taller than
+            before (112px tiles) so a line can wrap inside an equal-width
+            box; on a phone the heading box sits above one content box. */}
+        <HomepageTicker />
+      </div>
+
+      {/* Features Section */}
+      <section
+        id="capabilities"
+        className="py-20 relative"
+        style={{ background: "var(--gradient-capabilities)" }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            <div>
+              <h2 className="text-5xl font-bold text-foreground mb-4">
+                Platform Capabilities
+              </h2>
+
+              <p className="text-xl text-muted-foreground">
+                Comprehensive tools to manage, monitor, and mitigate third-party
+                risks at scale
+              </p>
+
+              {/* 2026-10-19 (Frank): "use attached description ... left side
+                  of page 1/3 way down under platform capabilities". How
+                  SIGNAL and NEXUS work together, under the section intro in
+                  the left column. mt-16 / lg:mt-28 sets it about a third of
+                  the way down the section beside the capabilities list on
+                  desktop; on phone and tablet the column stacks and the
+                  smaller gap keeps it close to the intro. Same colours and
+                  sizes as the intro above it (text-foreground for the
+                  lead-in, text-muted-foreground for the body).
+                  2026-10-19 (Frank, rev 2): "frame the text in a shaded box
+                  similar to what we have for nexus and signal ... and
+                  include the pdf link with pdf image". The two paragraphs
+                  now sit inside the same panel as the hero NEXUS and SIGNAL
+                  boxes (same border, background, padding, hover brightening
+                  and focus outline), with the PdfIcon on the right. The
+                  whole panel is a link that opens the SIGNAL vs NEXUS
+                  comparison PDF in a new tab (COMPARISON_PDF_SRC, top of
+                  this file). Wording and position unchanged. */}
+              <a
+                href={COMPARISON_PDF_SRC}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="How SIGNAL and NEXUS work together, PDF, opens in a new tab"
+                className="group mt-16 lg:mt-28 max-w-xl flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <span className="flex-1 space-y-5">
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    <strong className="font-semibold text-foreground">
+                      Discover how Hatfield.ai SIGNAL and NEXUS work together.
+                    </strong>{" "}
+                    SIGNAL delivers continuous company intelligence: it
+                    identifies emerging risks and explains what matters across
+                    financial, regulatory, cybersecurity and other developments.
+                    NEXUS connects that intelligence to your third-party
+                    relationships, so risk assessment, governance and action rest
+                    on it.
+                  </p>
+
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    Explore how each platform works on its own, and how together
+                    they turn intelligence into better-informed decisions.
+                  </p>
+                </span>
+
+                <span className="flex-shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5">
+                  <PdfIcon />
+                </span>
+              </a>
+            </div>
+
+            <div className="flex flex-col gap-8">
+              {features.map((feature, index) => (
+                <div key={index} className="flex items-start gap-4">
+                  <div>
+                    <h3 className="text-2xl font-semibold mb-2 text-foreground">
+                      {feature.title}
+                    </h3>
+
+                    <p className="text-lg text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Processing Intelligence Section */}
+      <section
+        data-light-section
+        className="pt-20 pb-12 relative overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(180deg, hsl(215 20% 90%) 0%, hsl(215 25% 92%) 35%, hsl(215 28% 88%) 70%, hsl(215 30% 85%) 100%)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-5xl md:text-6xl font-bold text-[hsl(215,45%,15%)] mb-6">
+              Processing Intelligence
+            </h2>
+
+            {/* 2026-10-06 (Frank, "fix"): "agenticAI" corrected to
+                "agentic AI" (missing space). No other wording changed. */}
+            <p className="text-xl text-[hsl(215,45%,25%)] max-w-5xl mx-auto leading-relaxed">
+              Harnessing AI-driven automation and adaptive agentic AI frameworks
+              to orchestrate intelligent workflows, enabling continuous risk
+              sensing, dynamic assessment, and autonomous decision-making
+              across the TPRM lifecycle
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+            {/* Real-Time Risk Sensing */}
+            <div className="bg-white backdrop-blur-sm p-8 rounded-lg border border-gray-200 shadow-sm">
+              <h3 className="text-2xl font-bold text-[hsl(215,45%,15%)] mb-6">
+                Real-Time Risk Sensing
+              </h3>
+
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Cybersecurity threat intelligence</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Social media sentiment analysis</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Negative news and reputational alerts</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Litigation tracking</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Corporate action and M&A alerts</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Advanced Analytics */}
+            <div className="bg-white backdrop-blur-sm p-8 rounded-lg border border-gray-200 shadow-sm">
+              <h3 className="text-2xl font-bold text-[hsl(215,45%,15%)] mb-6">
+                Advanced Analytics
+              </h3>
+
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>AI-powered risk analytics</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Next-generation reporting</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>SLA tracking and governance</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>ESG risk integration</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Automated incident management</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Platform Evolution */}
+            <div className="bg-white backdrop-blur-sm p-8 rounded-lg border border-gray-200 shadow-sm">
+              <h3 className="text-2xl font-bold text-[hsl(215,45%,15%)] mb-6">
+                Platform Evolution
+              </h3>
+
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Smart contract lifecycle management</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Third-party collaboration portal</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Risk event detection</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Continuous monitoring</span>
+                </li>
+
+                <li className="flex items-start gap-3 text-[hsl(215,45%,25%)] text-lg">
+                  <span className="text-[hsl(215,65%,48%)] mt-1">▸</span>
+                  <span>Predictive risk modeling</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      {/* 2026-10-13 (Frank, "restore"): "relative z-10" put back on the
+          inner container below. It had dropped out of the saved copy during
+          the AI governance tranche; restored so golden matches the original
+          layering (content above the section background). */}
+      <section
+        className="pt-12 pb-4 relative overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(180deg, hsl(220 45% 25%) 0%, hsl(220 48% 18%) 50%, hsl(220 50% 8%) 100%)",
+        }}
+      >
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <Button asChild size="lg" variant="default" className="text-lg">
+            <Link to="/contact">Schedule a Demo</Link>
+          </Button>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}
+
+export default Index;
