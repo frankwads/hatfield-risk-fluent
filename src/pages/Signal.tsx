@@ -86,6 +86,7 @@
 // 10. "Your GPS for business decisions" sits in the header opposite the
 //     wordmark, as on every artboard of the PDF.
 // 11. The trial button reads "Start your free 10-business-day trial".
+//     (2026-11-05: now "14-calendar-day", see item 31.)
 // 12. The footer names the legal entity: Hatfield Advisory LLC d/b/a
 //     Hatfield.ai.
 // 13. (Superseded by item 17 below.)
@@ -171,6 +172,64 @@
 //     page) in place of the word "(PDF)". The footer link keeps its
 //     wording because it sits in a plain text row.
 //
+// 2026-11-05. MODEL C: PROGRESSIVE COMPANY-BASED PRICING (Frank's brief
+// "SIGNAL pricing update" and the Model C requirements document).
+//
+// 26. THE FIXED TIERS ARE GONE. Watch / Monitor / Portfolio / Enterprise as
+//     capped plans ($950 / $3,500 / $6,000, +$25 above 200) are replaced
+//     by five PRICE BANDS, each charging its own rate only for the
+//     companies that fall inside it: 1-5 $50, 6-25 $45, 26-100 $40,
+//     101-200 $35, 201+ $25 per company per month. 30 companies =
+//     5 x $50 + 20 x $45 + 5 x $40 = $1,350, never 30 x $40. No minimum
+//     company count, unlimited users, annual prepaid = 10 x monthly.
+//     The band NAMES keep the old plan names for the upper four bands
+//     (Frank, 2026-11-05) and add "Focus" for 1-5, so the table keeps its
+//     Plan / Companies / Monthly / Annual shape - only the cells changed.
+//     Each row shows the band-top TOTAL ("Up to 25" = $1,150 / $11,500),
+//     as the original showed plan totals (Frank, 2026-11-05); Enterprise
+//     shows the 200-company total plus the per-additional-company rate.
+//     The blended rate per company is shown only in the calculator.
+//     Every figure lives ONCE, in PRICE_BANDS; TIER_ROWS, the "from $50"
+//     line, the calculator and the form estimate all derive from it.
+//
+// 27. monthlyFor() / breakdownFor() are INTEGER arithmetic in whole
+//     dollars (the Model C spec forbids floating point in anything that
+//     touches a bill). The blended rate is the only division and is
+//     rendered to cents for display only - it is never posted.
+//
+// 28. PRICING CALCULATOR. A new section under the table: enter a company
+//     count, see monthly total, blended monthly rate per company (shown
+//     next to - and labelled distinctly from - the marginal rate), annual
+//     prepaid, and the saving against twelve monthly payments, with the
+//     per-band breakdown. Same PRICE_BANDS as everything else.
+//
+// 29. THE FORM. "Tier of interest" is replaced by "Subscription" (Free
+//     trial / Paid subscription) plus "Companies to monitor" (a whole
+//     number, 1 or more) and the billing preference for a paid
+//     subscription. The POST now carries BOTH `tier` (the band key for
+//     that count - focus/watch/monitor/portfolio/enterprise - or "demo")
+//     AND `companies` (the count). PUBLISH GATE: the server's tiers are
+//     still keyed demo/watch/monitor/portfolio/enterprise with fixed
+//     Stripe prices, approve_client silently falls back to "watch" for a
+//     key it does not know ("focus" is new), and nothing reads
+//     `companies`. DO NOT PUBLISH THIS PAGE until dal.TIERS, Stripe
+//     (graduated tiered price, quantity = companies) and
+//     svc_registration_api accept a company count - or a prospect reads
+//     $50 a company here and is provisioned onto a $950 Watch plan.
+//
+// 30. OUT-OF-PORTFOLIO CHARGES: carried over as $65 FVA / $32 sanctions
+//     pending CEO confirmation, then set to $35 EACH on Frank's
+//     instruction (2026-11-05, "change fva and ofac pricing to $35 each").
+//     The product's own copies (the Stripe invoice-item amounts for the
+//     one-off runs) must be changed to match before this page publishes.
+//     Capability lists, page-3 questions, SEO metadata, the sample
+//     report and all links are untouched.
+//
+// 31. TRIAL TERM (Frank, 2026-11-05: "change the 10 business days to 14
+//     calendar days"). The Trial row's Annual cell and the hero button
+//     now say 14 calendar days, matching the clock the product stamps at
+//     approval; the tear sheet's footers say the same.
+//
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
@@ -208,29 +267,79 @@ const SAMPLE_REPORT_URL = "https://signal.hatfield.ai/sample-risk-report";
 const SIGNAL_PDF_URL = "/docs/Hatfield.ai_SIGNAL.pdf";
 
 /**
- * Tier KEYS as the server knows them, with the label this page shows.
- * The key is what gets posted and is load-bearing on the server; only
- * labels change here.
+ * MODEL C PRICE BANDS - every published figure, written ONCE (item 26).
+ * `rate` is whole US dollars per company per month and applies only to
+ * company positions `from`..`to` (inclusive; `to` null = open-ended).
+ * Keep in step with dal.TIERS and the Stripe graduated price.
+ */
+type PriceBand = {
+  key: string;
+  label: string;
+  from: number;
+  to: number | null;
+  rate: number;
+  popular?: boolean;
+};
+
+const PRICE_BANDS: PriceBand[] = [
+  { key: "focus", label: "Focus", from: 1, to: 5, rate: 50 },
+  { key: "watch", label: "Watch", from: 6, to: 25, rate: 45 },
+  { key: "monitor", label: "Monitor", from: 26, to: 100, rate: 40, popular: true },
+  { key: "portfolio", label: "Portfolio", from: 101, to: 200, rate: 35 },
+  { key: "enterprise", label: "Enterprise", from: 201, to: null, rate: 25 },
+];
+
+/** Annual prepaid = this many monthly payments (two months free). */
+const ANNUAL_MONTHS = 10;
+
+/** Whole-dollar formatting; no fractional dollars ever reach a price. */
+const usd = (n: number) => "$" + n.toLocaleString("en-US");
+
+/**
+ * Companies in band `b` for a portfolio of `n` companies. Integer
+ * arithmetic only (item 27).
+ */
+const inBand = (b: PriceBand, n: number) => {
+  if (n < b.from) return 0;
+  const top = b.to === null ? n : Math.min(n, b.to);
+  return top - b.from + 1;
+};
+
+/** Per-band breakdown for `n` companies: [{band, companies, amount}]. */
+const breakdownFor = (n: number) =>
+  PRICE_BANDS.map((b) => {
+    const companies = inBand(b, n);
+    return { band: b, companies, amount: companies * b.rate };
+  }).filter((x) => x.companies > 0);
+
+/** Monthly subscription for `n` companies, whole dollars. */
+const monthlyFor = (n: number) =>
+  breakdownFor(n).reduce((sum, x) => sum + x.amount, 0);
+
+/** The band in which company number `n` sits (the marginal rate). */
+const bandFor = (n: number) =>
+  PRICE_BANDS.find((b) => n >= b.from && (b.to === null || n <= b.to)) ??
+  PRICE_BANDS[0];
+
+/** "Companies" cell: "1-5", "201+". */
+const rangeLabel = (b: PriceBand) =>
+  b.to === null ? `${b.from}+` : `${b.from}\u2013${b.to}`;
+
+/**
+ * Keys the form may post as `tier`: the free trial, or the band the
+ * requested company count falls in (item 29).
  */
 const TIERS = [
   { key: "demo", label: "Trial" },
-  { key: "watch", label: "Watch" },
-  { key: "monitor", label: "Monitor" },
-  { key: "portfolio", label: "Portfolio" },
-  { key: "enterprise", label: "Enterprise" },
+  ...PRICE_BANDS.map((b) => ({ key: b.key, label: b.label })),
 ] as const;
 
-/**
- * Tiers that go through checkout, and therefore get a billing interval.
- * Mirrors the server's priced_tier(). Enterprise has a published price
- * since 2026-10-09 (item 15) but is still arranged with our team, so it
- * is not in this list until the server says otherwise.
- */
-const PRICED_TIERS = ["watch", "monitor", "portfolio"];
+/** Every paid subscription takes a billing interval. */
+const PRICED_TIERS = PRICE_BANDS.map((b) => b.key);
 
 /**
- * Every published price, written ONCE (item 14). Both pricing layouts
- * render from this array. Keep it in step with dal.TIERS and Stripe.
+ * Table rows. Both pricing layouts render from this array, which is
+ * DERIVED from PRICE_BANDS - there is no second copy of any figure.
  */
 type TierRow = {
   key: string;
@@ -251,44 +360,42 @@ const TIER_ROWS: TierRow[] = [
     note: "read-only",
     companies: "Pre-selected",
     monthly: "Free",
-    annual: "10 business days",
+    annual: "14 calendar days",
   },
-  {
-    key: "watch",
-    label: "Watch",
-    companies: "Up to 25",
-    monthly: "$950",
-    annual: "$9,500",
-  },
-  {
-    key: "monitor",
-    label: "Monitor",
-    companies: "Up to 100",
-    monthly: "$3,500",
-    annual: "$35,000",
-    popular: true,
-  },
-  {
-    key: "portfolio",
-    label: "Portfolio",
-    companies: "Up to 200",
-    monthly: "$6,000",
-    annual: "$60,000",
-  },
-  {
-    key: "enterprise",
-    label: "Enterprise",
-    companies: "201+",
-    monthly: "$6,000",
-    monthlyNote: "+$25/addt\u2019l company",
-    annual: "$60,000",
-    annualNote: "+$250/addt\u2019l company",
-  },
+  ...PRICE_BANDS.map((b, i): TierRow => {
+    // Band-top TOTALS, as the original table showed plan totals (Frank,
+    // 2026-11-05: "monthly and annual costs only the way the original did
+    // but with revised calculations"; blended per-company sub-lines
+    // removed the same day - the calculator carries the blended rate).
+    // The open-ended band shows the 200-company total plus the
+    // per-additional-company rate, as the old Enterprise row did.
+    if (b.to === null) {
+      const prevTop = monthlyFor(PRICE_BANDS[i - 1].to as number);
+      return {
+        key: b.key,
+        label: b.label,
+        companies: rangeLabel(b),
+        monthly: usd(prevTop),
+        monthlyNote: `+${usd(b.rate)}/addt\u2019l company`,
+        annual: usd(prevTop * ANNUAL_MONTHS),
+        annualNote: `+${usd(b.rate * ANNUAL_MONTHS)}/addt\u2019l company`,
+        popular: b.popular,
+      };
+    }
+    const total = monthlyFor(b.to);
+    return {
+      key: b.key,
+      label: b.label,
+      companies: `Up to ${b.to}`,
+      monthly: usd(total),
+      annual: usd(total * ANNUAL_MONTHS),
+      popular: b.popular,
+    };
+  }),
 ];
 
-/** "Plans from ..." reads the cheapest paid tier, never a typed copy. */
-const FROM_MONTHLY =
-  TIER_ROWS.find((r) => r.key === "watch")?.monthly ?? "";
+/** "from $50 a month" reads the first band, never a typed copy. */
+const FROM_MONTHLY = usd(PRICE_BANDS[0].rate);
 
 /**
  * Capabilities, as the tear sheet lists them (item 16). `detail` renders
@@ -445,8 +552,27 @@ declare global {
 }
 
 const Signal = () => {
-  const [selectedTier, setSelectedTier] = useState("");
+  // "demo" (free trial), "paid" (a Model C subscription), or "" (unset).
+  const [subscription, setSubscription] = useState("");
+  // Requested company count for a paid subscription, as typed.
+  const [companiesText, setCompaniesText] = useState("");
   const [selectedBilling, setSelectedBilling] = useState("");
+  // Calculator input (item 28). Starts at a mid-size portfolio.
+  const [calcText, setCalcText] = useState("100");
+
+  const companies = /^\d+$/.test(companiesText) ? parseInt(companiesText, 10) : 0;
+  const calcCompanies = /^\d+$/.test(calcText) ? parseInt(calcText, 10) : 0;
+
+  /**
+   * The key posted as `tier`: "demo" for the trial, else the band the
+   * requested count falls in. Empty until the form says enough.
+   */
+  const selectedTier =
+    subscription === "demo"
+      ? "demo"
+      : subscription === "paid" && companies >= 1
+      ? bandFor(companies).key
+      : "";
   const [billingError, setBillingError] = useState(false);
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<ApiResult | null>(null);
@@ -492,14 +618,26 @@ const Signal = () => {
     };
   }, []);
 
-  const handleTierChange = (tier: string) => {
-    setSelectedTier(tier);
+  const handleSubscriptionChange = (value: string) => {
+    setSubscription(value);
     setBillingError(false);
     setSelectedBilling("");
+    if (value !== "paid") setCompaniesText("");
   };
 
+  /**
+   * A band name in the table, or a trial button, pre-fills the form:
+   * the trial as before; a band as a paid subscription starting at that
+   * band's first company position (the prospect edits the count).
+   */
   const selectTier = (tier: string) => {
-    handleTierChange(tier);
+    if (tier === "demo") {
+      handleSubscriptionChange("demo");
+    } else {
+      const band = PRICE_BANDS.find((b) => b.key === tier);
+      handleSubscriptionChange("paid");
+      if (band) setCompaniesText(String(band.from));
+    }
 
     window.setTimeout(() => {
       document
@@ -531,12 +669,17 @@ const Signal = () => {
       ["email", "Work email"],
       ["role", "Your role"],
       ["industry", "Industry"],
-      ["tier", "Tier of interest"],
+      ["subscription", "Subscription"],
     ];
 
     const missing = required.filter(([id]) => !val(id)).map(([, lbl]) => lbl);
 
-    // A billing preference is required only for a checkout-priced tier.
+    // A paid subscription needs a company count of at least one (item 29).
+    if (subscription === "paid" && companies < 1) {
+      missing.push("Companies to monitor");
+    }
+
+    // A billing preference is required only for a paid subscription.
     const needsBilling = PRICED_TIERS.includes(selectedTier);
     if (needsBilling && !selectedBilling) {
       missing.push("Billing preference");
@@ -578,6 +721,9 @@ const Signal = () => {
           phone: val("phone"),
           industry: val("industry"),
           tier: selectedTier,
+          // Item 29: the requested company count, 0 for the trial. The
+          // server must read this before the page is published.
+          companies: subscription === "paid" ? companies : 0,
           interval: needsBilling ? selectedBilling : "",
           message: val("notes"),
           // Honeypot. Hidden from people; bots fill everything.
@@ -615,16 +761,25 @@ const Signal = () => {
     "text-sm text-[#101828] bg-white border rounded-lg px-3 py-[11px] w-full outline-none focus:border-[#2F6BFF] " +
     (invalid.includes(label) ? "border-[#B23B3B]" : "border-[#E2E7EF]");
 
-  const billingDisabled = !PRICED_TIERS.includes(selectedTier);
+  const billingDisabled = subscription !== "paid";
 
   const billingPlaceholder =
-    selectedTier === "demo"
+    subscription === "demo"
       ? "Not applicable"
-      : selectedTier === "enterprise"
-      ? "Arranged with our team"
-      : selectedTier === ""
-      ? "Select tier first"
+      : subscription === ""
+      ? "Select subscription first"
       : "Select";
+
+  /** Live estimate under the company-count field (item 29). */
+  const estimateMonthly = companies >= 1 ? monthlyFor(companies) : 0;
+
+  /** Calculator figures (item 28). Blended is display-only, to cents. */
+  const calcMonthly = calcCompanies >= 1 ? monthlyFor(calcCompanies) : 0;
+  const calcAnnual = calcMonthly * ANNUAL_MONTHS;
+  const calcSaving = calcMonthly * 12 - calcAnnual;
+  const calcBlended =
+    calcCompanies >= 1 ? (calcMonthly / calcCompanies).toFixed(2) : "0.00";
+  const calcMarginal = calcCompanies >= 1 ? bandFor(calcCompanies) : null;
 
   const renderCapability = (c: Capability) => (
     <>
@@ -641,7 +796,7 @@ const Signal = () => {
         {value}
       </span>
       {note && (
-        <span className="block text-[11px] font-normal text-[#667085] mt-[3px] leading-[1.35]">
+        <span className="block whitespace-pre-line text-[11px] font-normal text-[#667085] mt-[3px] leading-[1.35]">
           {note}
         </span>
       )}
@@ -720,7 +875,7 @@ const Signal = () => {
               onClick={() => selectTier("demo")}
               className="inline-block px-[18px] py-[11px] rounded-[7px] border-0 cursor-pointer text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors whitespace-nowrap"
             >
-              Start your free 10-business-day trial
+              Start your free 14-calendar-day trial
             </button>
 
             {SAMPLE_REPORT_URL && (
@@ -888,8 +1043,10 @@ const Signal = () => {
 
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
                   You pay for the companies you monitor, never for the seat. One
-                  subscription replaces a stack of feeds. Plans from{" "}
-                  {FROM_MONTHLY} a month.
+                  subscription replaces a stack of feeds. Monitor companies
+                  from just {FROM_MONTHLY} a month, with no minimum commitment
+                  and unlimited users. Progressive volume pricing rewards you
+                  as your portfolio grows.
                 </p>
               </div>
 
@@ -1114,13 +1271,27 @@ const Signal = () => {
               sentence kept on the web page (item 18). */}
           <div className="mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-6 lg:gap-12">
             <div className="text-[12px] text-[#667085] leading-[1.6]">
+              {/* Item 26: the progressive-pricing explanation, worded as in
+                  the tear sheet, with the 100-company example. */}
               <p className="m-0">
-                Enterprise additional-company charges apply only to companies
-                above 200.
+                <strong className="text-[#101828] font-semibold">
+                  Progressive pricing:
+                </strong>{" "}
+                {usd(PRICE_BANDS[0].rate)} per company for the first{" "}
+                {PRICE_BANDS[0].to}, {usd(PRICE_BANDS[1].rate)} for the next{" "}
+                {(PRICE_BANDS[1].to as number) - (PRICE_BANDS[0].to as number)},{" "}
+                {usd(PRICE_BANDS[2].rate)} for the next{" "}
+                {(PRICE_BANDS[2].to as number) - (PRICE_BANDS[1].to as number)},{" "}
+                {usd(PRICE_BANDS[3].rate)} for the next{" "}
+                {(PRICE_BANDS[3].to as number) - (PRICE_BANDS[2].to as number)}{" "}
+                and {usd(PRICE_BANDS[4].rate)} above {PRICE_BANDS[3].to}. Figures
+                shown are for a full band; smaller portfolios pay only for the
+                companies monitored &mdash; 100 companies: 5 &times; $50 + 20
+                &times; $45 + 75 &times; $40 = {usd(monthlyFor(100))} a month.
               </p>
               <p className="mt-3 mb-0">
-                Every paid SIGNAL plan includes unlimited users and all
-                standalone SIGNAL capabilities.
+                No minimum number of companies. Every SIGNAL subscription
+                includes unlimited users and all standard SIGNAL capabilities.
               </p>
             </div>
 
@@ -1130,8 +1301,8 @@ const Signal = () => {
               </strong>{" "}
               Trial covers companies we pre-select, read-only, with no
               on-demand financial or sanctions assessments. Out-of-portfolio
-              financial viability assessments are $65 each and sanctions
-              screenings are $32 each, introductory pricing. Private-company
+              financial viability assessments are $35 each and sanctions
+              screenings are $35 each, introductory pricing. Private-company
               reviews use financials you furnish and are visible only to your
               organization. Financial-health methodologies vary by company type
               and data availability. Every alert carries source evidence,
@@ -1141,6 +1312,152 @@ const Signal = () => {
               checkout from your billing address.
             </p>
           </div>
+
+          {/* PRICING CALCULATOR (item 28) - same PRICE_BANDS as the table */}
+          <section
+            id="calculator"
+            className="scroll-mt-8 mt-10 bg-[#F6F8FB] rounded-2xl px-6 md:px-[38px] py-[30px]"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-8 lg:gap-14 items-start">
+              <div>
+                <p className={kicker}>Pricing calculator</p>
+
+                <h3 className="mt-3 mb-0 font-serif font-normal text-[22px] md:text-[24px] leading-[1.2] tracking-[-0.02em] text-[#0A1A33]">
+                  What would your portfolio cost?
+                </h3>
+
+                <label
+                  htmlFor="calc-companies"
+                  className="block mt-5 text-[12px] font-medium text-[#667085]"
+                >
+                  Companies to monitor
+                </label>
+
+                <input
+                  id="calc-companies"
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  step={1}
+                  value={calcText}
+                  onChange={(e) => setCalcText(e.target.value.replace(/\D/g, ""))}
+                  className="mt-[6px] text-[18px] font-semibold text-[#101828] bg-white border border-[#E2E7EF] rounded-lg px-3 py-[10px] w-full max-w-[200px] outline-none focus:border-[#2F6BFF]"
+                />
+
+                <p className="mt-3 mb-0 text-[12px] text-[#667085] leading-[1.6]">
+                  Whole companies, no minimum. Prices exclude tax.
+                </p>
+              </div>
+
+              {calcCompanies >= 1 ? (
+                <div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+                    <div>
+                      <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase">
+                        Monthly
+                      </p>
+                      <p className="mt-1 mb-0 text-[26px] font-semibold tracking-[-0.02em] text-[#0A1A33]">
+                        {usd(calcMonthly)}
+                      </p>
+                      <p className="mt-[2px] mb-0 text-[11px] text-[#667085]">
+                        billed monthly
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase">
+                        Blended rate
+                      </p>
+                      <p className="mt-1 mb-0 text-[26px] font-semibold tracking-[-0.02em] text-[#0A1A33]">
+                        ${calcBlended}
+                      </p>
+                      <p className="mt-[2px] mb-0 text-[11px] text-[#667085]">
+                        average per company per month
+                        {calcMarginal && (
+                          <>
+                            {" "}
+                            &middot; marginal rate {usd(calcMarginal.rate)} (
+                            {calcMarginal.label})
+                          </>
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase">
+                        Annual prepaid
+                      </p>
+                      <p className="mt-1 mb-0 text-[26px] font-semibold tracking-[-0.02em] text-[#0A1A33]">
+                        {usd(calcAnnual)}
+                      </p>
+                      <p className="mt-[2px] mb-0 text-[11px] text-[#667085]">
+                        {ANNUAL_MONTHS} &times; monthly, two months free
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase">
+                        You save
+                      </p>
+                      <p className="mt-1 mb-0 text-[26px] font-semibold tracking-[-0.02em] text-[#16803C]">
+                        {usd(calcSaving)}
+                      </p>
+                      <p className="mt-[2px] mb-0 text-[11px] text-[#667085]">
+                        a year against twelve monthly payments
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Per-band breakdown: the progressive rule, made visible */}
+                  <div className="mt-6 border-t border-[#E2E7EF]">
+                    {breakdownFor(calcCompanies).map(({ band, companies: c, amount }) => (
+                      <div
+                        key={band.key}
+                        className="grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[110px_minmax(0,1fr)_auto] gap-x-4 py-[9px] border-b border-[#E2E7EF] text-[13px]"
+                      >
+                        <span className="font-semibold text-[#1B56A6]">
+                          {band.label}
+                        </span>
+                        <span className="text-[#475467] col-span-2 sm:col-span-1 order-last sm:order-none">
+                          {c.toLocaleString("en-US")}{" "}
+                          {c === 1 ? "company" : "companies"} &times;{" "}
+                          {usd(band.rate)}
+                        </span>
+                        <span className="text-right text-[#0A1A33]">
+                          {usd(amount)}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 py-[9px] text-[13px] font-semibold text-[#0A1A33]">
+                      <span>Monthly subscription</span>
+                      <span className="text-right">{usd(calcMonthly)}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSubscriptionChange("paid");
+                      setCompaniesText(String(calcCompanies));
+                      window.setTimeout(() => {
+                        document
+                          .getElementById("request")
+                          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }, 50);
+                    }}
+                    className="mt-5 inline-block px-[18px] py-[11px] rounded-[7px] border-0 cursor-pointer text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors"
+                  >
+                    Request access for {calcCompanies.toLocaleString("en-US")}{" "}
+                    {calcCompanies === 1 ? "company" : "companies"}
+                  </button>
+                </div>
+              ) : (
+                <p className="m-0 text-[13px] text-[#667085]">
+                  Enter the number of companies you want to monitor.
+                </p>
+              )}
+            </div>
+          </section>
 
           {/* ONE COMPANY, EVERY ANGLE - tear sheet page 3 */}
           <section className="border-t border-[#E2E7EF] pt-[46px] mt-[54px]">
@@ -1477,30 +1794,73 @@ const Signal = () => {
                     </select>
                   </div>
 
-                  {/* TIER */}
+                  {/* SUBSCRIPTION (item 29): trial or paid */}
                   <div className="flex flex-col gap-[6px]">
                     <label
-                      htmlFor="tier"
+                      htmlFor="subscription"
                       className="text-[12px] font-medium text-[#667085]"
                     >
-                      Tier of interest *
+                      Subscription *
                     </label>
 
                     <select
-                      id="tier"
-                      name="tier"
+                      id="subscription"
+                      name="subscription"
                       required
-                      value={selectedTier}
-                      onChange={(e) => handleTierChange(e.target.value)}
-                      className={fieldStyle("Tier of interest")}
+                      value={subscription}
+                      onChange={(e) => handleSubscriptionChange(e.target.value)}
+                      className={fieldStyle("Subscription")}
                     >
                       <option value="">Select</option>
-                      {TIERS.map((t) => (
-                        <option key={t.key} value={t.key}>
-                          {t.label}
-                        </option>
-                      ))}
+                      <option value="demo">Free trial</option>
+                      <option value="paid">Paid subscription</option>
                     </select>
+                  </div>
+
+                  {/* COMPANIES TO MONITOR (item 29) */}
+                  <div className="flex flex-col gap-[6px]">
+                    <label
+                      htmlFor="companies"
+                      className="text-[12px] font-medium text-[#667085]"
+                    >
+                      Companies to monitor
+                      {subscription === "paid" && " *"}
+                    </label>
+
+                    <input
+                      id="companies"
+                      name="companies"
+                      type="number"
+                      inputMode="numeric"
+                      min={1}
+                      step={1}
+                      value={companiesText}
+                      disabled={subscription !== "paid"}
+                      required={subscription === "paid"}
+                      placeholder={
+                        subscription === "demo"
+                          ? "Pre-selected"
+                          : subscription === ""
+                          ? "Select subscription first"
+                          : "1 or more"
+                      }
+                      onChange={(e) =>
+                        setCompaniesText(e.target.value.replace(/\D/g, ""))
+                      }
+                      className={
+                        subscription !== "paid"
+                          ? "text-sm bg-[#EAECF0] text-[#98A2B3] border border-[#D0D5DD] rounded-lg px-3 py-[11px] w-full outline-none cursor-not-allowed"
+                          : fieldStyle("Companies to monitor")
+                      }
+                    />
+
+                    {subscription === "paid" && companies >= 1 && (
+                      <span className="text-[11px] text-[#667085]">
+                        {usd(estimateMonthly)} a month &middot;{" "}
+                        {usd(estimateMonthly * ANNUAL_MONTHS)} annual prepaid
+                        &middot; {bandFor(companies).label} band
+                      </span>
+                    )}
                   </div>
 
                   {/* BILLING */}
@@ -1510,7 +1870,7 @@ const Signal = () => {
                       className="text-[12px] font-medium text-[#667085]"
                     >
                       Billing preference
-                      {PRICED_TIERS.includes(selectedTier) && " *"}
+                      {subscription === "paid" && " *"}
                     </label>
 
                     <select
@@ -1518,7 +1878,7 @@ const Signal = () => {
                       name="billing"
                       value={selectedBilling}
                       disabled={billingDisabled}
-                      required={PRICED_TIERS.includes(selectedTier)}
+                      required={subscription === "paid"}
                       onChange={(e) => {
                         setSelectedBilling(e.target.value);
                         setBillingError(false);
@@ -1630,12 +1990,21 @@ const Signal = () => {
                   <p className="m-0 text-[12px] text-[#667085]">
                     We use your details only to provision and support your
                     account.
-                    {selectedTier && (
+                    {selectedTier === "demo" && (
+                      <>
+                        {" "}
+                        You selected the{" "}
+                        <strong className="text-[#101828]">free trial</strong>.
+                      </>
+                    )}
+                    {selectedTier && selectedTier !== "demo" && (
                       <>
                         {" "}
                         You selected{" "}
                         <strong className="text-[#101828]">
-                          {labelFor(selectedTier)}
+                          {companies.toLocaleString("en-US")}{" "}
+                          {companies === 1 ? "company" : "companies"} (
+                          {labelFor(selectedTier)} band)
                         </strong>
                         .
                       </>
