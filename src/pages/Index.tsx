@@ -20,6 +20,9 @@ import HoverBinaryLogo from "@/components/HoverBinaryLogo";
 // src/components/PdfIcon.tsx). It was defined inline here from 2026-10-02
 // (rev 16) until today; the drawing and the default size are unchanged.
 import PdfIcon from "@/components/PdfIcon";
+// 2026-11-12 (Frank): one definition of the product wordmark, shared with
+// the product pages, so font and colour are the same everywhere.
+import ProductName from "@/components/ProductName";
 import heroNetwork from "@/assets/hero-network.jpg";
 import logoColor from "@/assets/logo-color.png";
 import heroHLogo from "@/assets/hero-h-logo.png";
@@ -180,11 +183,10 @@ const brandCase = (text: string) =>
     .replace(/HATFIELDRISQ/g, "HatfieldRISQ");
 
 const tickerWordmark = (headline: TickerProduct) =>
-  headline.startsWith("Hatfield") ? (
-    <span className="tracking-normal">
-      Hatfield
-      <span className="text-[#5A8CFF]">{headline.slice("Hatfield".length)}</span>
-    </span>
+  headline === "HatfieldIQ" ? (
+    <ProductName product="IQ" onDark />
+  ) : headline === "HatfieldRISQ" ? (
+    <ProductName product="RISQ" onDark />
   ) : (
     headline
   );
@@ -585,7 +587,7 @@ const Index = () => {
                     text-lg/md:text-xl) so the hero is short enough to share
                     the screen with the banner. */}
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  Hatfield.ai brings third-party risk management and real-world
+                  Hatfield.ai&trade; brings third-party risk management and real-world
                   risk intelligence together on one AI-native platform.
                 </p>
               </div>
@@ -637,7 +639,7 @@ const Index = () => {
                   className="group flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <span className="flex-1 text-base text-muted-foreground leading-relaxed">
-                    <strong className="font-bold">HatfieldRISQ&trade;</strong> provides the
+                    <ProductName product="RISQ" tm onDark className="text-foreground" /> provides the
                     operating system for third-party risk —
                     managing the entire lifecycle from intake and legal-entity
                     resolution through contracting, risk assessment, operational
@@ -657,7 +659,7 @@ const Index = () => {
                   className="group flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <span className="flex-1 text-base text-muted-foreground leading-relaxed">
-                    <strong className="font-bold">HatfieldIQ&trade;</strong> provides the
+                    <ProductName product="IQ" tm onDark className="text-foreground" /> provides the
                     intelligence layer — continuously monitoring
                     the companies that matter across financial health,
                     cybersecurity, sanctions, litigation, regulatory developments,

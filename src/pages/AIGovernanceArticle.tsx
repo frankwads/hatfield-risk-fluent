@@ -7,6 +7,7 @@
 // the new ones, see vercel.json). This overrides any line in this file that
 // says the addresses or PDF file names are unchanged.
 ﻿import type { ReactNode } from "react";
+import ProductName from "@/components/ProductName";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -383,7 +384,10 @@ const AIGovernanceArticle = () => {
             to see from a conventional vendor inventory.
           </P>
 
-          <H2>HatfieldRISQ: Assessing AI Risk Across Third Parties</H2>
+          <H2>
+            <ProductName product="RISQ" />: Assessing AI Risk Across Third
+            Parties
+          </H2>
           <P>
             HatfieldRISQ brings AI into the third-party risk assessment
             itself. Its inherent risk questionnaire, configured by each client
@@ -412,7 +416,10 @@ const AIGovernanceArticle = () => {
             </p>
           </Callout>
 
-          <H2>HatfieldIQ: Monitoring a Changing Risk Environment</H2>
+          <H2>
+            <ProductName product="IQ" />: Monitoring a Changing Risk
+            Environment
+          </H2>
           <P>
             HatfieldIQ provides continuous surveillance and risk intelligence
             concerning monitored companies, including cybersecurity incidents,

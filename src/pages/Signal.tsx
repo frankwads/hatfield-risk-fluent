@@ -247,6 +247,16 @@
 //     (VITE_SIGNAL_API_BASE, SIGNAL_PDF_URL ...), the component name Signal,
 //     and the dated items above, which keep the name in use when written.
 //
+// 35. HEADER AND WORDMARK (Frank, 2026-11-12, approved from a rendering).
+//     The header leads with the HatfieldIQ wordmark and "The signal is
+//     already there." in place of "Hatfield.ai / The Intelligent Choice";
+//     the wordmark is the link home; the right side is unchanged. The hero
+//     no longer repeats them. Product names in headlines are drawn by
+//     ProductName (src/components/ProductName.tsx) so font and colour match
+//     the wordmark; "Ask HatfieldIQ" keeps the brand capitals inside its
+//     upper-cased label; Hatfield.ai carries the trademark symbol in the
+//     footer.
+//
 // 34. PDF FILE NAME (Frank, 2026-11-12): the tear sheet is now served as
 //     /docs/HatfieldIQ.pdf (was Hatfield.ai_SIGNAL.pdf). The old name
 //     redirects to it (vercel.json), so links already sent keep working.
@@ -268,6 +278,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import PdfIcon from "@/components/PdfIcon";
+import ProductName from "@/components/ProductName";
 
 const API_BASE =
   (import.meta as any).env?.VITE_SIGNAL_API_BASE ?? "https://signal.hatfield.ai";
@@ -851,17 +862,17 @@ const Signal = () => {
       {/* HEADER */}
       <header className="bg-[#071326] border-b border-white/10">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] py-[22px] flex items-center justify-between gap-6">
-          <a href="/" className="no-underline">
-            <div className="text-white text-[28px] md:text-[30px] font-semibold tracking-[-0.035em] leading-none">
-              Hatfield<span className="text-[#5A8CFF]">.ai</span>
+          <a href="/" className="no-underline min-w-0" aria-label="HatfieldIQ - Hatfield.ai home">
+            <div className="text-white text-[26px] md:text-[32px] leading-none">
+              <ProductName product="IQ" tm onDark />
             </div>
 
-            <div className="text-[11px] font-normal text-[#7CA4FF] mt-[6px] tracking-[0.02em]">
-              The Intelligent Choice
+            <div className="text-[11px] font-semibold text-[#7CA4FF] mt-[9px] tracking-[0.15em] uppercase leading-[1.5]">
+              The signal is already there.
             </div>
           </a>
 
-          <div className="flex items-center gap-5 md:gap-7">
+          <div className="flex items-center gap-5 md:gap-7 shrink-0">
             {/* Item 10: sentence case in the DOM, uppercased in CSS. */}
             <p className="hidden md:block m-0 text-[11px] font-semibold tracking-[0.13em] text-white/70 uppercase">
               Enterprise Intelligence &middot; Know what matters.
@@ -882,13 +893,6 @@ const Signal = () => {
       <section className="bg-[#071326] text-white py-[72px] md:pb-[76px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col lg:flex-row lg:items-end justify-between gap-12">
           <div>
-            <p className="text-[26px] md:text-[32px] font-semibold tracking-[-0.01em] m-0 mb-6 text-white">
-              Hatfield<span className="text-[#5A8CFF]">IQ</span><sup className="ml-[2px] text-[0.42em] font-normal text-white/70">&trade;</sup>
-            </p>
-
-            <p className="m-0 mb-4 text-[11px] font-semibold tracking-[0.15em] text-[#7CA4FF] uppercase">
-              The signal is already there.
-            </p>
 
             <h1 className="m-0 font-serif text-[34px] sm:text-[42px] lg:text-[50px] font-semibold leading-[1.08] tracking-[-0.03em] max-w-[18ch]">
               Know before risk becomes your news headline.
@@ -1499,7 +1503,8 @@ const Signal = () => {
             <p className={kicker}>One company. Every angle that matters.</p>
 
             <h2 className="mt-4 mb-0 font-serif text-[28px] md:text-[34px] font-semibold leading-[1.15] tracking-[-0.025em] text-[#0A1A33] max-w-[30ch]">
-              The company is the story. HatfieldIQ sees the whole picture.
+              The company is the story. <ProductName product="IQ" /> sees the
+              whole picture.
             </h2>
 
             <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[80ch]">
@@ -1524,7 +1529,9 @@ const Signal = () => {
 
             <div className="mt-9 grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-7 border-t border-[#E2E7EF] pt-8">
               <div>
-                <p className={kicker}>Ask HatfieldIQ</p>
+                <p className={kicker}>
+                  Ask <span className="normal-case">HatfieldIQ</span>
+                </p>
                 <p className="mt-2 mb-0 text-[14px] leading-[1.65] text-[#101828]">
                   A thirteenth question? Ask in plain English. HatfieldIQ answers
                   from your own portfolio evidence and shows where the answer
@@ -2057,7 +2064,7 @@ const Signal = () => {
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col sm:flex-row gap-4 justify-between">
           {/* Item 12: the d/b/a. */}
           <p className="m-0">
-            Hatfield Advisory LLC d/b/a Hatfield.ai, St. Petersburg, Florida
+            Hatfield Advisory LLC d/b/a Hatfield.ai&trade;, St. Petersburg, Florida
           </p>
 
           <p className="m-0">

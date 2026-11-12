@@ -1,3 +1,5 @@
+// 2026-11-12 (Frank): "tm Hatfield.ai throughout" - the company name in the
+// copyright line carries the trademark symbol. Nothing else changed.
 import logoWhite from "@/assets/h-logo-white.png";
 
 const Footer = () => {
@@ -12,7 +14,7 @@ const Footer = () => {
             alt="Hatfield Advisory Logo" 
             className="h-6 w-auto"
           />
-          <p>&copy; {currentYear} Hatfield Advisory LLC DBA Hatfield.ai. All rights reserved.</p>
+          <p>&copy; {currentYear} Hatfield Advisory LLC DBA Hatfield.ai&trade;. All rights reserved.</p>
         </div>
       </div>
     </footer>

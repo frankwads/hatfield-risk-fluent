@@ -24,6 +24,21 @@
 // and component names (NEXUS_PDF_URL, Nexus) and the dated comments below.
 // The tear sheet this page mirrors is renamed to match (same file name).
 //
+// 2026-11-12, HEADER AND WORDMARK (Frank, approved from a rendering: "looks
+// good - go").
+// - The header now leads with the HatfieldRISQ wordmark and its line, "Stop
+//   managing third-party risk in silos.", in place of "Hatfield.ai / The
+//   Intelligent Choice". The wordmark is the link home. The right side
+//   (descriptor line and Book a briefing) is unchanged.
+// - The hero no longer repeats the wordmark and that line; it opens on
+//   "Connected. Not stitched."
+// - Product names in headlines and the closing band are drawn by
+//   ProductName (src/components/ProductName.tsx), so font and colour match
+//   the wordmark. Body text keeps the plain name.
+// - "Included with HatfieldRISQ" keeps the brand's capitals inside an
+//   upper-cased label.
+// - Hatfield.ai carries the trademark symbol in the footer.
+//
 // WHAT THIS PAGE IS. The NEXUS counterpart of src/pages/Signal.tsx: same
 // structure (own dark header, dark hero, white narrative, pricing,
 // capabilities, closing band, dark footer), same palette and type, so the
@@ -72,6 +87,7 @@
 // menu item that points here is in src/components/Navigation.tsx.
 
 import PdfIcon from "@/components/PdfIcon";
+import ProductName from "@/components/ProductName";
 
 /** The NEXUS tear sheet, served from public/docs/ (same file the homepage
  *  NEXUS panel opens). */
@@ -238,17 +254,17 @@ const Nexus = () => {
           is the tear sheet's running head. */}
       <header className="bg-[#071326] border-b border-white/10">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] py-[22px] flex items-center justify-between gap-6">
-          <a href="/" className="no-underline">
-            <div className="text-white text-[28px] md:text-[30px] font-semibold tracking-[-0.035em] leading-none">
-              Hatfield<span className="text-[#5A8CFF]">.ai</span>
+          <a href="/" className="no-underline min-w-0" aria-label="HatfieldRISQ - Hatfield.ai home">
+            <div className="text-white text-[26px] md:text-[32px] leading-none">
+              <ProductName product="RISQ" tm onDark />
             </div>
 
-            <div className="text-[11px] font-normal text-[#7CA4FF] mt-[6px] tracking-[0.02em]">
-              The Intelligent Choice
+            <div className="text-[11px] font-semibold text-[#7CA4FF] mt-[9px] tracking-[0.15em] uppercase leading-[1.5]">
+              Stop managing third-party risk in silos.
             </div>
           </a>
 
-          <div className="flex items-center gap-5 md:gap-7">
+          <div className="flex items-center gap-5 md:gap-7 shrink-0">
             <p className="hidden lg:block m-0 text-right text-[11px] font-semibold tracking-[0.13em] text-white/70 uppercase">
               Intelligent Third-Party Risk Management &middot; Manage what matters.
             </p>
@@ -267,13 +283,6 @@ const Nexus = () => {
       <section className="bg-[#071326] text-white py-[72px] md:pb-[76px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col lg:flex-row lg:items-end justify-between gap-12">
           <div>
-            <p className="text-[26px] md:text-[32px] font-semibold tracking-[-0.01em] m-0 mb-6 text-white">
-              Hatfield<span className="text-[#5A8CFF]">RISQ</span><sup className="ml-[2px] text-[0.42em] font-normal text-white/70">&trade;</sup>
-            </p>
-
-            <p className="m-0 mb-4 text-[11px] font-semibold tracking-[0.15em] text-[#7CA4FF] uppercase">
-              Stop managing third-party risk in silos.
-            </p>
 
             <h1 className="m-0 font-serif text-[34px] sm:text-[42px] lg:text-[50px] font-semibold leading-[1.08] tracking-[-0.03em] max-w-[18ch]">
               Connected. Not stitched.
@@ -346,7 +355,7 @@ const Nexus = () => {
                 </div>
                 <div>
                   <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
-                    HatfieldIQ
+                    <ProductName product="IQ" />
                   </p>
                   <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
                     built in
@@ -551,7 +560,7 @@ const Nexus = () => {
 
           {/* INCLUDED WITH NEXUS - rendered from INCLUDED */}
           <div className="mt-12 text-[11px] font-semibold tracking-[0.13em] text-[#667085] uppercase border-b border-[#E2E7EF] pb-4">
-            Included with HatfieldRISQ
+            Included with <span className="normal-case">HatfieldRISQ</span>
           </div>
 
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-0 border-b border-[#E2E7EF]">
@@ -594,7 +603,8 @@ const Nexus = () => {
             <p className={kicker}>From the first request to the last renewal</p>
 
             <h2 className="mt-4 mb-0 font-serif text-[28px] md:text-[34px] font-semibold leading-[1.15] tracking-[-0.025em] text-[#0A1A33] max-w-[30ch]">
-              The relationship changes. HatfieldRISQ keeps the thread.
+              The relationship changes. <ProductName product="RISQ" /> keeps
+              the thread.
             </h2>
 
             <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[80ch]">
@@ -637,7 +647,8 @@ const Nexus = () => {
             <div className="mt-10 mb-[70px] bg-[#071326] rounded-2xl px-6 md:px-[38px] py-[30px] flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
                 <p className="m-0 font-serif text-[22px] md:text-[26px] font-semibold text-white leading-[1.2]">
-                  See HatfieldRISQ as one connected system.
+                  See <ProductName product="RISQ" onDark /> as one connected
+                  system.
                 </p>
                 <p className="mt-2 mb-0 text-[13px] text-[#B8C4D6]">
                   One relationship. One lifecycle. One defensible record.
@@ -656,7 +667,7 @@ const Nexus = () => {
       <footer className="bg-[#071326] text-[#8FA2BC] text-[12px] py-[27px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col sm:flex-row gap-4 justify-between">
           <p className="m-0">
-            Hatfield Advisory LLC d/b/a Hatfield.ai, St. Petersburg, Florida
+            Hatfield Advisory LLC d/b/a Hatfield.ai&trade;, St. Petersburg, Florida
           </p>
 
           <p className="m-0">

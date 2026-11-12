@@ -7,6 +7,7 @@
 // the new ones, see vercel.json). This overrides any line in this file that
 // says the addresses or PDF file names are unchanged.
 import { Link } from "react-router-dom";
+import ProductName from "@/components/ProductName";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
@@ -196,7 +197,7 @@ const AIGovernance = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent mb-4">
-              Hatfield.ai &mdash; AI Governance &amp; Assurance
+              <span className="normal-case">Hatfield.ai&trade;</span> &mdash; AI Governance &amp; Assurance
             </p>
             <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
               Intelligence without surrendering control.
@@ -249,7 +250,8 @@ const AIGovernance = () => {
             id="ecosystem"
             className="text-4xl font-bold text-foreground mb-6 text-center"
           >
-            Extending Governance Across HatfieldRISQ and HatfieldIQ
+            Extending Governance Across <ProductName product="RISQ" /> and{" "}
+            <ProductName product="IQ" />
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed mb-4">
             Responsible AI governance extends beyond the systems an organization
@@ -266,7 +268,7 @@ const AIGovernance = () => {
           <Card className="border-border shadow-lg mb-8">
             <CardContent className="pt-8 pb-8">
               <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent mb-2">
-                HatfieldRISQ &mdash; Govern the AI risks your third parties introduce
+                <span className="normal-case">HatfieldRISQ</span> &mdash; Govern the AI risks your third parties introduce
               </p>
               <h3 className="text-3xl font-bold text-foreground mb-4">
                 AI Third-Party Risk Assessment
@@ -305,7 +307,7 @@ const AIGovernance = () => {
           <Card className="border-border shadow-lg">
             <CardContent className="pt-8 pb-8">
               <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent mb-2">
-                HatfieldIQ &mdash; Monitor what changes
+                <span className="normal-case">HatfieldIQ</span> &mdash; Monitor what changes
               </p>
               <h3 className="text-3xl font-bold text-foreground mb-4">
                 Continuous Surveillance
