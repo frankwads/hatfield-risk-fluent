@@ -50,6 +50,24 @@ import logoBlack from "@/assets/h-logo-black.png";
 // closed it, which mattered because it is the one item that stays on the
 // same page.
 
+// 2026-11-12 (Frank): "can we make iq and risq blue". A menu item whose name
+// is a product wordmark (HatfieldIQ, HatfieldRISQ) shows "Hatfield" in the
+// item's own colour and the ending in Hatfield blue, matching the wordmark
+// on the product pages and tear sheets: the lighter blue over the dark
+// header, the deeper blue once the header turns light. Other items are
+// returned unchanged.
+const navLabel = (name: string, onLight: boolean) =>
+  name.startsWith("Hatfield") && name.length > "Hatfield".length ? (
+    <>
+      Hatfield
+      <span className={onLight ? "text-[#2F6BFF]" : "text-[#5A8CFF]"}>
+        {name.slice("Hatfield".length)}
+      </span>
+    </>
+  ) : (
+    name
+  );
+
 const Navigation = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -210,7 +228,7 @@ const Navigation = () => {
                       : "text-foreground hover:text-accent"
                 }`}
               >
-                {item.name}
+                {navLabel(item.name, isDarkText)}
               </Link>
             ))}
 
@@ -264,7 +282,7 @@ const Navigation = () => {
                     : "text-foreground"
                 }`}
               >
-                {item.name}
+                {navLabel(item.name, false)}
               </Link>
             ))}
 
