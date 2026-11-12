@@ -26,6 +26,37 @@ import heroHLogo from "@/assets/hero-h-logo.png";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
 import { Play, ArrowRight } from "lucide-react";
 
+// 2026-11-12 (Frank): PRODUCT RENAME. SIGNAL is now HatfieldIQ and NEXUS is
+// now HatfieldRISQ ("rebrand both"; "visible wording only"). What changed in
+// this file, and nothing else:
+//   - every product name a visitor can read or a screen reader announces;
+//   - the ticker heading boxes carry the new descriptor and tagline
+//     (HatfieldIQ: "Enterprise Intelligence. Know what matters.";
+//      HatfieldRISQ: "Intelligent Third-Party Risk Management. Manage what
+//      matters."), replacing "Your GPS for business decisions." and "The
+//     operating system for third-party risk.";
+//   - the two-tone wordmark (white "Hatfield", blue "IQ" / "RISQ") in the
+//     ticker heading boxes, drawn by tickerWordmark() below;
+//   - the trademark symbol appears on the wordmark ONLY, once per product on
+//     this page: on the bold product name that opens each hero panel. Running
+//     text says plain HatfieldIQ / HatfieldRISQ;
+//   - "Introducing SIGNAL / Hatfield.ai Real-Time Surveillance" reads
+//     "INTRODUCING HatfieldIQ / Enterprise Intelligence";
+//   - the two video buttons read "HatfieldRISQ Commercial" and "HatfieldIQ
+//     Commercial". The VIDEOS THEMSELVES still say NEXUS and SIGNAL.
+// 2026-11-12, later (Frank): the product pages are now served at /iq and /risq
+// (the old /signal and /nexus still open the same pages), and the three PDFs
+// are renamed HatfieldIQ.pdf, HatfieldRISQ.pdf and
+// HatfieldIQ_vs_HatfieldRISQ_Comparison.pdf (the old file names redirect to
+// the new ones, see vercel.json). This overrides any line in this file that
+// says the addresses or PDF file names are unchanged.
+// NOT changed, on purpose: web addresses (/signal, /nexus), file names
+// (Hatfield.ai_SIGNAL.pdf, Hatfield.ai_NEXUS.pdf, the comparison PDF, the two
+// .mp4 files), constant names (NEXUS_PDF_SRC, SIGNAL_HEADING ...) and the
+// dated history comments below, which keep the names in use when they were
+// written. The lower-case wordplay ("Signal. Not noise.", "You have a signal
+// problem.") stays.
+
 // 2026-09-19: Commercial video (button now labelled "Hatfield.ai Commercial",
 // see the button comment below). Served as a static file from
 // public/videos/ (not imported from src/assets) so Vite copies it verbatim
@@ -53,15 +84,15 @@ const SIGNAL_COMMERCIAL_SRC = "/videos/signal-commercial.mp4";
 //   public/docs/Hatfield.ai_NEXUS.pdf
 //   public/docs/Hatfield.ai_SIGNAL.pdf
 // To publish a revised PDF, replace the file and keep the name.
-const NEXUS_PDF_SRC = "/docs/Hatfield.ai_NEXUS.pdf";
-const SIGNAL_PDF_SRC = "/docs/Hatfield.ai_SIGNAL.pdf";
+const NEXUS_PDF_SRC = "/docs/HatfieldRISQ.pdf";
+const SIGNAL_PDF_SRC = "/docs/HatfieldIQ.pdf";
 
 // 2026-10-19 (Frank): the three-page SIGNAL vs NEXUS comparison PDF, served
 // from public/docs/ like the two product overviews, under the name already
 // in the tree:
 //   public/docs/Hatfield_SIGNAL_vs_NEXUS_Comparison.pdf
 // The panel that links to it is in the Platform Capabilities section below.
-const COMPARISON_PDF_SRC = "/docs/Hatfield_SIGNAL_vs_NEXUS_Comparison.pdf";
+const COMPARISON_PDF_SRC = "/docs/HatfieldIQ_vs_HatfieldRISQ_Comparison.pdf";
 
 // 2026-10-02 (rev 16, Frank): "a it is". The PDF icon on the NEXUS and
 // SIGNAL boxes is option A: a WHITE page with a folded corner and a small
@@ -133,20 +164,41 @@ const COMPARISON_PDF_SRC = "/docs/Hatfield_SIGNAL_vs_NEXUS_Comparison.pdf";
 // governance page; they make no feature or percentage claim, in line with
 // the content-governance rule above.
 // ---------------------------------------------------------------------------
-type TickerProduct = "NEXUS" | "SIGNAL" | "AI GOVERNANCE";
+type TickerProduct = "HatfieldRISQ" | "HatfieldIQ" | "AI GOVERNANCE";
 type TickerHeading = { headline: TickerProduct; value: string; href: string };
 type TickerBox = { headline: string; value: string };
 type TickerVisit = { heading: TickerHeading; boxes: TickerBox[] };
+// 2026-11-12 (rename): the ticker used to upper-case its headings in CSS,
+// which would print HATFIELDIQ and lose the brand's capitalisation. The CSS
+// "uppercase" class is removed from the three ticker text spans; brandCase()
+// upper-cases a box headline in code and then restores the two product names,
+// and tickerWordmark() draws a product heading as the two-tone wordmark.
+const brandCase = (text: string) =>
+  text
+    .toUpperCase()
+    .replace(/HATFIELDIQ/g, "HatfieldIQ")
+    .replace(/HATFIELDRISQ/g, "HatfieldRISQ");
+
+const tickerWordmark = (headline: TickerProduct) =>
+  headline.startsWith("Hatfield") ? (
+    <span className="tracking-normal">
+      Hatfield
+      <span className="text-[#5A8CFF]">{headline.slice("Hatfield".length)}</span>
+    </span>
+  ) : (
+    headline
+  );
+
 
 const NEXUS_HEADING: TickerHeading = {
-  headline: "NEXUS",
-  value: "The operating system for third-party risk.",
-  href: "/nexus",
+  headline: "HatfieldRISQ",
+  value: "Intelligent Third-Party Risk Management. Manage what matters.",
+  href: "/risq", // 2026-11-12: the HatfieldRISQ page; /nexus still works
 };
 const SIGNAL_HEADING: TickerHeading = {
-  headline: "SIGNAL",
-  value: "Your GPS for business decisions.",
-  href: "/signal",
+  headline: "HatfieldIQ",
+  value: "Enterprise Intelligence. Know what matters.",
+  href: "/iq", // 2026-11-12: the HatfieldIQ page; /signal still works
 };
 // 2026-10-13: governance heading box. On a 768-1279px window the heading box
 // is narrower, so "AI GOVERNANCE" may wrap onto two lines; the 112px box has
@@ -166,7 +218,7 @@ const TICKER_VISITS: TickerVisit[] = [
       { headline: "Eliminate redundant processing", value: "Onboard once. Assess once." },
       { headline: "Reduce assessment overhead", value: "Valid prior assessments and evidence are reused, not repeated." },
       { headline: "Contract right", value: "Reviewed by two AI models and mapped to the regulators that govern you." },
-      { headline: "Watch always", value: "SIGNAL built in. One register entry per issue, not hundreds of alerts." },
+      { headline: "Watch always", value: "HatfieldIQ built in. One register entry per issue, not hundreds of alerts." },
     ],
   },
   {
@@ -174,7 +226,7 @@ const TICKER_VISITS: TickerVisit[] = [
     boxes: [
       { headline: "The signal is already there", value: "Know before risk alerts become your news headline." },
       { headline: "Signal. Not noise.", value: "You don’t have an information problem. You have a signal problem." },
-      { headline: "The company is the story", value: "SIGNAL sees the whole picture." },
+      { headline: "The company is the story", value: "HatfieldIQ sees the whole picture." },
       { headline: "Know what changed", value: "Financials, cyber, sanctions, litigation, regulation and supply chain." },
       { headline: "Know what matters", value: "Tested for materiality and consolidated into one event." },
       { headline: "Know where to act", value: "Severity-ranked and summed up in one daily brief." },
@@ -197,7 +249,7 @@ const TICKER_VISITS: TickerVisit[] = [
       { headline: "Three financial-health models", value: "Piotroski F-Score, Altman Z-Score, Merton." },
       { headline: "Are we watching the right company?", value: "Every name resolved to its registered legal entity." },
       { headline: "Not separate feeds", value: "One intelligence picture." },
-      { headline: "A thirteenth question? Ask SIGNAL.", value: "Answers from your own portfolio evidence." },
+      { headline: "A thirteenth question? Ask HatfieldIQ.", value: "Answers from your own portfolio evidence." },
       { headline: "10 users or 1,000. One price.", value: "Priced for the portfolio, not the person." },
       { headline: "Built by a practitioner", value: "Designed around how the work actually gets done." },
     ],
@@ -363,8 +415,8 @@ const HomepageTicker = () => {
           tabIndex={isCurrent ? undefined : -1}
           className="h-20 md:h-28 md:w-56 xl:w-72 flex-shrink-0 px-6 rounded-lg flex flex-col justify-center bg-[hsl(215,45%,15%)] text-white transition-opacity duration-300 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(215,65%,48%)]"
         >
-          <span className="block font-bold uppercase leading-tight text-xl tracking-[0.18em]">
-            {frame.heading.headline}
+          <span className="block font-bold leading-tight text-xl tracking-[0.18em]">
+            {tickerWordmark(frame.heading.headline)}
           </span>
           <span className="block mt-1.5 text-sm font-medium leading-snug text-white/80">
             {frame.heading.value}
@@ -376,11 +428,11 @@ const HomepageTicker = () => {
             key={boxIndex}
             className="h-28 flex-1 basis-0 min-w-0 overflow-hidden px-6 rounded-lg flex flex-col justify-center bg-[hsl(215,25%,75%)] text-[hsl(215,45%,15%)] border border-gray-300"
           >
-            <span className="block mb-1 text-[10px] font-semibold uppercase leading-none tracking-[0.18em] opacity-70">
+            <span className="block mb-1 text-[10px] font-semibold leading-none tracking-[0.12em] opacity-70">
               {frame.heading.headline}
             </span>
-            <span className="block font-bold uppercase leading-tight text-sm xl:text-base tracking-[0.08em]">
-              {box.headline}
+            <span className="block font-bold leading-tight text-sm xl:text-base tracking-[0.08em]">
+              {brandCase(box.headline)}
             </span>
             <span className="block mt-1.5 text-xs xl:text-sm font-medium leading-snug">
               {box.value}
@@ -398,7 +450,7 @@ const HomepageTicker = () => {
   return (
     <section
       data-stat-section
-      aria-label="NEXUS, SIGNAL and AI governance highlights"
+      aria-label="HatfieldRISQ, HatfieldIQ and AI governance highlights"
       className="bg-white py-3"
     >
       <style>{TICKER_CSS}</style>
@@ -581,11 +633,11 @@ const Index = () => {
                   href={NEXUS_PDF_SRC}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="NEXUS overview, PDF, opens in a new tab"
+                  aria-label="HatfieldRISQ overview, PDF, opens in a new tab"
                   className="group flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <span className="flex-1 text-base text-muted-foreground leading-relaxed">
-                    <strong className="font-bold">NEXUS</strong> provides the
+                    <strong className="font-bold">HatfieldRISQ&trade;</strong> provides the
                     operating system for third-party risk —
                     managing the entire lifecycle from intake and legal-entity
                     resolution through contracting, risk assessment, operational
@@ -601,11 +653,11 @@ const Index = () => {
                   href={SIGNAL_PDF_SRC}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="SIGNAL overview, PDF, opens in a new tab"
+                  aria-label="HatfieldIQ overview, PDF, opens in a new tab"
                   className="group flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <span className="flex-1 text-base text-muted-foreground leading-relaxed">
-                    <strong className="font-bold">SIGNAL</strong> provides the
+                    <strong className="font-bold">HatfieldIQ&trade;</strong> provides the
                     intelligence layer — continuously monitoring
                     the companies that matter across financial health,
                     cybersecurity, sanctions, litigation, regulatory developments,
@@ -622,7 +674,7 @@ const Index = () => {
               {/* Block 3: "Together..." line + actions (left column, bottom) */}
               <div className="lg:col-start-1 lg:row-start-2 lg:self-start">
                 <p className="text-lg lg:text-xl text-foreground font-semibold mb-6 leading-relaxed">
-                  Together, NEXUS and SIGNAL give organizations a connected view
+                  Together, HatfieldRISQ and HatfieldIQ give organizations a connected view
                   of third-party risk — assess what you know, monitor what
                   changes, and act on what matters.
                 </p>
@@ -681,17 +733,17 @@ const Index = () => {
                       link target (/signal), arrow and hover behaviour are
                       unchanged. */}
                   <a
-                    href="/signal"
+                    href="/iq"
                     className="group flex items-center h-11 px-4 rounded-md border border-[hsl(215,65%,48%)] transition-opacity duration-300 hover:opacity-80"
-                    aria-label="Introducing SIGNAL — Hatfield.ai Real-Time Surveillance"
+                    aria-label="Introducing HatfieldIQ — Enterprise Intelligence"
                   >
                     <span className="flex flex-col text-left">
-                      <span className="text-xs uppercase tracking-[0.18em] font-semibold text-accent">
-                        Introducing SIGNAL
+                      <span className="text-xs tracking-[0.18em] font-semibold text-accent">
+                        INTRODUCING HatfieldIQ
                       </span>
 
                       <span className="text-sm text-foreground font-medium whitespace-nowrap">
-                        Hatfield.ai Real-Time Surveillance
+                        Enterprise Intelligence
                         <ArrowRight
                           className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1"
                           size={16}
@@ -776,21 +828,21 @@ const Index = () => {
                         className="text-base px-6 whitespace-nowrap"
                       >
                         <Play className="mr-2" size={18} />
-                        Hatfield.ai NEXUS Commercial
+                        HatfieldRISQ Commercial
                       </Button>
                     </DialogTrigger>
 
                     <DialogContent className="max-w-4xl w-full p-0 bg-card">
                       <DialogTitle className="sr-only">
-                        Hatfield.ai NEXUS Commercial
+                        HatfieldRISQ Commercial
                       </DialogTitle>
                       <DialogDescription className="sr-only">
-                        The Hatfield.ai NEXUS commercial video.
+                        The HatfieldRISQ commercial video.
                       </DialogDescription>
                       <div className="aspect-video w-full">
                         <video
                           src={NEXUS_COMMERCIAL_SRC}
-                          title="Hatfield.ai NEXUS Commercial"
+                          title="HatfieldRISQ Commercial"
                           controls
                           autoPlay
                           playsInline
@@ -798,7 +850,7 @@ const Index = () => {
                           className="w-full h-full rounded-lg bg-black"
                         >
                           Your browser can't play this video.{" "}
-                          <a href={NEXUS_COMMERCIAL_SRC}>Download the Hatfield.ai NEXUS Commercial</a>.
+                          <a href={NEXUS_COMMERCIAL_SRC}>Download the HatfieldRISQ Commercial</a>.
                         </video>
                       </div>
                     </DialogContent>
@@ -818,21 +870,21 @@ const Index = () => {
                         className="text-base px-6 whitespace-nowrap"
                       >
                         <Play className="mr-2" size={18} />
-                        Hatfield.ai SIGNAL Commercial
+                        HatfieldIQ Commercial
                       </Button>
                     </DialogTrigger>
 
                     <DialogContent className="max-w-4xl w-full p-0 bg-card">
                       <DialogTitle className="sr-only">
-                        Hatfield.ai SIGNAL Commercial
+                        HatfieldIQ Commercial
                       </DialogTitle>
                       <DialogDescription className="sr-only">
-                        The Hatfield.ai SIGNAL commercial video.
+                        The HatfieldIQ commercial video.
                       </DialogDescription>
                       <div className="aspect-video w-full">
                         <video
                           src={SIGNAL_COMMERCIAL_SRC}
-                          title="Hatfield.ai SIGNAL Commercial"
+                          title="HatfieldIQ Commercial"
                           controls
                           autoPlay
                           playsInline
@@ -840,7 +892,7 @@ const Index = () => {
                           className="w-full h-full rounded-lg bg-black"
                         >
                           Your browser can't play this video.{" "}
-                          <a href={SIGNAL_COMMERCIAL_SRC}>Download the Hatfield.ai SIGNAL Commercial</a>.
+                          <a href={SIGNAL_COMMERCIAL_SRC}>Download the HatfieldIQ Commercial</a>.
                         </video>
                       </div>
                     </DialogContent>
@@ -904,18 +956,18 @@ const Index = () => {
                 href={COMPARISON_PDF_SRC}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="How SIGNAL and NEXUS work together, PDF, opens in a new tab"
+                aria-label="How HatfieldIQ and HatfieldRISQ work together, PDF, opens in a new tab"
                 className="group mt-16 lg:mt-28 max-w-xl flex items-start gap-4 rounded-lg border border-white/20 bg-white/5 p-5 transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 <span className="flex-1 space-y-5">
                   <p className="text-lg text-muted-foreground leading-relaxed">
                     <strong className="font-semibold text-foreground">
-                      Discover how Hatfield.ai SIGNAL and NEXUS work together.
+                      Discover how HatfieldIQ and HatfieldRISQ work together.
                     </strong>{" "}
-                    SIGNAL delivers continuous company intelligence: it
+                    HatfieldIQ delivers continuous company intelligence: it
                     identifies emerging risks and explains what matters across
                     financial, regulatory, cybersecurity and other developments.
-                    NEXUS connects that intelligence to your third-party
+                    HatfieldRISQ connects that intelligence to your third-party
                     relationships, so risk assessment, governance and action rest
                     on it.
                   </p>

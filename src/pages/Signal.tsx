@@ -230,6 +230,35 @@
 //     now say 14 calendar days, matching the clock the product stamps at
 //     approval; the tear sheet's footers say the same.
 //
+// 2026-11-12. PRODUCT RENAME (Frank: "rebrand both"; "visible wording only").
+//
+// 32. SIGNAL IS NOW HatfieldIQ (and NEXUS is HatfieldRISQ). Every product
+//     name a visitor reads or a screen reader announces is renamed, including
+//     the "Ask SIGNAL" feature, now "Ask HatfieldIQ". The hero name is the
+//     two-tone wordmark (white "Hatfield", blue "IQ") and is the ONE place
+//     on the page that carries the trademark symbol. The header's running
+//     head is the new descriptor and tagline, "Enterprise Intelligence -
+//     Know what matters.", replacing "Your GPS for business decisions"
+//     (item 10). The lower-case wordplay stays: "Signal. Not noise.", "The
+//     signal is already there.", "You have a signal problem."
+//     (Later the same day the page gained the address /iq, item 33.)
+//     NOT changed, on purpose: the address /signal, signal.hatfield.ai, the
+//     PDF file name, the tier keys the form posts, env and constant names
+//     (VITE_SIGNAL_API_BASE, SIGNAL_PDF_URL ...), the component name Signal,
+//     and the dated items above, which keep the name in use when written.
+//
+// 34. PDF FILE NAME (Frank, 2026-11-12): the tear sheet is now served as
+//     /docs/HatfieldIQ.pdf (was Hatfield.ai_SIGNAL.pdf). The old name
+//     redirects to it (vercel.json), so links already sent keep working.
+//     The HatfieldRISQ page is likewise at /risq, with /nexus kept.
+//
+// 33. /iq (Frank, 2026-11-12: "change https://www.hatfield.ai/signal to
+//     https://www.hatfield.ai/iq ... make sure the website is updated").
+//     This page is now served at /iq, the address the tear sheet prints.
+//     /signal still serves the same page, so links already sent out keep
+//     working. Both routes are in src/App.tsx. signal.hatfield.ai (the app)
+//     is unchanged.
+//
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
@@ -264,7 +293,7 @@ const SAMPLE_REPORT_URL = "https://signal.hatfield.ai/sample-risk-report";
  * The SIGNAL tear sheet, served from public/docs/ by this site (item 24).
  * Same file the homepage SIGNAL panel opens.
  */
-const SIGNAL_PDF_URL = "/docs/Hatfield.ai_SIGNAL.pdf";
+const SIGNAL_PDF_URL = "/docs/HatfieldIQ.pdf";
 
 /**
  * MODEL C PRICE BANDS - every published figure, written ONCE (item 26).
@@ -394,8 +423,14 @@ const TIER_ROWS: TierRow[] = [
   }),
 ];
 
-/** "from $50 a month" reads the first band, never a typed copy. */
-const FROM_MONTHLY = usd(PRICE_BANDS[0].rate);
+/**
+ * 2026-11-12 (Frank): the narrative line now reads "from as low as $25 a
+ * month" (was "from just $50 a month"), matching the tear sheet. The figure
+ * is the LOWEST band rate - today the 201+ band - read from PRICE_BANDS,
+ * never a typed copy. It is the rate for companies above 200, not the
+ * price of a small portfolio; the table and calculator show those.
+ */
+const LOWEST_MONTHLY = usd(Math.min(...PRICE_BANDS.map((b) => b.rate)));
 
 /**
  * Capabilities, as the tear sheet lists them (item 16). `detail` renders
@@ -463,7 +498,7 @@ const DOMAINS: { title: string; items: Capability[] }[] = [
       { main: "Port watch", detail: "shipping routes and critical chokepoints" },
       { main: "Risk simulation" },
       { main: "Daily executive briefing" },
-      { main: "Ask SIGNAL", detail: "answers from your portfolio" },
+      { main: "Ask HatfieldIQ", detail: "answers from your portfolio" },
     ],
   },
 ];
@@ -829,7 +864,7 @@ const Signal = () => {
           <div className="flex items-center gap-5 md:gap-7">
             {/* Item 10: sentence case in the DOM, uppercased in CSS. */}
             <p className="hidden md:block m-0 text-[11px] font-semibold tracking-[0.13em] text-white/70 uppercase">
-              Your GPS for business decisions
+              Enterprise Intelligence &middot; Know what matters.
             </p>
 
             {/* Item 9: /login, not the app root. */}
@@ -847,8 +882,8 @@ const Signal = () => {
       <section className="bg-[#071326] text-white py-[72px] md:pb-[76px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col lg:flex-row lg:items-end justify-between gap-12">
           <div>
-            <p className="text-[24px] md:text-[30px] font-semibold tracking-[0.26em] m-0 mb-6 text-[#7CA4FF]">
-              SIGNAL
+            <p className="text-[26px] md:text-[32px] font-semibold tracking-[-0.01em] m-0 mb-6 text-white">
+              Hatfield<span className="text-[#5A8CFF]">IQ</span><sup className="ml-[2px] text-[0.42em] font-normal text-white/70">&trade;</sup>
             </p>
 
             <p className="m-0 mb-4 text-[11px] font-semibold tracking-[0.15em] text-[#7CA4FF] uppercase">
@@ -860,7 +895,7 @@ const Signal = () => {
             </h1>
 
             <p className="mt-7 mb-0 text-[#B8C4D6] text-base max-w-[62ch] leading-7">
-              SIGNAL watches the companies that matter to you &mdash; and
+              HatfieldIQ watches the companies that matter to you &mdash; and
               connects what is changing across financials, cyber, sanctions,
               litigation, regulation, corporate events, geopolitics and supply
               chain. Know what changed. Know what matters. Know where to act.
@@ -892,10 +927,10 @@ const Signal = () => {
               href={SIGNAL_PDF_URL}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="SIGNAL overview, PDF, opens in a new tab"
+              aria-label="HatfieldIQ overview, PDF, opens in a new tab"
               className="inline-flex items-center gap-2 px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors whitespace-nowrap"
             >
-              SIGNAL overview
+              HatfieldIQ overview
               <PdfIcon height={18} />
             </a>
           </div>
@@ -989,7 +1024,7 @@ const Signal = () => {
                 The warning signs rarely arrive as one obvious alert. They
                 appear fragmented &mdash; across financials, litigation, cyber,
                 sanctions, news, regulation and the world around the company.
-                SIGNAL connects those signals before they become the headline.
+                HatfieldIQ connects those signals before they become the headline.
               </p>
             </div>
 
@@ -1044,7 +1079,7 @@ const Signal = () => {
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
                   You pay for the companies you monitor, never for the seat. One
                   subscription replaces a stack of feeds. Monitor companies
-                  from just {FROM_MONTHLY} a month, with no minimum commitment
+                  from as low as {LOWEST_MONTHLY} a month, with no minimum commitment
                   and unlimited users. Progressive volume pricing rewards you
                   as your portfolio grows.
                 </p>
@@ -1290,8 +1325,8 @@ const Signal = () => {
                 &times; $45 + 75 &times; $40 = {usd(monthlyFor(100))} a month.
               </p>
               <p className="mt-3 mb-0">
-                No minimum number of companies. Every SIGNAL subscription
-                includes unlimited users and all standard SIGNAL capabilities.
+                No minimum number of companies. Every HatfieldIQ subscription
+                includes unlimited users and all standard HatfieldIQ capabilities.
               </p>
             </div>
 
@@ -1464,11 +1499,11 @@ const Signal = () => {
             <p className={kicker}>One company. Every angle that matters.</p>
 
             <h2 className="mt-4 mb-0 font-serif text-[28px] md:text-[34px] font-semibold leading-[1.15] tracking-[-0.025em] text-[#0A1A33] max-w-[30ch]">
-              The company is the story. SIGNAL sees the whole picture.
+              The company is the story. HatfieldIQ sees the whole picture.
             </h2>
 
             <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[80ch]">
-              Financial health and sanctions are only two lenses. SIGNAL
+              Financial health and sanctions are only two lenses. HatfieldIQ
               connects the financial, cyber, legal, regulatory, corporate,
               geopolitical, supply-chain and economic picture around the same
               company.
@@ -1489,9 +1524,9 @@ const Signal = () => {
 
             <div className="mt-9 grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-7 border-t border-[#E2E7EF] pt-8">
               <div>
-                <p className={kicker}>Ask SIGNAL</p>
+                <p className={kicker}>Ask HatfieldIQ</p>
                 <p className="mt-2 mb-0 text-[14px] leading-[1.65] text-[#101828]">
-                  A thirteenth question? Ask in plain English. SIGNAL answers
+                  A thirteenth question? Ask in plain English. HatfieldIQ answers
                   from your own portfolio evidence and shows where the answer
                   came from.
                 </p>
@@ -1500,7 +1535,7 @@ const Signal = () => {
                 <p className={kicker}>Due diligence</p>
                 <p className="mt-2 mb-0 text-[14px] leading-[1.65] text-[#101828]">
                   Every company gets a standard or enhanced due-diligence
-                  level, and SIGNAL says plainly which factors it could not
+                  level, and HatfieldIQ says plainly which factors it could not
                   assess.
                 </p>
               </div>
@@ -1543,7 +1578,7 @@ const Signal = () => {
                   </h2>
 
                   <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[62ch]">
-                    This is a real SIGNAL report on a public company, with
+                    This is a real HatfieldIQ report on a public company, with
                     nothing added for the brochure. It shows the shape of what
                     lands in front of your team: what changed, why it matters,
                     and the evidence behind it.
@@ -2055,7 +2090,7 @@ const Signal = () => {
               rel="noopener noreferrer"
               className="text-[#C8D3E3] no-underline hover:text-white"
             >
-              SIGNAL overview (PDF)
+              HatfieldIQ overview (PDF)
             </a>
 
             {"  \u00b7  "}

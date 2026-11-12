@@ -1,3 +1,11 @@
+// 2026-11-12 (Frank): PRODUCT RENAME. SIGNAL is now HatfieldIQ and NEXUS is now
+// HatfieldRISQ. Constant names and the dated comments below are unchanged.
+// 2026-11-12, later (Frank): the product pages are now served at /iq and /risq
+// (the old /signal and /nexus still open the same pages), and the three PDFs
+// are renamed HatfieldIQ.pdf, HatfieldRISQ.pdf and
+// HatfieldIQ_vs_HatfieldRISQ_Comparison.pdf (the old file names redirect to
+// the new ones, see vercel.json). This overrides any line in this file that
+// says the addresses or PDF file names are unchanged.
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,8 +28,8 @@ const frankPhoto = "/advisors/Frank_elite.jpg";
 // The paths are the same files the homepage hero boxes open, so one copy
 // of each PDF serves the whole site.
 const TEAR_SHEETS = [
-  { label: "NEXUS", href: "/docs/Hatfield.ai_NEXUS.pdf" },
-  { label: "SIGNAL", href: "/docs/Hatfield.ai_SIGNAL.pdf" },
+  { label: "HatfieldRISQ", href: "/docs/HatfieldRISQ.pdf" },
+  { label: "HatfieldIQ", href: "/docs/HatfieldIQ.pdf" },
 ];
 
 const About = () => {

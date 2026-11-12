@@ -1,5 +1,25 @@
 {
+  "redirects": [
+    {
+      "source": "/docs/Hatfield.ai_NEXUS.pdf",
+      "destination": "/docs/HatfieldRISQ.pdf",
+      "permanent": false
+    },
+    {
+      "source": "/docs/Hatfield.ai_SIGNAL.pdf",
+      "destination": "/docs/HatfieldIQ.pdf",
+      "permanent": false
+    },
+    {
+      "source": "/docs/Hatfield_SIGNAL_vs_NEXUS_Comparison.pdf",
+      "destination": "/docs/HatfieldIQ_vs_HatfieldRISQ_Comparison.pdf",
+      "permanent": false
+    }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
   ]
 }

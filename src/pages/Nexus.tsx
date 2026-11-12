@@ -6,6 +6,24 @@
 // add NEXUS to navigation as we have with signal - use attached pdf to
 // create NEXUS page".
 //
+// 2026-11-12 (Frank): PRODUCT RENAME. NEXUS is now HatfieldRISQ and SIGNAL is
+// now HatfieldIQ ("rebrand both"; "visible wording only"). Changed here:
+// every product name a visitor reads or a screen reader announces; the hero
+// name is the two-tone wordmark (white "Hatfield", blue "RISQ") and is the
+// ONE place on the page that carries the trademark symbol; the header's
+// running head is the new descriptor and tagline, "Intelligent Third-Party
+// Risk Management - Manage what matters.", replacing "The operating system
+// for third-party risk" (shown from 1024px up, because it is longer).
+// 2026-11-12, later (Frank): the product pages are now served at /iq and /risq
+// (the old /signal and /nexus still open the same pages), and the three PDFs
+// are renamed HatfieldIQ.pdf, HatfieldRISQ.pdf and
+// HatfieldIQ_vs_HatfieldRISQ_Comparison.pdf (the old file names redirect to
+// the new ones, see vercel.json). This overrides any line in this file that
+// says the addresses or PDF file names are unchanged.
+// NOT changed, on purpose: the address /nexus, the PDF file name, constant
+// and component names (NEXUS_PDF_URL, Nexus) and the dated comments below.
+// The tear sheet this page mirrors is renamed to match (same file name).
+//
 // WHAT THIS PAGE IS. The NEXUS counterpart of src/pages/Signal.tsx: same
 // structure (own dark header, dark hero, white narrative, pricing,
 // capabilities, closing band, dark footer), same palette and type, so the
@@ -57,7 +75,7 @@ import PdfIcon from "@/components/PdfIcon";
 
 /** The NEXUS tear sheet, served from public/docs/ (same file the homepage
  *  NEXUS panel opens). */
-const NEXUS_PDF_URL = "/docs/Hatfield.ai_NEXUS.pdf";
+const NEXUS_PDF_URL = "/docs/HatfieldRISQ.pdf";
 
 /** Where every call to action goes - the tear sheet's "Book a briefing". */
 const BRIEFING_URL = "/contact";
@@ -66,10 +84,10 @@ const BRIEFING_URL = "/contact";
 type PricingRow = { product: string; price: string; total?: boolean };
 
 const PRICING_ROWS: PricingRow[] = [
-  { product: "NEXUS", price: "$85,000" },
+  { product: "HatfieldRISQ", price: "$85,000" },
   { product: "CLMS Add-on", price: "+$35,000" },
-  { product: "SIGNAL Surveillance", price: "Included in NEXUS" },
-  { product: "Vendor Portal", price: "Included in NEXUS" },
+  { product: "HatfieldIQ Surveillance", price: "Included in HatfieldRISQ" },
+  { product: "Vendor Portal", price: "Included in HatfieldRISQ" },
   { product: "Total Annual Subscription", price: "$85,000\u2013$120,000", total: true },
 ];
 
@@ -126,7 +144,7 @@ const INCLUDED: { title: string; items: Capability[] }[] = [
   {
     title: "Surveillance, reporting & platform",
     items: [
-      { main: "SIGNAL built in", detail: "cyber, sanctions, litigation, news, corporate actions and financial health" },
+      { main: "HatfieldIQ built in", detail: "cyber, sanctions, litigation, news, corporate actions and financial health" },
       { main: "Role- and business-unit-based alerts" },
       { main: "Third- and fourth-party concentration analytics" },
       { main: "Operational metrics and SLA management" },
@@ -166,7 +184,7 @@ const LIFECYCLE: { moment: string; what: string }[] = [
   },
   {
     moment: "The contract comes up for renewal.",
-    what: "NEXUS reassesses only when the change is material.",
+    what: "HatfieldRISQ reassesses only when the change is material.",
   },
   {
     moment: "A risk issue emerges.",
@@ -231,8 +249,8 @@ const Nexus = () => {
           </a>
 
           <div className="flex items-center gap-5 md:gap-7">
-            <p className="hidden md:block m-0 text-[11px] font-semibold tracking-[0.13em] text-white/70 uppercase">
-              The operating system for third-party risk
+            <p className="hidden lg:block m-0 text-right text-[11px] font-semibold tracking-[0.13em] text-white/70 uppercase">
+              Intelligent Third-Party Risk Management &middot; Manage what matters.
             </p>
 
             <a
@@ -249,8 +267,8 @@ const Nexus = () => {
       <section className="bg-[#071326] text-white py-[72px] md:pb-[76px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col lg:flex-row lg:items-end justify-between gap-12">
           <div>
-            <p className="text-[24px] md:text-[30px] font-semibold tracking-[0.26em] m-0 mb-6 text-[#7CA4FF]">
-              NEXUS
+            <p className="text-[26px] md:text-[32px] font-semibold tracking-[-0.01em] m-0 mb-6 text-white">
+              Hatfield<span className="text-[#5A8CFF]">RISQ</span><sup className="ml-[2px] text-[0.42em] font-normal text-white/70">&trade;</sup>
             </p>
 
             <p className="m-0 mb-4 text-[11px] font-semibold tracking-[0.15em] text-[#7CA4FF] uppercase">
@@ -262,7 +280,7 @@ const Nexus = () => {
             </h1>
 
             <p className="mt-7 mb-0 text-[#B8C4D6] text-base max-w-[62ch] leading-7">
-              NEXUS connects intake, identity, assessment, contracting,
+              HatfieldRISQ connects intake, identity, assessment, contracting,
               obligations, resilience, surveillance and evidence around one
               authoritative third-party record. One relationship. One
               lifecycle. One defensible record.
@@ -278,10 +296,10 @@ const Nexus = () => {
               href={NEXUS_PDF_URL}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="NEXUS overview, PDF, opens in a new tab"
+              aria-label="HatfieldRISQ overview, PDF, opens in a new tab"
               className="inline-flex items-center gap-2 px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold border border-white/35 text-white hover:border-white/60 transition-colors whitespace-nowrap"
             >
-              NEXUS overview
+              HatfieldRISQ overview
               <PdfIcon height={18} />
             </a>
           </div>
@@ -328,7 +346,7 @@ const Nexus = () => {
                 </div>
                 <div>
                   <p className="m-0 text-[30px] md:text-[34px] font-medium tracking-[-0.03em] text-[#0A1A33]">
-                    SIGNAL
+                    HatfieldIQ
                   </p>
                   <p className="mt-1 mb-0 text-[12px] leading-[1.5] text-[#667085]">
                     built in
@@ -427,7 +445,7 @@ const Nexus = () => {
                   Watch always.
                 </h3>
                 <p className="mt-3 mb-0 text-[13px] leading-[1.7] text-[#475467]">
-                  SIGNAL built in: cyber, sanctions, litigation, adverse media
+                  HatfieldIQ built in: cyber, sanctions, litigation, adverse media
                   and financial health &mdash; one register entry per issue,
                   not hundreds of alerts.
                 </p>
@@ -446,7 +464,7 @@ const Nexus = () => {
                 </h3>
 
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
-                  NEXUS replaces the patchwork of procurement, vendor-master,
+                  HatfieldRISQ replaces the patchwork of procurement, vendor-master,
                   CLM, TPRM, sanctions and financial-data tools.
                 </p>
               </div>
@@ -459,7 +477,7 @@ const Nexus = () => {
                 </h3>
 
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
-                  NEXUS is built by a practitioner with over thirty years of
+                  HatfieldRISQ is built by a practitioner with over thirty years of
                   experience at Morgan Stanley, J.P. Morgan, Merrill Lynch,
                   Barclays, SMBC and Bloomberg. AI proposes, logic verifies,
                   your people decide &mdash; and every decision is logged for
@@ -520,9 +538,9 @@ const Nexus = () => {
                 <strong className="text-[#101828] font-semibold">
                   Important entitlement clarification:
                 </strong>{" "}
-                NEXUS includes integrated SIGNAL company-level surveillance for
-                third parties managed within NEXUS. This is not the complete
-                standalone SIGNAL product.
+                HatfieldRISQ includes integrated HatfieldIQ company-level surveillance for
+                third parties managed within HatfieldRISQ. This is not the complete
+                standalone HatfieldIQ product.
               </p>
               <p className="m-0">
                 Implementation services are contracted and billed separately by
@@ -533,7 +551,7 @@ const Nexus = () => {
 
           {/* INCLUDED WITH NEXUS - rendered from INCLUDED */}
           <div className="mt-12 text-[11px] font-semibold tracking-[0.13em] text-[#667085] uppercase border-b border-[#E2E7EF] pb-4">
-            Included with NEXUS
+            Included with HatfieldRISQ
           </div>
 
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-0 border-b border-[#E2E7EF]">
@@ -576,11 +594,11 @@ const Nexus = () => {
             <p className={kicker}>From the first request to the last renewal</p>
 
             <h2 className="mt-4 mb-0 font-serif text-[28px] md:text-[34px] font-semibold leading-[1.15] tracking-[-0.025em] text-[#0A1A33] max-w-[30ch]">
-              The relationship changes. NEXUS keeps the thread.
+              The relationship changes. HatfieldRISQ keeps the thread.
             </h2>
 
             <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[80ch]">
-              Most platforms manage workflow. NEXUS runs the relationship.
+              Most platforms manage workflow. HatfieldRISQ runs the relationship.
             </p>
 
             <div className="mt-9 grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-7 border-t border-[#E2E7EF] pt-8">
@@ -619,7 +637,7 @@ const Nexus = () => {
             <div className="mt-10 mb-[70px] bg-[#071326] rounded-2xl px-6 md:px-[38px] py-[30px] flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
                 <p className="m-0 font-serif text-[22px] md:text-[26px] font-semibold text-white leading-[1.2]">
-                  See NEXUS as one connected system.
+                  See HatfieldRISQ as one connected system.
                 </p>
                 <p className="mt-2 mb-0 text-[13px] text-[#B8C4D6]">
                   One relationship. One lifecycle. One defensible record.
@@ -657,16 +675,16 @@ const Nexus = () => {
               rel="noopener noreferrer"
               className="text-[#C8D3E3] no-underline hover:text-white"
             >
-              NEXUS overview (PDF)
+              HatfieldRISQ overview (PDF)
             </a>
 
             {"  \u00b7  "}
 
             <a
-              href="/signal"
+              href="/iq"
               className="text-[#C8D3E3] no-underline hover:text-white"
             >
-              SIGNAL
+              HatfieldIQ
             </a>
           </p>
         </div>

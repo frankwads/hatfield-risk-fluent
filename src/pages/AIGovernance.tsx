@@ -1,3 +1,11 @@
+// 2026-11-12 (Frank): PRODUCT RENAME. SIGNAL is now HatfieldIQ and NEXUS is now
+// HatfieldRISQ. Constant names and the dated comments below are unchanged.
+// 2026-11-12, later (Frank): the product pages are now served at /iq and /risq
+// (the old /signal and /nexus still open the same pages), and the three PDFs
+// are renamed HatfieldIQ.pdf, HatfieldRISQ.pdf and
+// HatfieldIQ_vs_HatfieldRISQ_Comparison.pdf (the old file names redirect to
+// the new ones, see vercel.json). This overrides any line in this file that
+// says the addresses or PDF file names are unchanged.
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -241,7 +249,7 @@ const AIGovernance = () => {
             id="ecosystem"
             className="text-4xl font-bold text-foreground mb-6 text-center"
           >
-            Extending Governance Across NEXUS and SIGNAL
+            Extending Governance Across HatfieldRISQ and HatfieldIQ
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed mb-4">
             Responsible AI governance extends beyond the systems an organization
@@ -258,13 +266,13 @@ const AIGovernance = () => {
           <Card className="border-border shadow-lg mb-8">
             <CardContent className="pt-8 pb-8">
               <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent mb-2">
-                NEXUS &mdash; Govern the AI risks your third parties introduce
+                HatfieldRISQ &mdash; Govern the AI risks your third parties introduce
               </p>
               <h3 className="text-3xl font-bold text-foreground mb-4">
                 AI Third-Party Risk Assessment
               </h3>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                NEXUS brings AI into the third-party risk assessment itself.
+                HatfieldRISQ brings AI into the third-party risk assessment itself.
                 Each area below is configured by your administrators without
                 code: the questions engagements are screened with, how AI is
                 weighted as its own risk category, and which answers trigger
@@ -297,18 +305,18 @@ const AIGovernance = () => {
           <Card className="border-border shadow-lg">
             <CardContent className="pt-8 pb-8">
               <p className="text-xs uppercase tracking-[0.18em] font-semibold text-accent mb-2">
-                SIGNAL &mdash; Monitor what changes
+                HatfieldIQ &mdash; Monitor what changes
               </p>
               <h3 className="text-3xl font-bold text-foreground mb-4">
                 Continuous Surveillance
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                SIGNAL complements NEXUS with ongoing surveillance and risk
+                HatfieldIQ complements HatfieldRISQ with ongoing surveillance and risk
                 intelligence on monitored companies, including cybersecurity
                 incidents, regulatory developments, litigation, adverse media
                 and material corporate changes. An assessment is a point-in-time
-                view; SIGNAL shows when developments may warrant a fresh look.
-                Together, NEXUS and SIGNAL support a connected approach: assess
+                view; HatfieldIQ shows when developments may warrant a fresh look.
+                Together, HatfieldRISQ and HatfieldIQ support a connected approach: assess
                 the exposure, monitor what changes, govern the risk.
               </p>
             </CardContent>

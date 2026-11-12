@@ -1,3 +1,11 @@
+﻿// 2026-11-12 (Frank): PRODUCT RENAME. SIGNAL is now HatfieldIQ and NEXUS is now
+// HatfieldRISQ. Constant names and the dated comments below are unchanged.
+// 2026-11-12, later (Frank): the product pages are now served at /iq and /risq
+// (the old /signal and /nexus still open the same pages), and the three PDFs
+// are renamed HatfieldIQ.pdf, HatfieldRISQ.pdf and
+// HatfieldIQ_vs_HatfieldRISQ_Comparison.pdf (the old file names redirect to
+// the new ones, see vercel.json). This overrides any line in this file that
+// says the addresses or PDF file names are unchanged.
 ﻿import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -375,9 +383,9 @@ const AIGovernanceArticle = () => {
             to see from a conventional vendor inventory.
           </P>
 
-          <H2>NEXUS: Assessing AI Risk Across Third Parties</H2>
+          <H2>HatfieldRISQ: Assessing AI Risk Across Third Parties</H2>
           <P>
-            Hatfield.ai NEXUS brings AI into the third-party risk assessment
+            HatfieldRISQ brings AI into the third-party risk assessment
             itself. Its inherent risk questionnaire, configured by each client
             without code, screens engagements for AI use, agent autonomy and
             permissions, governance and human oversight, and model risk and
@@ -398,20 +406,20 @@ const AIGovernanceArticle = () => {
             detached technology checklist.
           </P>
 
-          <Callout label={"NEXUS \u2014 Embedded AI risk assessment"}>
+          <Callout label={"HatfieldRISQ \u2014 Embedded AI risk assessment"}>
             <p className="font-semibold text-xl">
               You cannot govern AI risk you cannot see.
             </p>
           </Callout>
 
-          <H2>SIGNAL: Monitoring a Changing Risk Environment</H2>
+          <H2>HatfieldIQ: Monitoring a Changing Risk Environment</H2>
           <P>
-            SIGNAL provides continuous surveillance and risk intelligence
+            HatfieldIQ provides continuous surveillance and risk intelligence
             concerning monitored companies, including cybersecurity incidents,
             regulatory developments, litigation, adverse media and material
             corporate changes. A third-party AI assessment is a point-in-time
             evaluation; subsequent developments may warrant reassessment.
-            Together, NEXUS and SIGNAL support a connected model: assess the
+            Together, HatfieldRISQ and HatfieldIQ support a connected model: assess the
             exposure, monitor what changes, govern the risk.
           </P>
 

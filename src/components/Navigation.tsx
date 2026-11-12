@@ -1,3 +1,11 @@
+// 2026-11-12 (Frank): PRODUCT RENAME. SIGNAL is now HatfieldIQ and NEXUS is now
+// HatfieldRISQ. Constant names and the dated comments below are unchanged.
+// 2026-11-12, later (Frank): the product pages are now served at /iq and /risq
+// (the old /signal and /nexus still open the same pages), and the three PDFs
+// are renamed HatfieldIQ.pdf, HatfieldRISQ.pdf and
+// HatfieldIQ_vs_HatfieldRISQ_Comparison.pdf (the old file names redirect to
+// the new ones, see vercel.json). This overrides any line in this file that
+// says the addresses or PDF file names are unchanged.
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -133,8 +141,8 @@ const Navigation = () => {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Capabilities", path: "/#capabilities" },
-    { name: "NEXUS", path: "/nexus" },
-    { name: "SIGNAL", path: "/signal" },
+    { name: "HatfieldRISQ", path: "/risq" }, // 2026-11-12: was /nexus, which still works
+    { name: "HatfieldIQ", path: "/iq" }, // 2026-11-12: was /signal, which still works
     { name: "News & Insights", path: "/insights" },
     { name: "About", path: "/about" },
     { name: "Consulting", path: "/consulting" },

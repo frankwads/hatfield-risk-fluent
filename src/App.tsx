@@ -38,7 +38,15 @@ const App = () => (
           {/* Products */}
           {/* 2026-10-19: /nexus added next to /signal; the header menu
               (src/components/Navigation.tsx) links to both. */}
+          {/* 2026-11-12 (Frank): the HatfieldRISQ page (formerly NEXUS) is now
+              at /risq. /nexus is kept and serves the same page. */}
+          <Route path="/risq" element={<Nexus />} />
           <Route path="/nexus" element={<Nexus />} />
+          {/* 2026-11-12 (Frank): the HatfieldIQ page (formerly SIGNAL) is now
+              at /iq, the address printed on the tear sheet. /signal is kept
+              and serves the same page, so tear sheets, email signatures and
+              emails already sent still work. */}
+          <Route path="/iq" element={<Signal />} />
           <Route path="/signal" element={<Signal />} />
 
           {/* Insights */}
