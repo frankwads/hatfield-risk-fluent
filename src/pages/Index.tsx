@@ -59,6 +59,27 @@ import { Play, ArrowRight } from "lucide-react";
 // dated history comments below, which keep the names in use when they were
 // written. The lower-case wordplay ("Signal. Not noise.", "You have a signal
 // problem.") stays.
+// 2026-11-13 (Frank): ONE BRAND BLUE ("let's go option B"; "hatfieldIQ and
+// HatfieldRISQ in commercial boxes need to be blue consistently and in
+// 'Together...' paragraph"). The brand blue is #2979FF, defined once as
+// --brand-blue in src/index.css. What changed in this file, and nothing else:
+//   - the "Together..." line, the two commercial buttons and the Platform
+//     Capabilities panel now draw each product name as the two-tone wordmark
+//     (ProductName: "Hatfield" in the colour of the text around it, "IQ" /
+//     "RISQ" in brand blue). This overrides the 2026-11-12 line above that
+//     says running text keeps the plain name, for those three places only;
+//   - the "INTRODUCING HatfieldIQ" label is two-tone in the same blue:
+//     "INTRODUCING" and "IQ" in brand blue, "Hatfield" in white;
+//   - the wordmarks that were already two-tone (ticker heading boxes, hero
+//     panels) pick up the brand blue through ProductName; nothing was edited
+//     here for them.
+// NOT changed: the trademark symbol still appears only on the two hero panel
+// names; the names inside the pale ticker boxes stay plain text (the brand
+// blue is too faint on that background); screen-reader titles, the video
+// title attributes and the download fallback text stay plain text.
+// NOT YET changed, waiting on src/components/ui/button.tsx: the frames round
+// "Explore Capabilities" and "INTRODUCING HatfieldIQ". Both stay
+// hsl(215,65%,48%) so that the pair still match each other.
 
 // 2026-09-19: Commercial video (button now labelled "Hatfield.ai Commercial",
 // see the button comment below). Served as a static file from
@@ -675,8 +696,12 @@ const Index = () => {
 
               {/* Block 3: "Together..." line + actions (left column, bottom) */}
               <div className="lg:col-start-1 lg:row-start-2 lg:self-start">
+                {/* 2026-11-13 (Frank): the two product names in this line
+                    are the two-tone wordmark, "RISQ" and "IQ" in brand blue.
+                    Wording unchanged. */}
                 <p className="text-lg lg:text-xl text-foreground font-semibold mb-6 leading-relaxed">
-                  Together, HatfieldRISQ and HatfieldIQ give organizations a connected view
+                  Together, <ProductName product="RISQ" onDark /> and{" "}
+                  <ProductName product="IQ" onDark /> give organizations a connected view
                   of third-party risk — assess what you know, monitor what
                   changes, and act on what matters.
                 </p>
@@ -733,15 +758,23 @@ const Index = () => {
                       vertical dividers that used to flank the link are
                       removed, since the frame now does that job. Wording,
                       link target (/signal), arrow and hover behaviour are
-                      unchanged. */}
+                      unchanged.
+                      2026-11-13 (Frank): the top line is two-tone in the
+                      brand blue (--brand-blue, src/index.css): "INTRODUCING"
+                      and "IQ" in brand blue, "Hatfield" in white. It was all
+                      one accent blue, hsl(215,65%,48%). The letter spacing
+                      and size of the line are unchanged. The frame colour is
+                      unchanged for now (see the note at the top of this
+                      file). */}
                   <a
                     href="/iq"
                     className="group flex items-center h-11 px-4 rounded-md border border-[hsl(215,65%,48%)] transition-opacity duration-300 hover:opacity-80"
                     aria-label="Introducing HatfieldIQ — Enterprise Intelligence"
                   >
                     <span className="flex flex-col text-left">
-                      <span className="text-xs tracking-[0.18em] font-semibold text-accent">
-                        INTRODUCING HatfieldIQ
+                      <span className="text-xs tracking-[0.18em] font-semibold text-[color:hsl(var(--brand-blue))]">
+                        INTRODUCING{" "}
+                        <span className="text-foreground">Hatfield</span>IQ
                       </span>
 
                       <span className="text-sm text-foreground font-medium whitespace-nowrap">
@@ -821,7 +854,13 @@ const Index = () => {
                       next to the new SIGNAL one below. The title attribute,
                       hidden dialog title/description and the no-video
                       fallback link text are renamed with it. Video file
-                      unchanged. */}
+                      unchanged.
+                      2026-11-13 (Frank): the product name on this button and
+                      on the HatfieldIQ Commercial button below is the
+                      two-tone wordmark, "RISQ" / "IQ" in brand blue. The
+                      name and the word "Commercial" share one <span> so the
+                      space between them is kept (a button lays its contents
+                      out in a row and would otherwise drop it). */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -830,7 +869,9 @@ const Index = () => {
                         className="text-base px-6 whitespace-nowrap"
                       >
                         <Play className="mr-2" size={18} />
-                        HatfieldRISQ Commercial
+                        <span>
+                          <ProductName product="RISQ" onDark /> Commercial
+                        </span>
                       </Button>
                     </DialogTrigger>
 
@@ -872,7 +913,9 @@ const Index = () => {
                         className="text-base px-6 whitespace-nowrap"
                       >
                         <Play className="mr-2" size={18} />
-                        HatfieldIQ Commercial
+                        <span>
+                          <ProductName product="IQ" onDark /> Commercial
+                        </span>
                       </Button>
                     </DialogTrigger>
 
@@ -953,7 +996,10 @@ const Index = () => {
                   and focus outline), with the PdfIcon on the right. The
                   whole panel is a link that opens the SIGNAL vs NEXUS
                   comparison PDF in a new tab (COMPARISON_PDF_SRC, top of
-                  this file). Wording and position unchanged. */}
+                  this file). Wording and position unchanged.
+                  2026-11-13 (Frank): the four product names in this panel
+                  are the two-tone wordmark, "IQ" / "RISQ" in brand blue.
+                  Wording unchanged. */}
               <a
                 href={COMPARISON_PDF_SRC}
                 target="_blank"
@@ -964,12 +1010,13 @@ const Index = () => {
                 <span className="flex-1 space-y-5">
                   <p className="text-lg text-muted-foreground leading-relaxed">
                     <strong className="font-semibold text-foreground">
-                      Discover how HatfieldIQ and HatfieldRISQ work together.
+                      Discover how <ProductName product="IQ" onDark /> and{" "}
+                      <ProductName product="RISQ" onDark /> work together.
                     </strong>{" "}
-                    HatfieldIQ delivers continuous company intelligence: it
+                    <ProductName product="IQ" onDark /> delivers continuous company intelligence: it
                     identifies emerging risks and explains what matters across
-                    financial, regulatory, cybersecurity and other developments.
-                    HatfieldRISQ connects that intelligence to your third-party
+                    financial, regulatory, cybersecurity and other developments.{" "}
+                    <ProductName product="RISQ" onDark /> connects that intelligence to your third-party
                     relationships, so risk assessment, governance and action rest
                     on it.
                   </p>

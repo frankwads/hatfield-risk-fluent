@@ -56,11 +56,34 @@ import logoBlack from "@/assets/h-logo-black.png";
 // on the product pages and tear sheets: the lighter blue over the dark
 // header, the deeper blue once the header turns light. Other items are
 // returned unchanged.
-const navLabel = (name: string, onLight: boolean) =>
+// 2026-11-13 (Frank): ONE BRAND BLUE ("let's go option B"). Every blue in
+// this header is now the brand blue, #2979FF, defined once as --brand-blue
+// in src/index.css:
+//   - ".ai" in the logo;
+//   - the "IQ" / "RISQ" endings in the menu;
+//   - the menu item for the page you are on;
+//   - the colour a menu item takes when the pointer is over it.
+// Before today ".ai", the current page and hover used the site accent,
+// hsl(215,65%,48%), and the endings used two blues written into this file
+// (#5A8CFF over the dark header, #2F6BFF over the light one). The brand blue
+// reads on both, so the dark-header / light-header split is gone for blue;
+// it is kept for the dark and white text.
+// Also 2026-11-13 (Frank, "1. yes"): blue menu text is one weight bolder
+// (semibold instead of medium) so that it is easier to read over the grey
+// header bar: the current-page item and the "IQ" / "RISQ" endings, on
+// desktop and in the phone menu. The current-page item is therefore a
+// pixel or two wider than it was.
+// The two constants below are written out in full, not built from pieces,
+// because Tailwind only generates a class it can find as a whole word in
+// the source.
+const BRAND_TEXT = "text-[color:hsl(var(--brand-blue))]";
+const BRAND_HOVER = "hover:text-[color:hsl(var(--brand-blue))]";
+
+const navLabel = (name: string) =>
   name.startsWith("Hatfield") && name.length > "Hatfield".length ? (
     <>
       Hatfield
-      <span className={onLight ? "text-[#2F6BFF]" : "text-[#5A8CFF]"}>
+      <span className={`font-semibold ${BRAND_TEXT}`}>
         {name.slice("Hatfield".length)}
       </span>
     </>
@@ -190,15 +213,7 @@ const Navigation = () => {
               }`}
             >
               Hatfield
-              <span
-                className={
-                  isDarkText
-                    ? "text-[hsl(215,65%,48%)]"
-                    : "text-accent"
-                }
-              >
-                .ai
-              </span>
+              <span className={BRAND_TEXT}>.ai</span>
             </div>
 
             <div
@@ -218,17 +233,15 @@ const Navigation = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-sm font-medium transition-colors duration-300 ${
+                className={`text-sm transition-colors duration-300 ${
                   isActive(item.path)
-                    ? isDarkText
-                      ? "text-[hsl(215,65%,48%)]"
-                      : "text-accent"
+                    ? `font-semibold ${BRAND_TEXT}`
                     : isDarkText
-                      ? "text-[hsl(215,45%,15%)] hover:text-[hsl(215,65%,48%)]"
-                      : "text-foreground hover:text-accent"
+                      ? `font-medium text-[hsl(215,45%,15%)] ${BRAND_HOVER}`
+                      : `font-medium text-foreground ${BRAND_HOVER}`
                 }`}
               >
-                {navLabel(item.name, isDarkText)}
+                {navLabel(item.name)}
               </Link>
             ))}
 
@@ -276,13 +289,13 @@ const Navigation = () => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block py-2 text-sm font-medium ${
+                className={`block py-2 text-sm ${
                   isActive(item.path)
-                    ? "text-accent"
-                    : "text-foreground"
+                    ? `font-semibold ${BRAND_TEXT}`
+                    : "font-medium text-foreground"
                 }`}
               >
-                {navLabel(item.name, false)}
+                {navLabel(item.name)}
               </Link>
             ))}
 

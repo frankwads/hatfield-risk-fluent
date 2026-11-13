@@ -14,6 +14,9 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
 import AdvisoryBoard from "../components/AdvisoryBoard";
+// 2026-11-13 (Frank): the shared product wordmark, for the two tear sheet
+// buttons (see the TEAR_SHEETS note below).
+import ProductName from "@/components/ProductName";
 // 2026-10-13: ArrowRight for the AI Governance card's "Explore Our
 // Framework" button (same lucide-react icon set Index.tsx uses).
 import { ArrowRight } from "lucide-react";
@@ -27,9 +30,14 @@ const frankPhoto = "/advisors/Frank_elite.jpg";
 // router would treat the address as a page and show the 404 again.
 // The paths are the same files the homepage hero boxes open, so one copy
 // of each PDF serves the whole site.
-const TEAR_SHEETS = [
-  { label: "HatfieldRISQ", href: "/docs/HatfieldRISQ.pdf" },
-  { label: "HatfieldIQ", href: "/docs/HatfieldIQ.pdf" },
+// 2026-11-13 (Frank): ONE BRAND BLUE. Each button now shows its product name
+// as the two-tone wordmark (ProductName): "Hatfield" in the button's own
+// text colour, "RISQ" / "IQ" in the brand blue (--brand-blue, src/index.css).
+// "product" says which wordmark to draw; "label" is kept as the list key.
+// The buttons, their links and their order are unchanged.
+const TEAR_SHEETS: { label: string; product: "RISQ" | "IQ"; href: string }[] = [
+  { label: "HatfieldRISQ", product: "RISQ", href: "/docs/HatfieldRISQ.pdf" },
+  { label: "HatfieldIQ", product: "IQ", href: "/docs/HatfieldIQ.pdf" },
 ];
 
 const About = () => {
@@ -276,7 +284,7 @@ const About = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {sheet.label}
+                        <ProductName product={sheet.product} />
                       </a>
                     </Button>
                   ))}

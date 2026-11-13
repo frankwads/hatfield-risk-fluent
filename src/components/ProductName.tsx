@@ -8,9 +8,18 @@
 // bands that name a product, and by the homepage ticker and hero panels.
 // Running paragraphs, tables and bullet lists keep the plain name.
 //
+// 2026-11-13 (Frank): ONE BRAND BLUE ("let's go option B"). "IQ" / "RISQ"
+// are now drawn in the site's brand blue, #2979FF, on every background. The
+// colour is defined once, as --brand-blue in src/index.css, and read here.
+// Before today this file held two blues of its own: #5A8CFF on navy
+// backgrounds (onDark) and #2F6BFF on light ones. Both are retired; the one
+// brand blue reads on navy and on white alike.
+// The onDark prop is still accepted, so every existing caller keeps
+// compiling, but it no longer changes anything.
+//
 //   product  "IQ" or "RISQ"
 //   tm       add the trademark symbol (wordmark positions only)
-//   onDark   lighter blue, for navy backgrounds
+//   onDark   accepted for existing callers; no longer changes the colour
 //   className  extra classes for placement (for example a text colour)
 
 type ProductNameProps = {
@@ -25,7 +34,6 @@ const PRODUCT_NAME_FONT = 'Inter, "Segoe UI", Helvetica, Arial, sans-serif';
 const ProductName = ({
   product,
   tm = false,
-  onDark = false,
   className = "",
 }: ProductNameProps) => (
   <span
@@ -33,9 +41,7 @@ const ProductName = ({
     style={{ fontFamily: PRODUCT_NAME_FONT }}
   >
     Hatfield
-    <span className={onDark ? "text-[#5A8CFF]" : "text-[#2F6BFF]"}>
-      {product}
-    </span>
+    <span className="text-[color:hsl(var(--brand-blue))]">{product}</span>
     {tm && (
       <sup className="ml-[2px] text-[0.42em] font-normal opacity-70">
         &trade;
