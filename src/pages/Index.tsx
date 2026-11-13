@@ -27,7 +27,7 @@ import heroNetwork from "@/assets/hero-network.jpg";
 import logoColor from "@/assets/logo-color.png";
 import heroHLogo from "@/assets/hero-h-logo.png";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
-import { Play, ArrowRight } from "lucide-react";
+import { Play } from "lucide-react";
 
 // 2026-11-12 (Frank): PRODUCT RENAME. SIGNAL is now HatfieldIQ and NEXUS is
 // now HatfieldRISQ ("rebrand both"; "visible wording only"). What changed in
@@ -68,8 +68,6 @@ import { Play, ArrowRight } from "lucide-react";
 //     (ProductName: "Hatfield" in the colour of the text around it, "IQ" /
 //     "RISQ" in brand blue). This overrides the 2026-11-12 line above that
 //     says running text keeps the plain name, for those three places only;
-//   - the "INTRODUCING HatfieldIQ" label is two-tone in the same blue:
-//     "INTRODUCING" and "IQ" in brand blue, "Hatfield" in white;
 //   - the wordmarks that were already two-tone (ticker heading boxes, hero
 //     panels) pick up the brand blue through ProductName; nothing was edited
 //     here for them.
@@ -77,9 +75,14 @@ import { Play, ArrowRight } from "lucide-react";
 // names; the names inside the pale ticker boxes stay plain text (the brand
 // blue is too faint on that background); screen-reader titles, the video
 // title attributes and the download fallback text stay plain text.
-// NOT YET changed, waiting on src/components/ui/button.tsx: the frames round
-// "Explore Capabilities" and "INTRODUCING HatfieldIQ". Both stay
-// hsl(215,65%,48%) so that the pair still match each other.
+// 2026-11-13, later (Frank): "can we remove these 2 links". The "Explore
+// Capabilities" button and the framed "INTRODUCING HatfieldIQ / Enterprise
+// Intelligence" link are removed from the hero. The three video buttons
+// stay, in the same order. Both destinations are still one click away:
+// Capabilities from the header menu, and the HatfieldIQ page from the header
+// menu and from the HatfieldIQ heading box in the ticker. The ArrowRight icon
+// was used only by those two links, so it is no longer imported. Dated
+// comments further down that describe the two links are history.
 
 // 2026-09-19: Commercial video (button now labelled "Hatfield.ai Commercial",
 // see the button comment below). Served as a static file from
@@ -723,70 +726,11 @@ const Index = () => {
                     Order, labels, sizes and behaviour are unchanged. On a
                     phone the four still stack one per line. */}
                 <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4">
-                  {/* 2026-10-06 (Frank): "the explore capabilities after
-                      landing on capabilities exits when clicking back".
-                      Explore Capabilities is now a link to /#capabilities
-                      (Button asChild + Link, the same pattern as "Schedule a
-                      Demo" at the bottom of this page) instead of an
-                      onClick scrollIntoView. The link records a history
-                      entry, and the scrolling is done by the Capabilities
-                      hash rule in src/components/Navigation.tsx, the same
-                      rule the header Capabilities link uses. So Back now
-                      returns to the top of the homepage instead of leaving
-                      the site. Look, label and position unchanged. */}
-                  <Button
-                    asChild
-                    size="lg"
-                    className="text-base px-6 whitespace-nowrap"
-                  >
-                    <Link to="/#capabilities">
-                      Explore Capabilities <ArrowRight className="ml-2" size={18} />
-                    </Link>
-                  </Button>
-
-                  {/* SIGNAL Product Introduction */}
-                  {/* 2026-09-19 (rev 2): moved from last place to second,
-                      directly after Explore Capabilities. Dividers on both
-                      sides set it apart from the buttons around it.
-                      2026-10-19 (Frank): "put a blue frame around INTRODUCING
-                      SIGNAL box the same as Explore capabilities box". The
-                      link is now framed: a 1px border in the page's accent
-                      blue (hsl(215,65%,48%), the same blue as the ticker's
-                      focus outline and the Processing Intelligence bullets),
-                      rounded-md corners and h-11 to sit level with the
-                      Explore Capabilities button beside it. The two thin
-                      vertical dividers that used to flank the link are
-                      removed, since the frame now does that job. Wording,
-                      link target (/signal), arrow and hover behaviour are
-                      unchanged.
-                      2026-11-13 (Frank): the top line is two-tone in the
-                      brand blue (--brand-blue, src/index.css): "INTRODUCING"
-                      and "IQ" in brand blue, "Hatfield" in white. It was all
-                      one accent blue, hsl(215,65%,48%). The letter spacing
-                      and size of the line are unchanged. The frame colour is
-                      unchanged for now (see the note at the top of this
-                      file). */}
-                  <a
-                    href="/iq"
-                    className="group flex items-center h-11 px-4 rounded-md border border-[hsl(215,65%,48%)] transition-opacity duration-300 hover:opacity-80"
-                    aria-label="Introducing HatfieldIQ — Enterprise Intelligence"
-                  >
-                    <span className="flex flex-col text-left">
-                      <span className="text-xs tracking-[0.18em] font-semibold text-[color:hsl(var(--brand-blue))]">
-                        INTRODUCING{" "}
-                        <span className="text-foreground">Hatfield</span>IQ
-                      </span>
-
-                      <span className="text-sm text-foreground font-medium whitespace-nowrap">
-                        Enterprise Intelligence
-                        <ArrowRight
-                          className="inline-block ml-2 transition-transform duration-300 group-hover:translate-x-1"
-                          size={16}
-                        />
-                      </span>
-                    </span>
-                  </a>
-
+                  {/* 2026-11-13 (Frank): "can we remove these 2 links". The
+                      "Explore Capabilities" button and the framed
+                      "INTRODUCING HatfieldIQ" link that opened this row are
+                      removed. The row now holds the three video buttons
+                      only. */}
                   {/* 2026-09-19: label renamed from "Watch Introduction" to
                       "Hatfield.ai Introduction" (Frank). Video unchanged.
                       2026-09-22 (Frank): the video now starts playing by itself
