@@ -83,6 +83,11 @@ import { Play } from "lucide-react";
 // menu and from the HatfieldIQ heading box in the ticker. The ArrowRight icon
 // was used only by those two links, so it is no longer imported. Dated
 // comments further down that describe the two links are history.
+// 2026-11-13, later (Frank): "the .ai ... is still white instead of blue".
+// ".ai" is now brand blue wherever the company name Hatfield.ai is shown in
+// the hero, matching ".ai" in the header logo: in the opening sentence
+// ("Hatfield.ai(TM) brings ...") and on the "Hatfield.ai Introduction" video
+// button. Screen-reader titles and the video title stay plain text.
 
 // 2026-09-19: Commercial video (button now labelled "Hatfield.ai Commercial",
 // see the button comment below). Served as a static file from
@@ -609,9 +614,11 @@ const Index = () => {
                     colour and size as the sentence around them.
                     2026-10-01 (option B): body copy is text-lg (was
                     text-lg/md:text-xl) so the hero is short enough to share
-                    the screen with the banner. */}
+                    the screen with the banner.
+                    2026-11-13 (Frank): ".ai" in brand blue, as in the
+                    header logo. Wording unchanged. */}
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  Hatfield.ai&trade; brings third-party risk management and real-world
+                  Hatfield<span className="text-[color:hsl(var(--brand-blue))]">.ai</span>&trade; brings third-party risk management and real-world
                   risk intelligence together on one AI-native platform.
                 </p>
               </div>
@@ -747,7 +754,10 @@ const Index = () => {
                       the sr-only class, so they are invisible on screen and
                       the pop-up looks exactly as before. They clear the
                       browser warnings "DialogContent requires a DialogTitle"
-                      and "Missing Description". */}
+                      and "Missing Description".
+                      2026-11-13 (Frank): ".ai" on this button is brand blue,
+                      as in the header logo. Name and "Introduction" share
+                      one <span> so the space between them is kept. */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -756,7 +766,9 @@ const Index = () => {
                         className="text-base px-6 whitespace-nowrap"
                       >
                         <Play className="mr-2" size={18} />
-                        Hatfield.ai Introduction
+                        <span>
+                          Hatfield<span className="text-[color:hsl(var(--brand-blue))]">.ai</span> Introduction
+                        </span>
                       </Button>
                     </DialogTrigger>
 
