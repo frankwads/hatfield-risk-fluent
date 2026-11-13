@@ -38,6 +38,17 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
+    /* 2026-11-13 (Frank): ONE BRAND BLUE ("let's go option B").
+       #2979FF written as HSL. It is the blue of ".ai" in the logo, of "IQ"
+       and "RISQ" in the product wordmark, of the current page and the hover
+       colour in the header menu, and of the homepage "INTRODUCING" label.
+       Read by src/components/ProductName.tsx, src/components/Navigation.tsx
+       and src/pages/Index.tsx as hsl(var(--brand-blue)). To change the
+       brand blue everywhere, change this one line.
+       --primary, --accent and --ring above are deliberately NOT changed:
+       they colour the standard buttons and focus rings on every page. */
+    --brand-blue: 217.6 100% 58%;
+
     /* Design tokens - Blue accent palette */
     --deep-blue: 215 45% 15%;
     --blue-dark: 212 40% 25%;
