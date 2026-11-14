@@ -17,6 +17,12 @@
 // The onDark prop is still accepted, so every existing caller keeps
 // compiling, but it no longer changes anything.
 //
+// 2026-11-14 (Frank): "yes let's make one step bolder". "IQ" / "RISQ" are
+// drawn one weight step heavier than "Hatfield": bold (700) next to its
+// semibold (600). In the brand blue on a dark background the endings had
+// looked thinner than the white text beside them. Applies wherever the
+// wordmark is drawn: homepage, product-page headers, About page buttons.
+//
 //   product  "IQ" or "RISQ"
 //   tm       add the trademark symbol (wordmark positions only)
 //   onDark   accepted for existing callers; no longer changes the colour
@@ -41,7 +47,7 @@ const ProductName = ({
     style={{ fontFamily: PRODUCT_NAME_FONT }}
   >
     Hatfield
-    <span className="text-[color:hsl(var(--brand-blue))]">{product}</span>
+    <span className="font-bold text-[color:hsl(var(--brand-blue))]">{product}</span>
     {tm && (
       <sup className="ml-[2px] text-[0.42em] font-normal opacity-70">
         &trade;

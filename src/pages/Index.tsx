@@ -88,6 +88,10 @@ import { Play } from "lucide-react";
 // the hero, matching ".ai" in the header logo: in the opening sentence
 // ("Hatfield.ai(TM) brings ...") and on the "Hatfield.ai Introduction" video
 // button. Screen-reader titles and the video title stay plain text.
+// 2026-11-14 (Frank): "yes let's make one step bolder". Those two blue ".ai"
+// are one weight step heavier than the text around them: medium (500) in
+// the regular-weight sentence, semibold (600) on the button. The product
+// wordmarks on this page get the same treatment through ProductName.
 
 // 2026-09-19: Commercial video (button now labelled "Hatfield.ai Commercial",
 // see the button comment below). Served as a static file from
@@ -618,7 +622,7 @@ const Index = () => {
                     2026-11-13 (Frank): ".ai" in brand blue, as in the
                     header logo. Wording unchanged. */}
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  Hatfield<span className="text-[color:hsl(var(--brand-blue))]">.ai</span>&trade; brings third-party risk management and real-world
+                  Hatfield<span className="font-medium text-[color:hsl(var(--brand-blue))]">.ai</span>&trade; brings third-party risk management and real-world
                   risk intelligence together on one AI-native platform.
                 </p>
               </div>
@@ -767,7 +771,7 @@ const Index = () => {
                       >
                         <Play className="mr-2" size={18} />
                         <span>
-                          Hatfield<span className="text-[color:hsl(var(--brand-blue))]">.ai</span> Introduction
+                          Hatfield<span className="font-semibold text-[color:hsl(var(--brand-blue))]">.ai</span> Introduction
                         </span>
                       </Button>
                     </DialogTrigger>

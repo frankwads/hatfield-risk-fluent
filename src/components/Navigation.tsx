@@ -73,6 +73,11 @@ import logoBlack from "@/assets/h-logo-black.png";
 // header bar: the current-page item and the "IQ" / "RISQ" endings, on
 // desktop and in the phone menu. The current-page item is therefore a
 // pixel or two wider than it was.
+// 2026-11-14 (Frank): "yes let's make one step bolder". The blue endings
+// and ".ai" go one weight step heavier than they were: the "IQ" / "RISQ"
+// endings in the menu from semibold (600) to bold (700), and ".ai" in the
+// logo from bold (700) to extrabold (800). They had looked thinner than the
+// white text beside them. The current-page item keeps its semibold weight.
 // The two constants below are written out in full, not built from pieces,
 // because Tailwind only generates a class it can find as a whole word in
 // the source.
@@ -83,7 +88,7 @@ const navLabel = (name: string) =>
   name.startsWith("Hatfield") && name.length > "Hatfield".length ? (
     <>
       Hatfield
-      <span className={`font-semibold ${BRAND_TEXT}`}>
+      <span className={`font-bold ${BRAND_TEXT}`}>
         {name.slice("Hatfield".length)}
       </span>
     </>
@@ -213,7 +218,7 @@ const Navigation = () => {
               }`}
             >
               Hatfield
-              <span className={BRAND_TEXT}>.ai</span>
+              <span className={`font-extrabold ${BRAND_TEXT}`}>.ai</span>
             </div>
 
             <div
