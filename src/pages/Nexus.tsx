@@ -79,8 +79,8 @@
 //
 // PLAIN ASCII. As in Insights.tsx (2026-10-13), typographic characters are
 // written as escapes so the file survives the Windows codepage:
-//   in JavaScript strings  — (em dash)  ’ (apostrophe)
-//                          “ and ” (curly double quotes)
+//   in JavaScript strings  \u2014 (em dash)  \u2019 (apostrophe)
+//                          \u201C and \u201D (curly double quotes)
 //   in page text           &mdash; &rsquo; &ldquo; &rdquo;
 // Keep new copy in this file to the same rule.
 //
@@ -111,7 +111,7 @@ const PRICING_ROWS: PricingRow[] = [
   { product: "CLMS Add-on", price: "+$35,000" },
   { product: "HatfieldIQ Surveillance", price: "Included in HatfieldRISQ" },
   { product: "Vendor Portal", price: "Included in HatfieldRISQ" },
-  { product: "Total Annual Subscription", price: "$85,000–$120,000", total: true },
+  { product: "Total Annual Subscription", price: "$85,000\u2013$120,000", total: true },
 ];
 
 /** Tear sheet page 2: the four "Included with NEXUS" columns. `detail`
@@ -182,12 +182,12 @@ const INCLUDED: { title: string; items: Capability[] }[] = [
  *  sheet's order, read down the left column then the right. */
 const LIFECYCLE: { moment: string; what: string }[] = [
   {
-    moment: "“I need a third party for this.”",
+    moment: "\u201CI need a third party for this.\u201D",
     what: "A requester talks or types to the Digital Service Agent. It reads the statement of work, classifies the purchase and guides intake.",
   },
   {
-    moment: "“Where is my request?”",
-    what: "The same agent answers in plain English, by text or voice, within each user’s role and business unit.",
+    moment: "\u201CWhere is my request?\u201D",
+    what: "The same agent answers in plain English, by text or voice, within each user\u2019s role and business unit.",
   },
   {
     moment: "The third party has to respond.",
@@ -195,7 +195,7 @@ const LIFECYCLE: { moment: string; what: string }[] = [
   },
   {
     moment: "The evidence arrives.",
-    what: "AI reads the evidence, extracts the controls and compares them with the third party’s responses.",
+    what: "AI reads the evidence, extracts the controls and compares them with the third party\u2019s responses.",
   },
   {
     moment: "Legal asks what changed.",
@@ -685,7 +685,7 @@ const Nexus = () => {
               Book a briefing
             </a>
 
-            {"  ·  "}
+            {"  \u00b7  "}
 
             <a
               href={NEXUS_PDF_URL}
@@ -696,7 +696,7 @@ const Nexus = () => {
               HatfieldRISQ overview (PDF)
             </a>
 
-            {"  ·  "}
+            {"  \u00b7  "}
 
             <a
               href="/iq"
