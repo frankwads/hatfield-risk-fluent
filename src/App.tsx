@@ -21,6 +21,9 @@ import RealTimeRiskMonitoring from "./pages/insights/RealTimeRiskMonitoring";
 // the new AI Governance & Assurance page. Both files live in src/pages/.
 import AIGovernanceArticle from "./pages/AIGovernanceArticle";
 import AIGovernance from "./pages/AIGovernance";
+// 2026-11-17 (Frank): "In Just One Week, the World Changed" article,
+// src/pages/insights/OneWeekExposure.tsx.
+import OneWeekExposure from "./pages/insights/OneWeekExposure";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +68,12 @@ const App = () => (
           <Route
             path="/insights/ai-intelligence-without-surrendering-control"
             element={<AIGovernanceArticle />}
+          />
+          {/* 2026-11-17: "In Just One Week" article. The address matches
+              the card in src/pages/Insights.tsx. */}
+          <Route
+            path="/insights/one-week-the-world-changed"
+            element={<OneWeekExposure />}
           />
 
           {/* Corporate */}

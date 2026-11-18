@@ -22,7 +22,21 @@ const Insights = () => {
   // 13 October 2026. "5 min read" is counted from the article's final text
   // and must stay in step with READ_TIME in
   // src/pages/AIGovernanceArticle.tsx. The two existing cards are unchanged.
+  // 2026-11-17 (Frank, "In Just One Week" article): fourth article added,
+  // newest first. With four cards the desktop grid shows a row of three
+  // and one card on the second row (grid unchanged). Title, date and
+  // "4 min read" must stay in step with ARTICLE_TITLE, PUBLISHED_ISO and
+  // READ_TIME in src/pages/insights/OneWeekExposure.tsx.
   const articles = [
+    {
+      title:
+        "In Just One Week, the World Changed. Did Your Understanding of Risk Keep Up?",
+      excerpt:
+        "A CEO resignation, cloud and banking outages, a nationwide flight ground stop and the return of endemic measles: one week that shows why your third party\u2019s problem is your problem.",
+      date: "2026-11-17",
+      readTime: "4 min read",
+      path: "/insights/one-week-the-world-changed",
+    },
     {
       title:
         "AI at the Crossroads: Why Greater Intelligence Demands Greater Control",
