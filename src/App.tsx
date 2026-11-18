@@ -24,6 +24,10 @@ import AIGovernance from "./pages/AIGovernance";
 // 2026-11-17 (Frank): "In Just One Week, the World Changed" article,
 // src/pages/insights/OneWeekExposure.tsx.
 import OneWeekExposure from "./pages/insights/OneWeekExposure";
+// 2026-11-18 (Frank): HatfieldIQ launch press release,
+// src/pages/insights/HatfieldIQLaunch.tsx. Linked from the News & Insights
+// card and the announcement strip on the homepage.
+import HatfieldIQLaunch from "./pages/insights/HatfieldIQLaunch";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +78,13 @@ const App = () => (
           <Route
             path="/insights/one-week-the-world-changed"
             element={<OneWeekExposure />}
+          />
+          {/* 2026-11-18: HatfieldIQ launch press release. The address
+              matches the card in src/pages/Insights.tsx and the homepage
+              announcement strip (src/pages/Index.tsx). */}
+          <Route
+            path="/insights/hatfieldiq-launch"
+            element={<HatfieldIQLaunch />}
           />
 
           {/* Corporate */}

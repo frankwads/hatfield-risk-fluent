@@ -27,7 +27,31 @@ const Insights = () => {
   // and one card on the second row (grid unchanged). Title, date and
   // "4 min read" must stay in step with ARTICLE_TITLE, PUBLISHED_ISO and
   // READ_TIME in src/pages/insights/OneWeekExposure.tsx.
-  const articles = [
+  // 2026-11-18 (Frank, "add the press release to news and insights"): the
+  // HatfieldIQ launch press release is the first card, labelled "Press
+  // release" (kind: "press") so it reads differently from the articles. Its
+  // page is src/pages/insights/HatfieldIQLaunch.tsx; title, date and "4 min
+  // read" must stay in step with ARTICLE_TITLE, PUBLISHED_ISO and READ_TIME
+  // there. Articles carry no kind and show no label. Same date as "In Just
+  // One Week"; the release is listed first.
+  const articles: {
+    title: string;
+    excerpt: string;
+    date: string;
+    readTime: string;
+    path: string;
+    kind?: "press";
+  }[] = [
+    {
+      title:
+        "Hatfield.ai Launches HatfieldIQ\u2122, an AI-Powered Global Company Intelligence Platform",
+      excerpt:
+        "Integrated intelligence from ~900 curated sources connects company developments with the geopolitical, economic, regulatory and market forces shaping business.",
+      date: "2026-11-17",
+      readTime: "4 min read",
+      path: "/insights/hatfieldiq-launch",
+      kind: "press",
+    },
     {
       title:
         "In Just One Week, the World Changed. Did Your Understanding of Risk Keep Up?",
@@ -98,6 +122,14 @@ const Insights = () => {
                 <Card className="border-border hover:shadow-xl transition-all group cursor-pointer h-full">
                   <CardContent className="pt-6">
                     <div className="mb-4">
+                      {article.kind === "press" && (
+                        <Badge
+                          variant="secondary"
+                          className="mb-3 uppercase tracking-wider text-[10px]"
+                        >
+                          Press release
+                        </Badge>
+                      )}
                       <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-accent transition-colors">
                         {article.title}
                       </h3>

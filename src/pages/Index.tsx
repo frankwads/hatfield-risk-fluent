@@ -27,7 +27,7 @@ import heroNetwork from "@/assets/hero-network.jpg";
 import logoColor from "@/assets/logo-color.png";
 import heroHLogo from "@/assets/hero-h-logo.png";
 import hero3dLogo from "@/assets/hero-3d-logo.png";
-import { Play } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 
 // 2026-11-12 (Frank): PRODUCT RENAME. SIGNAL is now HatfieldIQ and NEXUS is
 // now HatfieldRISQ ("rebrand both"; "visible wording only"). What changed in
@@ -92,6 +92,18 @@ import { Play } from "lucide-react";
 // are one weight step heavier than the text around them: medium (500) in
 // the regular-weight sentence, semibold (600) on the button. The product
 // wordmarks on this page get the same treatment through ProductName.
+
+// 2026-11-18 (Frank): "have something on homepage announcing the launch and
+// linking to the press release". A slim announcement strip sits above the
+// hero headline: a blue "NEW" tag, "Hatfield.ai launches HatfieldIQ - read
+// the announcement" and an arrow, linking to the press release page
+// (LAUNCH_RELEASE_PATH, src/pages/insights/HatfieldIQLaunch.tsx). The
+// product name is the two-tone wordmark WITHOUT the trademark symbol (the
+// symbol stays on the two hero panel names only, per the 2026-11-12 rule
+// above). One line tall; the hero already centres its content, so the hero
+// and ticker still share the first screen. To retire the strip later, delete
+// the block marked "LAUNCH ANNOUNCEMENT" in the hero; nothing else uses it.
+const LAUNCH_RELEASE_PATH = "/insights/hatfieldiq-launch";
 
 // 2026-09-19: Commercial video (button now labelled "Hatfield.ai Commercial",
 // see the button comment below). Served as a static file from
@@ -603,6 +615,27 @@ const Index = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-6">
               {/* Block 1: headline + opening sentence (left column, top) */}
               <div className="lg:col-start-1 lg:row-start-1 lg:self-end">
+                {/* LAUNCH ANNOUNCEMENT (2026-11-18) - see LAUNCH_RELEASE_PATH. */}
+                <Link
+                  to={LAUNCH_RELEASE_PATH}
+                  className="group mb-5 inline-flex max-w-full items-center gap-3 rounded-full border border-white/25 bg-white/5 py-1.5 pl-1.5 pr-4 text-sm text-muted-foreground transition-colors duration-300 hover:bg-white/10 hover:border-white/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  <span className="shrink-0 rounded-full bg-[color:hsl(var(--brand-blue))] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white">
+                    New
+                  </span>
+                  <span className="min-w-0">
+                    Hatfield<span className="font-medium text-[color:hsl(var(--brand-blue))]">.ai</span>{" "}
+                    launches{" "}
+                    <ProductName product="IQ" onDark className="text-foreground" />
+                    <span className="hidden sm:inline"> &mdash; read the announcement</span>
+                  </span>
+                  <ArrowRight
+                    size={16}
+                    aria-hidden="true"
+                    className="shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+                  />
+                </Link>
+
                 <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-foreground leading-tight mb-5">
                   AI-powered{" "}
                   <span className="whitespace-nowrap">third-party</span>{" "}
