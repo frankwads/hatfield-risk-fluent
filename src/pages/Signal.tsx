@@ -279,6 +279,42 @@
 //     working. Both routes are in src/App.tsx. signal.hatfield.ai (the app)
 //     is unchanged.
 //
+// 2026-11-17. PRICE TIERS, NOT NAMED PLANS (Frank: "change the pricing model
+// in tear sheet to reflect various pricing tiers instead of categories - may
+// be too confusing"; "make modification to pdf and also to website").
+//
+// 37. THE TABLE NOW SHOWS THE RATE PER COMPANY, NOT PLAN TOTALS. This
+//     supersedes the band names and band-top totals of item 26. The old rows
+//     ("Monitor - Up to 100 - $4,150") read as plans: a bank with 30
+//     companies saw $4,150 and actually pays $1,350. The rows are now the
+//     five tiers as the User Agreement states them - First 5 $50, Next 20
+//     $45, Next 75 $40, Next 100 $35, Above 200 $25, per company per month,
+//     with the annual rate (10 x) beside each - followed by three worked
+//     example portfolios (10, 40 and 150 companies, monthly and annual
+//     totals) and the free trial row. Plan names (Focus / Watch / Monitor /
+//     Portfolio / Enterprise) and "MOST POPULAR" no longer appear anywhere a
+//     visitor reads, including the calculator breakdown, the form estimate
+//     and the "You selected" line. Everything still derives from
+//     PRICE_BANDS; the example totals use the same monthlyFor().
+//
+// 38. THE PLAN KEYS STAY, INVISIBLY. PRICE_BANDS keeps `key`, and the form
+//     still posts `tier` (the key of the band the requested count falls in)
+//     alongside `companies`, because svc_registration_api reads both. Only
+//     the visible labels went; changing the posted keys is a server-side
+//     decision, not this page's.
+//
+// 39. "FROM AS LOW AS $25 A MONTH" IS GONE (supersedes the 2026-11-12 note at
+//     LOWEST_MONTHLY). Next to a table that opens at $50 it read like bait:
+//     $25 applies only above 200 companies. The narrative now says
+//     progressive pricing runs from $50 down to $25 per company a month,
+//     both figures read from PRICE_BANDS. The tear sheet page 1 says the
+//     same.
+//
+// 40. THE PROGRESSIVE NOTE carries the 30-company example (5 x $50 + 20 x
+//     $45 + 5 x $40 = $1,350), the case a rate table invites people to
+//     mis-multiply as 30 x $40. "Figures shown are for a full band" is gone
+//     because no band totals are shown any more.
+//
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
@@ -321,23 +357,36 @@ const SIGNAL_PDF_URL = "/docs/HatfieldIQ.pdf";
  * `rate` is whole US dollars per company per month and applies only to
  * company positions `from`..`to` (inclusive; `to` null = open-ended).
  * Keep in step with dal.TIERS and the Stripe graduated price.
+ * `key` is posted as `tier` and is never shown (item 38); no plan names.
  */
 type PriceBand = {
   key: string;
-  label: string;
   from: number;
   to: number | null;
   rate: number;
-  popular?: boolean;
 };
 
 const PRICE_BANDS: PriceBand[] = [
-  { key: "focus", label: "Focus", from: 1, to: 5, rate: 50 },
-  { key: "watch", label: "Watch", from: 6, to: 25, rate: 45 },
-  { key: "monitor", label: "Monitor", from: 26, to: 100, rate: 40, popular: true },
-  { key: "portfolio", label: "Portfolio", from: 101, to: 200, rate: 35 },
-  { key: "enterprise", label: "Enterprise", from: 201, to: null, rate: 25 },
+  { key: "focus", from: 1, to: 5, rate: 50 },
+  { key: "watch", from: 6, to: 25, rate: 45 },
+  { key: "monitor", from: 26, to: 100, rate: 40 },
+  { key: "portfolio", from: 101, to: 200, rate: 35 },
+  { key: "enterprise", from: 201, to: null, rate: 25 },
 ];
+
+/**
+ * Visible tier name (item 37): "First 5", "Next 20", "Next 75",
+ * "Next 100", "Above 200" - derived from the band edges, never typed.
+ */
+const bandName = (b: PriceBand) =>
+  b.from === 1
+    ? `First ${b.to}`
+    : b.to === null
+    ? `Above ${b.from - 1}`
+    : `Next ${b.to - b.from + 1}`;
+
+/** Worked example portfolios under the rate rows (item 37). */
+const EXAMPLE_PORTFOLIOS = [10, 40, 150];
 
 /** Annual prepaid = this many monthly payments (two months free). */
 const ANNUAL_MONTHS = 10;
@@ -371,87 +420,69 @@ const bandFor = (n: number) =>
   PRICE_BANDS.find((b) => n >= b.from && (b.to === null || n <= b.to)) ??
   PRICE_BANDS[0];
 
-/** "Companies" cell: "1-5", "201+". */
+/** Sub-line under a tier name: "companies 1-5", "companies 201+". */
 const rangeLabel = (b: PriceBand) =>
-  b.to === null ? `${b.from}+` : `${b.from}\u2013${b.to}`;
-
-/**
- * Keys the form may post as `tier`: the free trial, or the band the
- * requested company count falls in (item 29).
- */
-const TIERS = [
-  { key: "demo", label: "Trial" },
-  ...PRICE_BANDS.map((b) => ({ key: b.key, label: b.label })),
-] as const;
+  b.to === null ? `companies ${b.from}+` : `companies ${b.from}\u2013${b.to}`;
 
 /** Every paid subscription takes a billing interval. */
 const PRICED_TIERS = PRICE_BANDS.map((b) => b.key);
 
 /**
- * Table rows. Both pricing layouts render from this array, which is
- * DERIVED from PRICE_BANDS - there is no second copy of any figure.
+ * Table rows (item 37). Both pricing layouts render from this array,
+ * which is DERIVED from PRICE_BANDS - there is no second copy of any
+ * figure. `kind`: "rate" = a tier, per-company figures; "heading" = the
+ * example-portfolios caption; "example" = a worked portfolio total;
+ * "trial" = the free trial (the only row that is a button).
  */
-type TierRow = {
+type PriceRow = {
   key: string;
+  kind: "rate" | "heading" | "example" | "trial";
   label: string;
   note?: string;
-  companies: string;
   monthly: string;
-  monthlyNote?: string;
   annual: string;
-  annualNote?: string;
-  popular?: boolean;
 };
 
-const TIER_ROWS: TierRow[] = [
+const PRICE_ROWS: PriceRow[] = [
+  ...PRICE_BANDS.map(
+    (b): PriceRow => ({
+      key: b.key,
+      kind: "rate",
+      label: bandName(b),
+      note: rangeLabel(b),
+      monthly: usd(b.rate),
+      annual: usd(b.rate * ANNUAL_MONTHS),
+    })
+  ),
+  { key: "examples", kind: "heading", label: "Example portfolios", monthly: "", annual: "" },
+  ...EXAMPLE_PORTFOLIOS.map(
+    (n): PriceRow => ({
+      key: `ex-${n}`,
+      kind: "example",
+      label: `${n.toLocaleString("en-US")} companies`,
+      monthly: usd(monthlyFor(n)),
+      annual: usd(monthlyFor(n) * ANNUAL_MONTHS),
+    })
+  ),
   {
     key: "demo",
-    label: "Trial",
-    note: "read-only",
-    companies: "Pre-selected",
+    kind: "trial",
+    label: "Free Trial",
+    note: "pre-selected companies, read-only",
     monthly: "Free",
     annual: "14 calendar days",
   },
-  ...PRICE_BANDS.map((b, i): TierRow => {
-    // Band-top TOTALS, as the original table showed plan totals (Frank,
-    // 2026-11-05: "monthly and annual costs only the way the original did
-    // but with revised calculations"; blended per-company sub-lines
-    // removed the same day - the calculator carries the blended rate).
-    // The open-ended band shows the 200-company total plus the
-    // per-additional-company rate, as the old Enterprise row did.
-    if (b.to === null) {
-      const prevTop = monthlyFor(PRICE_BANDS[i - 1].to as number);
-      return {
-        key: b.key,
-        label: b.label,
-        companies: rangeLabel(b),
-        monthly: usd(prevTop),
-        monthlyNote: `+${usd(b.rate)}/addt\u2019l company`,
-        annual: usd(prevTop * ANNUAL_MONTHS),
-        annualNote: `+${usd(b.rate * ANNUAL_MONTHS)}/addt\u2019l company`,
-        popular: b.popular,
-      };
-    }
-    const total = monthlyFor(b.to);
-    return {
-      key: b.key,
-      label: b.label,
-      companies: `Up to ${b.to}`,
-      monthly: usd(total),
-      annual: usd(total * ANNUAL_MONTHS),
-      popular: b.popular,
-    };
-  }),
 ];
 
 /**
- * 2026-11-12 (Frank): the narrative line now reads "from as low as $25 a
- * month" (was "from just $50 a month"), matching the tear sheet. The figure
- * is the LOWEST band rate - today the 201+ band - read from PRICE_BANDS,
- * never a typed copy. It is the rate for companies above 200, not the
- * price of a small portfolio; the table and calculator show those.
+ * Narrative range (item 39): highest and lowest per-company rates, read
+ * from PRICE_BANDS. Replaces "from as low as $25 a month".
  */
-const LOWEST_MONTHLY = usd(Math.min(...PRICE_BANDS.map((b) => b.rate)));
+const HIGHEST_RATE = usd(Math.max(...PRICE_BANDS.map((b) => b.rate)));
+const LOWEST_RATE = usd(Math.min(...PRICE_BANDS.map((b) => b.rate)));
+
+/** The note's worked example (item 40): 30 companies. */
+const NOTE_EXAMPLE = 30;
 
 /**
  * Capabilities, as the tear sheet lists them (item 16). `detail` renders
@@ -591,9 +622,6 @@ const FALLBACK_SECTORS = [
   "Transportation & Logistics",
 ];
 
-const labelFor = (key: string) =>
-  TIERS.find((t) => t.key === key)?.label ?? "";
-
 type ApiResult = {
   ok: boolean;
   code: string;
@@ -682,18 +710,13 @@ const Signal = () => {
   };
 
   /**
-   * A band name in the table, or a trial button, pre-fills the form:
-   * the trial as before; a band as a paid subscription starting at that
-   * band's first company position (the prospect edits the count).
+   * The trial buttons and the Free Trial row pre-fill the form with the
+   * trial. Tier rows are no longer clickable (item 37: they are rates,
+   * not plans to pick); a paid request starts from the calculator or the
+   * form's company count.
    */
-  const selectTier = (tier: string) => {
-    if (tier === "demo") {
-      handleSubscriptionChange("demo");
-    } else {
-      const band = PRICE_BANDS.find((b) => b.key === tier);
-      handleSubscriptionChange("paid");
-      if (band) setCompaniesText(String(band.from));
-    }
+  const startTrial = () => {
+    handleSubscriptionChange("demo");
 
     window.setTimeout(() => {
       document
@@ -921,7 +944,7 @@ const Signal = () => {
             {/* Item 11: the term is in the button. */}
             <button
               type="button"
-              onClick={() => selectTier("demo")}
+              onClick={startTrial}
               className="inline-block px-[18px] py-[11px] rounded-[7px] border-0 cursor-pointer text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors whitespace-nowrap"
             >
               Start your free 14-calendar-day trial
@@ -1092,10 +1115,10 @@ const Signal = () => {
 
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
                   You pay for the companies you monitor, never for the seat. One
-                  subscription replaces a stack of feeds. Monitor companies
-                  from as low as {LOWEST_MONTHLY} a month, with no minimum commitment
-                  and unlimited users. Progressive volume pricing rewards you
-                  as your portfolio grows.
+                  subscription replaces a stack of feeds. Progressive pricing
+                  runs from {HIGHEST_RATE} down to {LOWEST_RATE} per company a
+                  month &mdash; the more you monitor, the less each company
+                  costs. No minimum commitment, unlimited users.
                 </p>
               </div>
 
@@ -1130,11 +1153,13 @@ const Signal = () => {
             </p>
           </div>
 
-          {/* DESKTOP MATRIX - rendered from TIER_ROWS and DOMAINS */}
-          <div className="hidden xl:grid grid-cols-[118px_124px_120px_136px_repeat(4,minmax(0,1fr))] bg-white border-y border-[#E2E7EF]">
+          {/* DESKTOP MATRIX - rendered from PRICE_ROWS and DOMAINS (item 37):
+              three pricing columns (tier, monthly, annual), then the four
+              capability columns spanning every pricing row. */}
+          <div className="hidden xl:grid grid-cols-[136px_104px_128px_repeat(4,minmax(0,1fr))] bg-white border-y border-[#E2E7EF]">
 
             {/* GROUP HEADERS */}
-            <div className="col-span-4 px-4 py-[15px] border-b border-[#E2E7EF] text-[11px] font-semibold tracking-[0.13em] text-[#667085] uppercase">
+            <div className="col-span-3 px-4 py-[15px] border-b border-[#E2E7EF] text-[11px] font-semibold tracking-[0.13em] text-[#667085] uppercase">
               Subscription
             </div>
 
@@ -1144,42 +1169,63 @@ const Signal = () => {
 
             {/* COLUMN HEADERS */}
             {[
-              "Plan",
-              "Companies",
-              "Monthly",
-              "Annual",
-              ...DOMAINS.map((d) => d.title),
-            ].map((heading) => (
+              { h: "Companies", sub: "" },
+              { h: "Monthly", sub: "per company" },
+              { h: "Annual", sub: "per company" },
+              ...DOMAINS.map((d) => ({ h: d.title, sub: "" })),
+            ].map(({ h, sub }) => (
               <div
-                key={heading}
+                key={h}
                 className="px-4 py-[15px] border-b border-[#E2E7EF] bg-[#F6F8FB] text-[12px] font-semibold text-[#0A1A33]"
               >
-                {heading}
+                {h}
+                {sub && (
+                  <span className="block text-[11px] font-normal text-[#667085] mt-[2px]">
+                    {sub}
+                  </span>
+                )}
               </div>
             ))}
 
-            {/* TIER ROWS */}
-            {TIER_ROWS.map((row, i) => {
+            {/* PRICING ROWS */}
+            {PRICE_ROWS.map((row, i) => {
               const gridRow = 3 + i;
-              const cell =
-                "px-4 py-[15px] border-b border-[#E2E7EF]" +
-                (row.popular ? " bg-[#EEF4FC]" : "");
+              const cell = "px-4 border-b border-[#E2E7EF] py-[13px]";
+
+              if (row.kind === "heading") {
+                return (
+                  <div
+                    key={row.key}
+                    className="px-4 pt-[16px] pb-[8px] border-b border-[#E2E7EF] text-[10px] font-semibold tracking-[0.13em] text-[#667085] uppercase"
+                    style={{ gridColumn: "1 / span 3", gridRow }}
+                  >
+                    {row.label}
+                  </div>
+                );
+              }
+
               return (
                 <div key={row.key} className="contents">
                   <div className={cell} style={{ gridColumn: 1, gridRow }}>
-                    {row.popular && (
-                      <span className="block text-[10px] font-bold tracking-[0.08em] text-[#2F6BFF] mb-1">
-                        MOST POPULAR
+                    {row.kind === "trial" ? (
+                      <button
+                        type="button"
+                        onClick={startTrial}
+                        className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
+                      >
+                        {row.label}
+                      </button>
+                    ) : (
+                      <span
+                        className={
+                          row.kind === "rate"
+                            ? "font-semibold text-[#1B56A6]"
+                            : "text-[14px] text-[#101828] whitespace-nowrap"
+                        }
+                      >
+                        {row.label}
                       </span>
                     )}
-
-                    <button
-                      type="button"
-                      onClick={() => selectTier(row.key)}
-                      className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
-                    >
-                      {row.label}
-                    </button>
 
                     {row.note && (
                       <span className="block font-normal text-[11px] text-[#667085] mt-[3px]">
@@ -1188,35 +1234,31 @@ const Signal = () => {
                     )}
                   </div>
 
-                  <div className={cell} style={{ gridColumn: 2, gridRow }}>
-                    {row.companies}
-                  </div>
-
                   <div
                     className={`${cell} font-semibold`}
-                    style={{ gridColumn: 3, gridRow }}
+                    style={{ gridColumn: 2, gridRow }}
                   >
-                    {renderPrice(row.monthly, row.monthlyNote)}
+                    {renderPrice(row.monthly)}
                   </div>
 
                   <div
-                    className={`${cell}${row.key === "demo" ? " text-[#667085]" : ""}`}
-                    style={{ gridColumn: 4, gridRow }}
+                    className={`${cell}${row.kind === "trial" ? " text-[#667085]" : ""}`}
+                    style={{ gridColumn: 3, gridRow }}
                   >
-                    {renderPrice(row.annual, row.annualNote)}
+                    {renderPrice(row.annual)}
                   </div>
                 </div>
               );
             })}
 
-            {/* DOMAIN COLUMNS - each spans every tier row */}
+            {/* DOMAIN COLUMNS - each spans every pricing row */}
             {DOMAINS.map((domain, i) => (
               <div
                 key={domain.title}
                 className="px-4 pt-[17px] pb-[15px] border-b border-[#E2E7EF]"
                 style={{
-                  gridColumn: 5 + i,
-                  gridRow: `3 / span ${TIER_ROWS.length}`,
+                  gridColumn: 4 + i,
+                  gridRow: `3 / span ${PRICE_ROWS.length}`,
                 }}
               >
                 <ul className="list-none m-0 p-0">
@@ -1230,64 +1272,67 @@ const Signal = () => {
             ))}
           </div>
 
-          {/* TABLET / MOBILE - same TIER_ROWS and DOMAINS */}
+          {/* TABLET / MOBILE - same PRICE_ROWS and DOMAINS */}
           <div className="xl:hidden">
             <div className="text-[11px] font-semibold tracking-[0.13em] text-[#667085] uppercase border-b border-[#E2E7EF] pb-4">
               Subscription
             </div>
 
             <div className="divide-y divide-[#E2E7EF]">
-              {TIER_ROWS.map((row) => (
-                <div
-                  key={row.key}
-                  className={`grid grid-cols-2 sm:grid-cols-4 gap-4 py-5 ${
-                    row.popular ? "bg-[#EEF4FC] px-4" : ""
-                  }`}
-                >
-                  <div>
-                    {row.popular && (
-                      <span className="block text-[9px] font-bold tracking-[0.08em] text-[#2F6BFF] mb-1">
-                        MOST POPULAR
+              {PRICE_ROWS.map((row) =>
+                row.kind === "heading" ? (
+                  <div
+                    key={row.key}
+                    className="pt-6 pb-3 text-[10px] font-semibold tracking-[0.13em] text-[#667085] uppercase"
+                  >
+                    {row.label}
+                  </div>
+                ) : (
+                  <div key={row.key} className="grid grid-cols-3 gap-4 py-5">
+                    <div>
+                      {row.kind === "trial" ? (
+                        <button
+                          type="button"
+                          onClick={startTrial}
+                          className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
+                        >
+                          {row.label}
+                        </button>
+                      ) : (
+                        <span
+                          className={
+                            row.kind === "rate"
+                              ? "font-semibold text-[#1B56A6]"
+                              : "text-sm text-[#101828]"
+                          }
+                        >
+                          {row.label}
+                        </span>
+                      )}
+
+                      {row.note && (
+                        <span className="block text-[11px] text-[#667085] mt-[3px]">
+                          {row.note}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="text-sm">
+                      <span className="block text-[10px] text-[#667085] uppercase mb-1">
+                        {row.kind === "rate" ? "Monthly / company" : "Monthly"}
                       </span>
-                    )}
+                      <span className="font-semibold">{renderPrice(row.monthly)}</span>
+                    </div>
 
-                    <button
-                      type="button"
-                      onClick={() => selectTier(row.key)}
-                      className={`${tierLinkStyle} bg-transparent border-0 p-0 text-left`}
-                    >
-                      {row.label}
-                    </button>
-
-                    {row.note && (
-                      <span className="block text-[11px] text-[#667085] mt-[3px]">
-                        {row.note}
+                    <div className="text-sm">
+                      <span className="block text-[10px] text-[#667085] uppercase mb-1">
+                        {row.kind === "rate" ? "Annual / company" : "Annual"}
                       </span>
-                    )}
+                      {renderPrice(row.annual)}
+                    </div>
                   </div>
-
-                  <div className="text-sm">
-                    <span className="block text-[10px] text-[#667085] uppercase mb-1">
-                      Companies
-                    </span>
-                    {row.companies}
-                  </div>
-
-                  <div className="text-sm">
-                    <span className="block text-[10px] text-[#667085] uppercase mb-1">
-                      Monthly
-                    </span>
-                    {renderPrice(row.monthly, row.monthlyNote)}
-                  </div>
-
-                  <div className="text-sm">
-                    <span className="block text-[10px] text-[#667085] uppercase mb-1">
-                      Annual
-                    </span>
-                    {renderPrice(row.annual, row.annualNote)}
-                  </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
 
             <div className="mt-12 text-[11px] font-semibold tracking-[0.13em] text-[#667085] uppercase border-b border-[#E2E7EF] pb-4">
@@ -1320,23 +1365,18 @@ const Signal = () => {
               sentence kept on the web page (item 18). */}
           <div className="mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-6 lg:gap-12">
             <div className="text-[12px] text-[#667085] leading-[1.6]">
-              {/* Item 26: the progressive-pricing explanation, worded as in
-                  the tear sheet, with the 100-company example. */}
+              {/* Item 40: the progressive rule, worded as on the tear sheet,
+                  with the 30-company example built from breakdownFor(). */}
               <p className="m-0">
                 <strong className="text-[#101828] font-semibold">
                   Progressive pricing:
                 </strong>{" "}
-                {usd(PRICE_BANDS[0].rate)} per company for the first{" "}
-                {PRICE_BANDS[0].to}, {usd(PRICE_BANDS[1].rate)} for the next{" "}
-                {(PRICE_BANDS[1].to as number) - (PRICE_BANDS[0].to as number)},{" "}
-                {usd(PRICE_BANDS[2].rate)} for the next{" "}
-                {(PRICE_BANDS[2].to as number) - (PRICE_BANDS[1].to as number)},{" "}
-                {usd(PRICE_BANDS[3].rate)} for the next{" "}
-                {(PRICE_BANDS[3].to as number) - (PRICE_BANDS[2].to as number)}{" "}
-                and {usd(PRICE_BANDS[4].rate)} above {PRICE_BANDS[3].to}. Figures
-                shown are for a full band; smaller portfolios pay only for the
-                companies monitored &mdash; 100 companies: 5 &times; $50 + 20
-                &times; $45 + 75 &times; $40 = {usd(monthlyFor(100))} a month.
+                each rate applies only to the companies in its tier.{" "}
+                {NOTE_EXAMPLE} companies ={" "}
+                {breakdownFor(NOTE_EXAMPLE)
+                  .map(({ companies: c, band }) => `${c} \u00d7 ${usd(band.rate)}`)
+                  .join(" + ")}{" "}
+                = {usd(monthlyFor(NOTE_EXAMPLE))} a month.
               </p>
               <p className="mt-3 mb-0">
                 No minimum number of companies. Every HatfieldIQ subscription
@@ -1426,7 +1466,7 @@ const Signal = () => {
                           <>
                             {" "}
                             &middot; marginal rate {usd(calcMarginal.rate)} (
-                            {calcMarginal.label})
+                            {bandName(calcMarginal).toLowerCase()})
                           </>
                         )}
                       </p>
@@ -1465,7 +1505,7 @@ const Signal = () => {
                         className="grid grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[110px_minmax(0,1fr)_auto] gap-x-4 py-[9px] border-b border-[#E2E7EF] text-[13px]"
                       >
                         <span className="font-semibold text-[#1B56A6]">
-                          {band.label}
+                          {bandName(band)}
                         </span>
                         <span className="text-[#475467] col-span-2 sm:col-span-1 order-last sm:order-none">
                           {c.toLocaleString("en-US")}{" "}
@@ -1570,7 +1610,7 @@ const Signal = () => {
 
               <button
                 type="button"
-                onClick={() => selectTier("demo")}
+                onClick={startTrial}
                 className="shrink-0 px-[18px] py-[11px] rounded-[7px] border-0 cursor-pointer text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors"
               >
                 Start your free trial
@@ -1580,559 +1620,3 @@ const Signal = () => {
 
           {/* SAMPLE RISK REPORT */}
           {SAMPLE_REPORT_URL && (
-            <section
-              id="sample"
-              className="scroll-mt-8 border-t border-[#E2E7EF] pt-[46px] mt-[54px]"
-            >
-              <div className="grid lg:grid-cols-[minmax(0,1fr)_320px] gap-10 lg:gap-14 items-start">
-                <div>
-                  <p className="m-0 text-[12px] font-semibold tracking-[0.16em] text-[#2F6BFF] uppercase">
-                    See the output
-                  </p>
-
-                  <h2 className="mt-4 mb-0 text-[26px] md:text-[30px] font-semibold tracking-[-0.025em] text-[#0A1A33]">
-                    A sample risk report
-                  </h2>
-
-                  <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[62ch]">
-                    This is a real HatfieldIQ report on a public company, with
-                    nothing added for the brochure. It shows the shape of what
-                    lands in front of your team: what changed, why it matters,
-                    and the evidence behind it.
-                  </p>
-
-                  <ul className="list-none m-0 mt-6 p-0 grid sm:grid-cols-2 gap-x-8">
-                    <li className={domainStyle}>
-                      Financial health &mdash; reported figures, Piotroski
-                      F-Score, Altman Z-Score and Merton analysis, with the
-                      trend behind each
-                    </li>
-
-                    <li className={domainStyle}>
-                      Sanctions and watchlist position, including PEP
-                      identification
-                    </li>
-
-                    <li className={domainStyle}>
-                      Litigation, regulatory and cybersecurity events over the
-                      review window
-                    </li>
-
-                    <li className={domainStyle}>
-                      Geographic and supply-chain exposure, with the sources
-                      each finding came from
-                    </li>
-                  </ul>
-
-                  <p className="mt-6 mb-0 text-[12px] text-[#667085] max-w-[62ch] leading-[1.6]">
-                    Every finding carries its source, a severity and an audit
-                    trail. AI supports the analysis; your organization retains
-                    decision authority.
-                  </p>
-                </div>
-
-                <div className="bg-[#F6F8FB] rounded-2xl px-6 py-7 w-full">
-                  <p className="m-0 text-[13px] font-semibold text-[#0A1A33]">
-                    Sample risk report
-                  </p>
-
-                  <p className="mt-2 mb-0 text-[12px] text-[#667085] leading-[1.6]">
-                    PDF, no sign-up required.
-                  </p>
-
-                  <a
-                    href={SAMPLE_REPORT_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-5 inline-block px-[18px] py-[11px] rounded-[7px] no-underline text-[13px] font-semibold bg-[#2F6BFF] text-white hover:bg-[#245CE0] transition-colors"
-                  >
-                    Open the sample report
-                  </a>
-
-                  <p className="mt-4 mb-0 text-[11px] text-[#98A2B3] leading-[1.5]">
-                    Opens in a new tab.
-                  </p>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* REQUEST ACCESS */}
-          <section
-            id="request"
-            className="scroll-mt-8 bg-[#F6F8FB] rounded-2xl px-6 md:px-[38px] py-[38px] my-[70px]"
-          >
-            <h2 className="m-0 mb-[6px] text-[26px] font-semibold tracking-[-0.025em] text-[#0A1A33]">
-              Request access
-            </h2>
-
-            <p className="m-0 mb-[26px] text-sm text-[#667085]">
-              Confirm your email address, then our team provisions accounts
-              within one business day.
-            </p>
-
-            {result?.ok ? (
-              <div>
-                <p className="text-[15px] font-medium text-[#1B56A6] m-0">
-                  {result.message}
-                </p>
-
-                <p className="mt-3 mb-0 text-[13px] text-[#667085]">
-                  The confirmation link is valid for three days. If it does
-                  not arrive, check your spam folder or email{" "}
-                  <a
-                    href="mailto:contact@hatfield.ai?subject=Registration"
-                    className="text-[#1B56A6]"
-                  >
-                    contact@hatfield.ai
-                  </a>
-                  .
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} noValidate>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-[18px] gap-y-[15px]">
-
-                  {/* COMPANY */}
-                  <div className="flex flex-col gap-[6px] md:col-span-2">
-                    <label
-                      htmlFor="company"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Company name *
-                    </label>
-
-                    <input
-                      id="company"
-                      name="company"
-                      required
-                      autoComplete="organization"
-                      className={fieldStyle("Company name")}
-                    />
-                  </div>
-
-                  {/* FIRST NAME */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="first"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      First name *
-                    </label>
-
-                    <input
-                      id="first"
-                      name="first"
-                      required
-                      autoComplete="given-name"
-                      className={fieldStyle("First name")}
-                    />
-                  </div>
-
-                  {/* LAST NAME */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="last"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Last name *
-                    </label>
-
-                    <input
-                      id="last"
-                      name="last"
-                      required
-                      autoComplete="family-name"
-                      className={fieldStyle("Last name")}
-                    />
-                  </div>
-
-                  {/* SUFFIX */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="suffix"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Suffix
-                    </label>
-
-                    <input
-                      id="suffix"
-                      name="suffix"
-                      placeholder="Jr., III, CFA"
-                      className={fieldStyle("Suffix")}
-                    />
-                  </div>
-
-                  {/* EMAIL */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="email"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Work email *
-                    </label>
-
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      className={fieldStyle("Work email")}
-                    />
-
-                    <span className="text-[11px] text-[#98A2B3]">
-                      Corporate address required.
-                    </span>
-                  </div>
-
-                  {/* ROLE */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="role"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Your role *
-                    </label>
-
-                    <input
-                      id="role"
-                      name="role"
-                      required
-                      autoComplete="organization-title"
-                      className={fieldStyle("Your role")}
-                    />
-                  </div>
-
-                  {/* PHONE */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="phone"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Phone (optional)
-                    </label>
-
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      autoComplete="tel"
-                      className={fieldStyle("Phone")}
-                    />
-                  </div>
-
-                  {/* INDUSTRY - options from GET /api/sectors (item 7) */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="industry"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Industry *
-                    </label>
-
-                    <select
-                      id="industry"
-                      name="industry"
-                      required
-                      className={fieldStyle("Industry")}
-                    >
-                      <option value="">Select</option>
-                      {sectors.map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                      <option>Other</option>
-                    </select>
-                  </div>
-
-                  {/* SUBSCRIPTION (item 29): trial or paid */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="subscription"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Subscription *
-                    </label>
-
-                    <select
-                      id="subscription"
-                      name="subscription"
-                      required
-                      value={subscription}
-                      onChange={(e) => handleSubscriptionChange(e.target.value)}
-                      className={fieldStyle("Subscription")}
-                    >
-                      <option value="">Select</option>
-                      <option value="demo">Free trial</option>
-                      <option value="paid">Paid subscription</option>
-                    </select>
-                  </div>
-
-                  {/* COMPANIES TO MONITOR (item 29) */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="companies"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Companies to monitor
-                      {subscription === "paid" && " *"}
-                    </label>
-
-                    <input
-                      id="companies"
-                      name="companies"
-                      type="number"
-                      inputMode="numeric"
-                      min={1}
-                      step={1}
-                      value={companiesText}
-                      disabled={subscription !== "paid"}
-                      required={subscription === "paid"}
-                      placeholder={
-                        subscription === "demo"
-                          ? "Pre-selected"
-                          : subscription === ""
-                          ? "Select subscription first"
-                          : "1 or more"
-                      }
-                      onChange={(e) =>
-                        setCompaniesText(e.target.value.replace(/\D/g, ""))
-                      }
-                      className={
-                        subscription !== "paid"
-                          ? "text-sm bg-[#EAECF0] text-[#98A2B3] border border-[#D0D5DD] rounded-lg px-3 py-[11px] w-full outline-none cursor-not-allowed"
-                          : fieldStyle("Companies to monitor")
-                      }
-                    />
-
-                    {subscription === "paid" && companies >= 1 && (
-                      <span className="text-[11px] text-[#667085]">
-                        {usd(estimateMonthly)} a month &middot;{" "}
-                        {usd(estimateMonthly * ANNUAL_MONTHS)} annual prepaid
-                        &middot; {bandFor(companies).label} band
-                      </span>
-                    )}
-                  </div>
-
-                  {/* BILLING */}
-                  <div className="flex flex-col gap-[6px]">
-                    <label
-                      htmlFor="billing"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Billing preference
-                      {subscription === "paid" && " *"}
-                    </label>
-
-                    <select
-                      id="billing"
-                      name="billing"
-                      value={selectedBilling}
-                      disabled={billingDisabled}
-                      required={subscription === "paid"}
-                      onChange={(e) => {
-                        setSelectedBilling(e.target.value);
-                        setBillingError(false);
-                      }}
-                      className={`text-sm border rounded-lg px-3 py-[11px] w-full outline-none transition-colors ${
-                        billingDisabled
-                          ? "bg-[#EAECF0] text-[#98A2B3] border-[#D0D5DD] cursor-not-allowed"
-                          : billingError
-                          ? "bg-white text-[#101828] border-[#B23B3B]"
-                          : "bg-white text-[#101828] border-[#E2E7EF] focus:border-[#2F6BFF]"
-                      }`}
-                    >
-                      <option value="">
-                        {billingPlaceholder}
-                      </option>
-
-                      {!billingDisabled && (
-                        <>
-                          <option value="monthly">
-                            Monthly
-                          </option>
-
-                          <option value="annual">
-                            Annual
-                          </option>
-                        </>
-                      )}
-                    </select>
-
-                    {billingError && (
-                      <span className="text-[11px] text-[#B23B3B] mt-[2px]">
-                        Please select Monthly or Annual.
-                      </span>
-                    )}
-                  </div>
-
-                  {/* NOTES */}
-                  <div className="flex flex-col gap-[6px] md:col-span-2">
-                    <label
-                      htmlFor="notes"
-                      className="text-[12px] font-medium text-[#667085]"
-                    >
-                      Anything we should know?
-                    </label>
-
-                    <textarea
-                      id="notes"
-                      name="notes"
-                      className="min-h-[72px] text-sm text-[#101828] bg-white border border-[#E2E7EF] rounded-lg px-3 py-[11px] w-full outline-none resize-y focus:border-[#2F6BFF]"
-                    />
-                  </div>
-                </div>
-
-                {/* HONEYPOT - hidden from people, assistive tech, tab order
-                    and autofill (item 6). */}
-                <div
-                  aria-hidden="true"
-                  style={{
-                    position: "absolute",
-                    left: "-9999px",
-                    width: "1px",
-                    height: "1px",
-                    overflow: "hidden",
-                  }}
-                >
-                  <label htmlFor="company_website">
-                    Company website (leave blank)
-                  </label>
-                  <input
-                    id="company_website"
-                    name="company_website"
-                    type="text"
-                    tabIndex={-1}
-                    autoComplete="off"
-                  />
-                </div>
-
-                {TURNSTILE_SITE_KEY && (
-                  <div
-                    ref={turnstileRef}
-                    className="cf-turnstile mt-[18px]"
-                    data-sitekey={TURNSTILE_SITE_KEY}
-                    data-theme="light"
-                  />
-                )}
-
-                {result && !result.ok && (
-                  <p
-                    role="alert"
-                    className="mt-[18px] mb-0 text-[13px] text-[#B23B3B]"
-                  >
-                    {result.message}
-                  </p>
-                )}
-
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-[22px]">
-                  <button
-                    type="submit"
-                    disabled={sending}
-                    className={`inline-block px-[18px] py-[11px] rounded-[7px] text-[13px] font-semibold border-0 text-white transition-colors ${
-                      sending
-                        ? "bg-[#98A2B3] cursor-not-allowed"
-                        : "bg-[#2F6BFF] hover:bg-[#245CE0] cursor-pointer"
-                    }`}
-                  >
-                    {sending ? "Sending\u2026" : "Request access"}
-                  </button>
-
-                  <p className="m-0 text-[12px] text-[#667085]">
-                    We use your details only to provision and support your
-                    account.
-                    {selectedTier === "demo" && (
-                      <>
-                        {" "}
-                        You selected the{" "}
-                        <strong className="text-[#101828]">free trial</strong>.
-                      </>
-                    )}
-                    {selectedTier && selectedTier !== "demo" && (
-                      <>
-                        {" "}
-                        You selected{" "}
-                        <strong className="text-[#101828]">
-                          {companies.toLocaleString("en-US")}{" "}
-                          {companies === 1 ? "company" : "companies"} (
-                          {labelFor(selectedTier)} band)
-                        </strong>
-                        .
-                      </>
-                    )}
-                  </p>
-                </div>
-              </form>
-            )}
-          </section>
-        </div>
-      </main>
-
-      {/* FOOTER */}
-      <footer className="bg-[#071326] text-[#8FA2BC] text-[12px] py-[27px]">
-        <div className="max-w-[1280px] mx-auto px-5 md:px-[42px] flex flex-col sm:flex-row gap-4 justify-between">
-          {/* Item 12: the d/b/a. */}
-          <p className="m-0">
-            Hatfield Advisory LLC d/b/a Hatfield.ai&trade;, St. Petersburg, Florida
-          </p>
-
-          <p className="m-0">
-            <a
-              href="#request"
-              className="text-[#C8D3E3] no-underline hover:text-white"
-            >
-              Request access
-            </a>
-
-            {SAMPLE_REPORT_URL && (
-              <>
-                {"  \u00b7  "}
-
-                <a
-                  href="#sample"
-                  className="text-[#C8D3E3] no-underline hover:text-white"
-                >
-                  Sample risk report
-                </a>
-              </>
-            )}
-
-            {"  \u00b7  "}
-
-            {/* Item 24: the tear sheet. */}
-            <a
-              href={SIGNAL_PDF_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#C8D3E3] no-underline hover:text-white"
-            >
-              HatfieldIQ overview (PDF)
-            </a>
-
-            {"  \u00b7  "}
-
-            <a
-              href="/contact"
-              className="text-[#C8D3E3] no-underline hover:text-white"
-            >
-              Contact us
-            </a>
-
-            {"  \u00b7  "}
-
-            {/* Item 9: /login, not the app root. */}
-            <a
-              href={SIGNAL_LOGIN_URL}
-              className="text-[#C8D3E3] no-underline hover:text-white"
-            >
-              Client sign in
-            </a>
-          </p>
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default Signal;
