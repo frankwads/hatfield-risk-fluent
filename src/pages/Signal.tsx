@@ -364,6 +364,14 @@
 //     "Price your portfolio" panel follows the five rate rows directly. Same
 //     order on the tear sheet.
 //
+// 49. CALCULATOR FIGURES ALIGNED (Frank, 2026-11-18: "can we do a better job
+//     of aligning the headings and numbers"). "Average cost per company"
+//     wraps to two lines and pushed its figure below the other three. The
+//     four results now share one grid with three rows - label, figure, note
+//     (CSS subgrid) - labels bottom-aligned, figures on one line, notes
+//     top-aligned, at every width. Figures use tabular numerals. The marginal
+//     rate moves to its own line under "per company, per month".
+//
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
@@ -1525,61 +1533,65 @@ const Signal = () => {
 
               {calcCompanies >= 1 ? (
                 <div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-                    <div>
-                      <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase">
-                        Monthly
-                      </p>
-                      <p className="mt-1 mb-0 text-[26px] font-semibold tracking-[-0.02em] text-[#0A1A33]">
-                        {usd(calcMonthly)}
-                      </p>
-                      <p className="mt-[2px] mb-0 text-[11px] text-[#667085]">
-                        billed monthly
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase">
-                        Average cost per company
-                      </p>
-                      <p className="mt-1 mb-0 text-[26px] font-semibold tracking-[-0.02em] text-[#0A1A33]">
-                        ${calcBlended}
-                      </p>
-                      <p className="mt-[2px] mb-0 text-[11px] text-[#667085]">
-                        per company, per month
-                        {calcMarginal && (
+                  {/* Item 49: one grid, three shared rows (label / figure /
+                      note) via CSS subgrid, so the four figures always sit
+                      on the same line however many lines a label takes. */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-1">
+                    {[
+                      {
+                        label: "Monthly",
+                        value: usd(calcMonthly),
+                        note: <>billed monthly</>,
+                        green: false,
+                      },
+                      {
+                        label: "Average cost per company",
+                        value: `$${calcBlended}`,
+                        note: (
                           <>
-                            {" "}
-                            &middot; marginal rate {usd(calcMarginal.rate)} (
-                            {bandName(calcMarginal).toLowerCase()})
+                            per company, per month
+                            {calcMarginal && (
+                              <span className="block">
+                                marginal rate {usd(calcMarginal.rate)} (
+                                {bandName(calcMarginal).toLowerCase()})
+                              </span>
+                            )}
                           </>
-                        )}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase">
-                        Annual prepaid
-                      </p>
-                      <p className="mt-1 mb-0 text-[26px] font-semibold tracking-[-0.02em] text-[#0A1A33]">
-                        {usd(calcAnnual)}
-                      </p>
-                      <p className="mt-[2px] mb-0 text-[11px] text-[#667085]">
-                        {ANNUAL_MONTHS} &times; monthly, two months free
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase">
-                        You save
-                      </p>
-                      <p className="mt-1 mb-0 text-[26px] font-semibold tracking-[-0.02em] text-[#16803C]">
-                        {usd(calcSaving)}
-                      </p>
-                      <p className="mt-[2px] mb-0 text-[11px] text-[#667085]">
-                        a year against twelve monthly payments
-                      </p>
-                    </div>
+                        ),
+                        green: false,
+                      },
+                      {
+                        label: "Annual prepaid",
+                        value: usd(calcAnnual),
+                        note: <>{ANNUAL_MONTHS} &times; monthly, two months free</>,
+                        green: false,
+                      },
+                      {
+                        label: "You save",
+                        value: usd(calcSaving),
+                        note: <>a year against twelve monthly payments</>,
+                        green: true,
+                      },
+                    ].map((stat) => (
+                      <div
+                        key={stat.label}
+                        className="grid grid-rows-subgrid row-span-3 pb-4 md:pb-0"
+                      >
+                        <p className="m-0 self-end text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase leading-[1.45]">
+                          {stat.label}
+                        </p>
+                        <p
+                          className={`m-0 text-[26px] font-semibold tracking-[-0.02em] tabular-nums leading-[1.2] ${
+                            stat.green ? "text-[#16803C]" : "text-[#0A1A33]"
+                          }`}
+                        >
+                          {stat.value}
+                        </p>
+                        <p className="m-0 self-start text-[11px] text-[#667085] leading-[1.45]">
+                          {stat.note}
+                        </p>
+                      </div>
+                    ))}
                   </div>
 
                   {/* Per-band breakdown: the progressive rule, made visible */}
