@@ -315,6 +315,12 @@
 //     mis-multiply as 30 x $40. "Figures shown are for a full band" is gone
 //     because no band totals are shown any more.
 //
+// 41. "ONE PRICE." IN BRAND BLUE (Frank, 2026-11-17: "can we change the
+//     color of this to blue One price."). The narrative heading reads
+//     "10 users or 1,000." in ink and "One price." in #2F6BFF - the same blue
+//     the tear sheet prints it in, and the same treatment as "You have a
+//     signal problem." above.
+//
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
@@ -1110,7 +1116,8 @@ const Signal = () => {
                 <p className={kicker}>Priced for the portfolio, not the person</p>
 
                 <h3 className="mt-5 mb-0 font-serif font-normal text-[24px] md:text-[27px] leading-[1.2] tracking-[-0.025em] text-[#0A1A33]">
-                  10 users or 1,000. One price.
+                  10 users or 1,000.{" "}
+                  <span className="text-[#2F6BFF]">One price.</span>
                 </h3>
 
                 <p className="mt-4 mb-0 text-[13px] leading-[1.75] text-[#475467]">
