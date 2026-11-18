@@ -321,6 +321,49 @@
 //     the tear sheet prints it in, and the same treatment as "You have a
 //     signal problem." above.
 //
+// 2026-11-18. RENE'S FEEDBACK + PRICING CALCULATOR LINK (Frank: "let's proceed
+// with your recommendations and update pdf and website and include
+// functioning calculator").
+//
+// 42. EXAMPLE ROWS -> CALCULATOR PANEL. The three example-portfolio rows (10,
+//     40, 150 companies) and their caption are gone from the pricing table.
+//     In their place is one "Price your portfolio" panel: what the calculator
+//     gives you (average cost per company, total monthly, total annual), two
+//     anchor prices for the board and sales (25 companies $1,150 a month; 100
+//     companies $4,150 a month - computed by monthlyFor(), never typed) and an
+//     "Open the pricing calculator" link to #calculator. The tear sheet page 2
+//     carries the same panel, linked to https://www.hatfield.ai/iq#calculator.
+//
+// 43. THE WORKED FORMULA IS GONE from the progressive-pricing note (Rene: it
+//     "reads like homework"); the calculator does the arithmetic. The note
+//     keeps the rule: each rate applies only to the companies in its band.
+//
+// 44. LEAD LINE (Rene's wording) under the pricing headline: "From $50 per
+//     company a month, falling to $25 as your portfolio grows. No minimum.
+//     Unlimited users." - replaces "Monitor the companies that matter. Give
+//     the intelligence to everyone who needs it." Both rates read from
+//     PRICE_BANDS. Same line on the tear sheet.
+//
+// 45. CALCULATOR WORDING: "Blended rate" now reads "Average cost per company",
+//     the words the tear sheet panel uses. Figures unchanged.
+//
+// 46. #calculator LINKS LAND ON THE CALCULATOR. This is a single-page React
+//     app: the browser tries to jump to #calculator before React has drawn
+//     the section, so a link from the PDF (or anywhere) opened the page at
+//     the top. On mount the page now scrolls to the element named by the URL
+//     hash (#calculator, #request, #sample) once it exists.
+//
+// 47. ANCHOR PRICES ALIGNED (Frank, 2026-11-18: "can we align a little
+//     better"). The panel's examples are a three-column mini-table - company
+//     count, per month, per annum - with the figures right-aligned so the
+//     digits line up. Same layout on the tear sheet.
+//
+// 48. FREE TRIAL FIRST (Frank, 2026-11-18, agreed). The Free Trial row now
+//     leads the pricing table, above First 5 - it is the page's call to
+//     action and the natural entry point (Free, then $50, then lower). The
+//     "Price your portfolio" panel follows the five rate rows directly. Same
+//     order on the tear sheet.
+//
 // ENV (Vercel project settings):
 //   VITE_SIGNAL_API_BASE      default https://signal.hatfield.ai
 //   VITE_TURNSTILE_SITE_KEY   Cloudflare Turnstile site key. Unset =>
@@ -391,8 +434,8 @@ const bandName = (b: PriceBand) =>
     ? `Above ${b.from - 1}`
     : `Next ${b.to - b.from + 1}`;
 
-/** Worked example portfolios under the rate rows (item 37). */
-const EXAMPLE_PORTFOLIOS = [10, 40, 150];
+/** Anchor prices in the calculator panel (item 42): quotable figures. */
+const ANCHOR_PORTFOLIOS = [25, 100];
 
 /** Annual prepaid = this many monthly payments (two months free). */
 const ANNUAL_MONTHS = 10;
@@ -436,13 +479,13 @@ const PRICED_TIERS = PRICE_BANDS.map((b) => b.key);
 /**
  * Table rows (item 37). Both pricing layouts render from this array,
  * which is DERIVED from PRICE_BANDS - there is no second copy of any
- * figure. `kind`: "rate" = a tier, per-company figures; "heading" = the
- * example-portfolios caption; "example" = a worked portfolio total;
- * "trial" = the free trial (the only row that is a button).
+ * figure. `kind`: "rate" = a tier, per-company figures; "calc" = the
+ * "Price your portfolio" panel linking to the calculator (item 42);
+ * "trial" = the free trial (a button that pre-fills the form).
  */
 type PriceRow = {
   key: string;
-  kind: "rate" | "heading" | "example" | "trial";
+  kind: "rate" | "calc" | "trial";
   label: string;
   note?: string;
   monthly: string;
@@ -450,6 +493,15 @@ type PriceRow = {
 };
 
 const PRICE_ROWS: PriceRow[] = [
+  // Item 48: the free trial leads the table, above First 5.
+  {
+    key: "demo",
+    kind: "trial",
+    label: "Free Trial",
+    note: "pre-selected companies, read-only",
+    monthly: "Free",
+    annual: "14 calendar days",
+  },
   ...PRICE_BANDS.map(
     (b): PriceRow => ({
       key: b.key,
@@ -460,24 +512,7 @@ const PRICE_ROWS: PriceRow[] = [
       annual: usd(b.rate * ANNUAL_MONTHS),
     })
   ),
-  { key: "examples", kind: "heading", label: "Example portfolios", monthly: "", annual: "" },
-  ...EXAMPLE_PORTFOLIOS.map(
-    (n): PriceRow => ({
-      key: `ex-${n}`,
-      kind: "example",
-      label: `${n.toLocaleString("en-US")} companies`,
-      monthly: usd(monthlyFor(n)),
-      annual: usd(monthlyFor(n) * ANNUAL_MONTHS),
-    })
-  ),
-  {
-    key: "demo",
-    kind: "trial",
-    label: "Free Trial",
-    note: "pre-selected companies, read-only",
-    monthly: "Free",
-    annual: "14 calendar days",
-  },
+  { key: "calc", kind: "calc", label: "Price your portfolio", monthly: "", annual: "" },
 ];
 
 /**
@@ -487,8 +522,7 @@ const PRICE_ROWS: PriceRow[] = [
 const HIGHEST_RATE = usd(Math.max(...PRICE_BANDS.map((b) => b.rate)));
 const LOWEST_RATE = usd(Math.min(...PRICE_BANDS.map((b) => b.rate)));
 
-/** The note's worked example (item 40): 30 companies. */
-const NOTE_EXAMPLE = 30;
+
 
 /**
  * Capabilities, as the tear sheet lists them (item 16). `detail` renders
@@ -708,6 +742,23 @@ const Signal = () => {
     };
   }, []);
 
+  // Item 46: honour #calculator / #request / #sample on arrival. React draws
+  // the page after the browser's own hash jump, so retry briefly until the
+  // target exists, then scroll to it once.
+  useEffect(() => {
+    const id = window.location.hash.replace(/^#/, "");
+    if (!id) return;
+    let tries = 0;
+    const timer = window.setInterval(() => {
+      const el = document.getElementById(id);
+      if (el || ++tries > 20) {
+        window.clearInterval(timer);
+        el?.scrollIntoView({ behavior: "auto", block: "start" });
+      }
+    }, 100);
+    return () => window.clearInterval(timer);
+  }, []);
+
   const handleSubscriptionChange = (value: string) => {
     setSubscription(value);
     setBillingError(false);
@@ -890,6 +941,53 @@ const Signal = () => {
 
   const kicker =
     "m-0 text-[11px] font-semibold tracking-[0.15em] text-[#2F6BFF] uppercase leading-[1.5]";
+
+  /** Item 42: the "Price your portfolio" panel, used by both layouts. */
+  const renderCalcPanel = () => (
+    <div className="bg-[#EEF4FC] border-l-[3px] border-[#2F6BFF] rounded-r-lg px-4 py-[14px]">
+      <p className="m-0 text-[10px] font-bold tracking-[0.13em] text-[#2F6BFF] uppercase">
+        Price your portfolio
+      </p>
+      <p className="mt-2 mb-0 text-[13px] leading-[1.55] text-[#101828]">
+        Enter the number of companies you want to monitor and see your average
+        cost per company, total monthly subscription and total annual
+        subscription.
+      </p>
+      {/* Item 47: anchor prices as an aligned mini-table - figures
+          right-aligned in "per month" / "per annum" columns. */}
+      <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-5 gap-y-[3px] text-[13px] max-w-[340px]">
+        <span className="text-[11px] font-semibold text-[#667085]">Example</span>
+        <span className="text-[11px] text-[#667085] text-right">per month</span>
+        <span className="text-[11px] text-[#667085] text-right">per annum</span>
+        {ANCHOR_PORTFOLIOS.map((n) => (
+          <div key={n} className="contents">
+            <span className="text-[#101828]">
+              {n.toLocaleString("en-US")} companies
+            </span>
+            <span className="text-right font-semibold text-[#101828] tabular-nums">
+              {usd(monthlyFor(n))}
+            </span>
+            <span className="text-right font-semibold text-[#101828] tabular-nums">
+              {usd(monthlyFor(n) * ANNUAL_MONTHS)}
+            </span>
+          </div>
+        ))}
+      </div>
+      <a
+        href="#calculator"
+        onClick={(e) => {
+          e.preventDefault();
+          document
+            .getElementById("calculator")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          window.history.replaceState(null, "", "#calculator");
+        }}
+        className="mt-3 inline-block text-[13px] font-semibold text-[#1B56A6] no-underline hover:text-[#2F6BFF] hover:underline underline-offset-4"
+      >
+        Open the pricing calculator &rsaquo;
+      </a>
+    </div>
+  );
 
   return (
     <div
@@ -1154,9 +1252,9 @@ const Signal = () => {
               Enterprise intelligence. Priced for the portfolio.
             </h2>
 
-            <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[70ch]">
-              Monitor the companies that matter. Give the intelligence to
-              everyone who needs it.
+            <p className="mt-4 mb-0 text-[15px] leading-[1.65] text-[#475467] max-w-[80ch]">
+              From {HIGHEST_RATE} per company a month, falling to {LOWEST_RATE}{" "}
+              as your portfolio grows. No minimum. Unlimited users.
             </p>
           </div>
 
@@ -1199,14 +1297,14 @@ const Signal = () => {
               const gridRow = 3 + i;
               const cell = "px-4 border-b border-[#E2E7EF] py-[13px]";
 
-              if (row.kind === "heading") {
+              if (row.kind === "calc") {
                 return (
                   <div
                     key={row.key}
-                    className="px-4 pt-[16px] pb-[8px] border-b border-[#E2E7EF] text-[10px] font-semibold tracking-[0.13em] text-[#667085] uppercase"
+                    className="px-4 py-[14px] border-b border-[#E2E7EF]"
                     style={{ gridColumn: "1 / span 3", gridRow }}
                   >
-                    {row.label}
+                    {renderCalcPanel()}
                   </div>
                 );
               }
@@ -1223,13 +1321,7 @@ const Signal = () => {
                         {row.label}
                       </button>
                     ) : (
-                      <span
-                        className={
-                          row.kind === "rate"
-                            ? "font-semibold text-[#1B56A6]"
-                            : "text-[14px] text-[#101828] whitespace-nowrap"
-                        }
-                      >
+                      <span className="font-semibold text-[#1B56A6]">
                         {row.label}
                       </span>
                     )}
@@ -1287,12 +1379,9 @@ const Signal = () => {
 
             <div className="divide-y divide-[#E2E7EF]">
               {PRICE_ROWS.map((row) =>
-                row.kind === "heading" ? (
-                  <div
-                    key={row.key}
-                    className="pt-6 pb-3 text-[10px] font-semibold tracking-[0.13em] text-[#667085] uppercase"
-                  >
-                    {row.label}
+                row.kind === "calc" ? (
+                  <div key={row.key} className="py-5">
+                    {renderCalcPanel()}
                   </div>
                 ) : (
                   <div key={row.key} className="grid grid-cols-3 gap-4 py-5">
@@ -1306,13 +1395,7 @@ const Signal = () => {
                           {row.label}
                         </button>
                       ) : (
-                        <span
-                          className={
-                            row.kind === "rate"
-                              ? "font-semibold text-[#1B56A6]"
-                              : "text-sm text-[#101828]"
-                          }
-                        >
+                        <span className="font-semibold text-[#1B56A6]">
                           {row.label}
                         </span>
                       )}
@@ -1372,18 +1455,13 @@ const Signal = () => {
               sentence kept on the web page (item 18). */}
           <div className="mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] gap-6 lg:gap-12">
             <div className="text-[12px] text-[#667085] leading-[1.6]">
-              {/* Item 40: the progressive rule, worded as on the tear sheet,
-                  with the 30-company example built from breakdownFor(). */}
+              {/* Item 43: the progressive rule, worded as on the tear sheet;
+                  the worked formula is gone - the calculator does the sums. */}
               <p className="m-0">
                 <strong className="text-[#101828] font-semibold">
                   Progressive pricing:
                 </strong>{" "}
-                each rate applies only to the companies in its tier.{" "}
-                {NOTE_EXAMPLE} companies ={" "}
-                {breakdownFor(NOTE_EXAMPLE)
-                  .map(({ companies: c, band }) => `${c} \u00d7 ${usd(band.rate)}`)
-                  .join(" + ")}{" "}
-                = {usd(monthlyFor(NOTE_EXAMPLE))} a month.
+                each rate applies only to the companies in its band.
               </p>
               <p className="mt-3 mb-0">
                 No minimum number of companies. Every HatfieldIQ subscription
@@ -1462,13 +1540,13 @@ const Signal = () => {
 
                     <div>
                       <p className="m-0 text-[11px] font-semibold tracking-[0.08em] text-[#667085] uppercase">
-                        Blended rate
+                        Average cost per company
                       </p>
                       <p className="mt-1 mb-0 text-[26px] font-semibold tracking-[-0.02em] text-[#0A1A33]">
                         ${calcBlended}
                       </p>
                       <p className="mt-[2px] mb-0 text-[11px] text-[#667085]">
-                        average per company per month
+                        per company, per month
                         {calcMarginal && (
                           <>
                             {" "}
