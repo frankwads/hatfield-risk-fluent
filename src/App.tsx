@@ -28,6 +28,9 @@ import OneWeekExposure from "./pages/insights/OneWeekExposure";
 // src/pages/insights/HatfieldIQLaunch.tsx. Linked from the News & Insights
 // card and the announcement strip on the homepage.
 import HatfieldIQLaunch from "./pages/insights/HatfieldIQLaunch";
+// 2026-11-20 (Frank): Privacy Notice, src/pages/Privacy.tsx, served at /privacy.
+// The footer (src/components/Footer.tsx) links to it on every page.
+import Privacy from "./pages/Privacy";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +98,9 @@ const App = () => (
           <Route path="/about/ai-governance" element={<AIGovernance />} />
           <Route path="/consulting" element={<Consulting />} />
           <Route path="/contact" element={<Contact />} />
+          {/* 2026-11-20 (Frank): Privacy Notice. Also entered in Stripe as the
+              privacy policy URL and linked from the footer. */}
+          <Route path="/privacy" element={<Privacy />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
