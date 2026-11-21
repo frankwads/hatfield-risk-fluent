@@ -9,7 +9,9 @@
 import logoWhite from "@/assets/h-logo-white.png";
 
 const TERMS_URL = "https://signal.hatfield.ai/terms";
-const PRIVACY_URL = ""; // fill in when the privacy notice is published
+// 2026-11-20 (Frank): the privacy notice is published at www.hatfield.ai/privacy
+// (src/pages/Privacy.tsx), so the Privacy link now shows on every page.
+const PRIVACY_URL = "https://www.hatfield.ai/privacy";
 
 const linkClass =
   "hover:text-white underline-offset-4 hover:underline transition-colors";
